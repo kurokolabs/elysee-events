@@ -9,10 +9,44 @@
   <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
 </head>
 <body>
+  <style>
+    /* ── Navigation ──────────────────────────────────────── */
+    .nav { position:fixed; top:0; left:0; right:0; height:68px; background:linear-gradient(180deg,rgba(8,8,7,.97) 0%,rgba(14,13,12,.94) 100%); backdrop-filter:blur(32px) saturate(180%); -webkit-backdrop-filter:blur(32px) saturate(180%); z-index:9000; }
+    .nav::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent 0%,#C9A84C 15%,#e8d48b 50%,#C9A84C 85%,transparent 100%); opacity:.6; }
+    .nav__inner { position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; height:100%; max-width:1400px; margin:0 auto; padding:0 44px; }
+    .nav__logo { display:flex; align-items:center; gap:16px; text-decoration:none; }
+    .nav__logo img { height:40px; width:auto; border-radius:3px; }
+    .nav__logo-mark { width:42px; height:42px; flex-shrink:0; }
+    .nav__brand { display:flex; flex-direction:column; gap:1px; padding-left:16px; border-left:1px solid rgba(201,168,76,.2); }
+    .nav__brandname { font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:400; font-style:italic; letter-spacing:.06em; color:rgba(255,255,255,.88); line-height:1; }
+    .nav__brandtag { font-size:8px; font-weight:600; letter-spacing:.24em; text-transform:uppercase; color:rgba(201,168,76,.55); line-height:1; margin-top:3px; }
+    .nav__links { display:flex; align-items:center; gap:6px; list-style:none; position:absolute; left:50%; transform:translateX(-50%); }
+    .nav__links li { list-style:none; }
+    .nav__links a { font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.45); padding:7px 16px; border-radius:100px; transition:color .3s ease,background .3s ease; text-decoration:none; }
+    .nav__links a:hover { color:rgba(255,255,255,.9); background:rgba(255,255,255,.06); }
+    .login-page { padding-top:68px; }
+    @media(max-width:900px) { .nav__links { display:none; } .nav__inner { padding:0 20px; } }
+  </style>
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="/elysee-events.html" class="nav__logo">
+        <svg class="nav__logo-mark" viewBox="0 0 42 42" fill="none"><rect x=".5" y=".5" width="41" height="41" rx="8" stroke="rgba(201,168,76,.4)" stroke-width="1"/><text x="50%" y="54%" text-anchor="middle" dominant-baseline="central" font-family="'Cormorant Garamond',serif" font-size="15" font-weight="600" font-style="italic" fill="#C9A84C">EE</text></svg>
+        <div class="nav__brand">
+          <span class="nav__brandname">Élysée Events</span>
+          <span class="nav__brandtag">Catering &amp; Events</span>
+        </div>
+      </a>
+      <ul class="nav__links">
+        <li><a href="/kantine.html">Die Kantine</a></li>
+        <li><a href="/hochzeit.html">Hochzeiten</a></li>
+        <li><a href="/corporate.html">Corporate</a></li>
+      </ul>
+    </div>
+  </nav>
   <div class="login-page">
     <div class="login-card">
       <div class="login-card__logo">
-        <div class="login-card__monogram">ÉE</div>
+        <img th:src="@{/portal/img/elysee-logo.jpg}" alt="Élysée Events" style="height:48px;border-radius:4px;">
       </div>
       <h1 class="login-card__title">Kundenportal</h1>
 

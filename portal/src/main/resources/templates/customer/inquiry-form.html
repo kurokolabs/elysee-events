@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Neue Anfrage - Elysee Events</title>
   <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
-  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css?v=2}">
 </head>
 <body>
   <div th:replace="~{fragments/admin-nav :: customer-topnav}"></div>
@@ -13,66 +13,629 @@
     <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
     <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
 
-    <div class="portal-header">
-      <h1 class="portal-header__title">Neue Anfrage</h1>
-      <p class="portal-header__subtitle">Stellen Sie eine neue Anfrage für Ihr Event</p>
+    <!-- Progress -->
+    <div class="wizard-progress" id="wizProgress">
+      <div class="wizard-progress__step is-active"></div>
+      <div class="wizard-progress__step"></div>
+      <div class="wizard-progress__step"></div>
+      <div class="wizard-progress__step"></div>
+      <div class="wizard-progress__step"></div>
     </div>
 
-    <div class="detail-card" style="max-width:720px;">
-      <div class="detail-card__title">Anfrage-Details</div>
-      <form th:action="@{/portal/anfrage}" method="post">
-        <div class="form-group">
-          <label class="form-label" for="bookingType">Buchungstyp *</label>
-          <select id="bookingType" name="bookingType" class="form-select" required>
-            <option value="">Bitte wählen...</option>
-            <option th:each="t : ${bookingTypes}" th:value="${t.name()}" th:text="${t.label}">Typ</option>
-          </select>
-        </div>
+    <!-- Single form with hidden fields -->
+    <form id="inquiryForm" th:action="@{/portal/anfrage}" method="post">
+      <input type="hidden" name="bookingType" id="hBookingType">
+      <input type="hidden" name="eventDate" id="hEventDate">
+      <input type="hidden" name="eventTimeSlot" id="hEventTimeSlot">
+      <input type="hidden" name="guestCount" id="hGuestCount">
+      <input type="hidden" name="budget" id="hBudget">
+      <input type="hidden" name="menuSelection" id="hMenuSelection">
+      <input type="hidden" name="deliveryAddress" id="hDeliveryAddress">
+      <input type="hidden" name="cateringPackage" id="hCateringPackage">
+      <input type="hidden" name="foodOption" id="hFoodOption">
+      <input type="hidden" name="foodSubOption" id="hFoodSubOption">
+      <input type="hidden" name="cuisineStyle" id="hCuisineStyle">
+      <input type="hidden" name="specialRequests" id="hSpecialRequests">
 
-        <div class="form-group">
-          <label class="form-label" for="eventDate">Eventdatum *</label>
-          <input type="date" id="eventDate" name="eventDate" class="form-input" required>
+      <!-- STEP 1: Event-Typ -->
+      <div class="wizard-step is-active" data-step="1">
+        <div class="wizard-step__header">
+          <p class="wizard-step__label">Schritt 1 von 5</p>
+          <h2 class="wizard-step__title">Welche Art von Event?</h2>
         </div>
-
-        <div class="form-group">
-          <label class="form-label" for="eventTimeSlot">Zeitfenster</label>
-          <select id="eventTimeSlot" name="eventTimeSlot" class="form-select">
-            <option value="">Bitte wählen...</option>
-            <option value="Vormittag (9-12 Uhr)">Vormittag (9-12 Uhr)</option>
-            <option value="Mittag (12-15 Uhr)">Mittag (12-15 Uhr)</option>
-            <option value="Nachmittag (15-18 Uhr)">Nachmittag (15-18 Uhr)</option>
-            <option value="Abend (18-23 Uhr)">Abend (18-23 Uhr)</option>
-            <option value="Ganztags">Ganztags</option>
-          </select>
+        <div class="wizard-cards">
+          <div class="wizard-card" data-type="CORPORATE">
+            <div class="wizard-card__icon">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2">
+                <rect x="6" y="14" width="36" height="28" rx="2"/>
+                <path d="M16 14V8a2 2 0 012-2h12a2 2 0 012 2v6"/>
+                <line x1="6" y1="26" x2="42" y2="26"/>
+                <rect x="20" y="22" width="8" height="8" rx="1"/>
+              </svg>
+            </div>
+            <div class="wizard-card__title">Corporate Event</div>
+            <div class="wizard-card__desc">Firmenfeier, Tagung, Gala</div>
+          </div>
+          <div class="wizard-card" data-type="HOCHZEIT">
+            <div class="wizard-card__icon">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2">
+                <circle cx="17" cy="20" r="8"/>
+                <circle cx="31" cy="20" r="8"/>
+                <path d="M24 28c-8 0-16 4-16 10v4h32v-4c0-6-8-10-16-10z"/>
+              </svg>
+            </div>
+            <div class="wizard-card__title">Hochzeit</div>
+            <div class="wizard-card__desc">Ihr besonderer Tag</div>
+          </div>
+          <div class="wizard-card" data-type="KANTINE">
+            <div class="wizard-card__icon">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2">
+                <ellipse cx="24" cy="30" rx="18" ry="6"/>
+                <path d="M6 30c0 3.3 8 6 18 6s18-2.7 18-6"/>
+                <path d="M10 18c0-6 6-10 14-10s14 4 14 10"/>
+                <line x1="24" y1="8" x2="24" y2="12"/>
+                <path d="M18 12c0-2 2.7-4 6-4s6 2 6 4"/>
+              </svg>
+            </div>
+            <div class="wizard-card__title">Catering</div>
+            <div class="wizard-card__desc">Lieferung und Buffet-Service</div>
+          </div>
         </div>
-
-        <div class="form-group">
-          <label class="form-label" for="guestCount">Anzahl Gäste *</label>
-          <input type="number" id="guestCount" name="guestCount" class="form-input" min="1" required>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="budget">Budget (EUR)</label>
-          <input type="number" id="budget" name="budget" class="form-input" min="0" step="100">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="menuSelection">Menüwahl</label>
-          <textarea id="menuSelection" name="menuSelection" class="form-textarea" placeholder="Gewünschte Speisen, Getränke..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="specialRequests">Besondere Wünsche</label>
-          <textarea id="specialRequests" name="specialRequests" class="form-textarea" placeholder="Allergien, besondere Wünsche..."></textarea>
-        </div>
-
-        <div style="display:flex; gap:12px; margin-top:24px;">
-          <button type="submit" class="btn btn--gold">Anfrage senden</button>
+        <div class="wizard-nav">
           <a th:href="@{/portal/dashboard}" class="btn btn--outline">Abbrechen</a>
+          <button type="button" class="btn btn--gold" id="next1" disabled>Weiter</button>
         </div>
-      </form>
-    </div>
+      </div>
+
+      <!-- STEP 2: Datum + Zeitslot -->
+      <div class="wizard-step" data-step="2">
+        <div class="wizard-step__header">
+          <p class="wizard-step__label">Schritt 2 von 5</p>
+          <h2 class="wizard-step__title">Wann soll das Event stattfinden?</h2>
+        </div>
+        <div class="wizard-calendar">
+          <div class="cal-nav">
+            <button type="button" class="btn btn--outline btn--sm" id="calPrev">&larr;</button>
+            <div class="cal-nav__month" id="calMonthLabel"></div>
+            <button type="button" class="btn btn--outline btn--sm" id="calNext">&rarr;</button>
+          </div>
+          <div class="cal-grid" id="wizCalGrid">
+            <div class="cal-header">Mo</div>
+            <div class="cal-header">Di</div>
+            <div class="cal-header">Mi</div>
+            <div class="cal-header">Do</div>
+            <div class="cal-header">Fr</div>
+            <div class="cal-header">Sa</div>
+            <div class="cal-header">So</div>
+          </div>
+        </div>
+        <div class="wizard-slots" id="wizSlots" style="display:none;">
+          <p class="form-label" style="text-align:center;">Zeitfenster</p>
+          <div class="wizard-slot-grid" id="wizSlotGrid"></div>
+        </div>
+        <div class="wizard-nav">
+          <button type="button" class="btn btn--outline" id="back2">Zurück</button>
+          <button type="button" class="btn btn--gold" id="next2" disabled>Weiter</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Gäste-Anzahl -->
+      <div class="wizard-step" data-step="3">
+        <div class="wizard-step__header">
+          <p class="wizard-step__label">Schritt 3 von 5</p>
+          <h2 class="wizard-step__title">Wie viele Gäste erwarten Sie?</h2>
+        </div>
+        <div class="form-group" style="max-width:320px; width:100%;">
+          <label class="form-label" for="guestInput">Anzahl Gäste</label>
+          <input type="number" id="guestInput" class="form-input" min="1" placeholder="z.B. 50">
+        </div>
+        <div class="wizard-nav">
+          <button type="button" class="btn btn--outline" id="back3">Zurück</button>
+          <button type="button" class="btn btn--gold" id="next3" disabled>Weiter</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Budget / Menu (konditional) -->
+      <div class="wizard-step" data-step="4">
+        <div class="wizard-step__header">
+          <p class="wizard-step__label">Schritt 4 von 5</p>
+          <h2 class="wizard-step__title" id="step4Title">Budget und Menü</h2>
+        </div>
+
+        <!-- KANTINE: Catering-Pakete + Lieferadresse -->
+        <div id="cateringSection" class="wizard-reveal" style="width:100%;">
+          <div class="wizard-cards">
+            <div class="wizard-card" data-package="BASIC">
+              <div class="wizard-card__price">ab 18 EUR / Person</div>
+              <div class="wizard-card__title">Basic</div>
+              <div class="wizard-card__desc">Fingerfood -- ab 20 Pers.</div>
+            </div>
+            <div class="wizard-card" data-package="KLASSIK">
+              <div class="wizard-card__price">ab 32 EUR / Person</div>
+              <div class="wizard-card__title">Klassik</div>
+              <div class="wizard-card__desc">2-Gang-Buffet -- ab 30 Pers.</div>
+            </div>
+            <div class="wizard-card" data-package="PREMIUM">
+              <div class="wizard-card__price">ab 55 EUR / Person</div>
+              <div class="wizard-card__title">Premium</div>
+              <div class="wizard-card__desc">3-Gang-Menü -- ab 40 Pers.</div>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:24px; max-width:520px; width:100%;">
+            <label class="form-label" for="deliveryAddr">Lieferadresse *</label>
+            <input type="text" id="deliveryAddr" class="form-input" placeholder="Straße, PLZ, Ort">
+          </div>
+        </div>
+
+        <!-- CORPORATE / HOCHZEIT: Budget + Essen-Optionen -->
+        <div id="eventSection" class="wizard-reveal" style="width:100%;">
+          <div class="wizard-budget-wrap">
+            <label class="form-label">Budget (EUR)</label>
+            <div class="wizard-budget-display" id="budgetDisplay">0 EUR</div>
+            <input type="range" class="wizard-budget-range" id="budgetRange" min="0" max="50000" step="500" value="0">
+            <div class="wizard-budget-ends"><span>0 EUR</span><span>50.000 EUR</span></div>
+          </div>
+
+          <div class="form-group" style="margin-top:32px; width:100%;">
+            <label class="form-label" style="text-align:center; display:block;">Essen gewünscht?</label>
+            <div class="wizard-cards wizard-cards--small" style="max-width:400px; margin:12px auto 0;">
+              <div class="wizard-card" data-food="JA">Ja, Essen gewünscht</div>
+              <div class="wizard-card" data-food="NEIN">Kein Essen</div>
+            </div>
+          </div>
+
+          <!-- Sub-Optionen bei Essen gewünscht -->
+          <div id="foodSubOptions" class="wizard-reveal" style="width:100%;">
+            <div class="form-group" style="margin-top:24px;">
+              <label class="form-label" style="text-align:center; display:block;">Art des Essens</label>
+              <div class="wizard-cards wizard-cards--small" style="max-width:400px; margin:12px auto 0;">
+                <div class="wizard-card" data-sub="BUFFET">Buffet</div>
+                <div class="wizard-card" data-sub="A_LA_CARTE">A la Carte</div>
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:24px;">
+              <label class="form-label" style="text-align:center; display:block;">Küchenstil</label>
+              <div class="wizard-cards wizard-cards--small" style="max-width:460px; margin:12px auto 0;">
+                <div class="wizard-card" data-cuisine="persisch">Persisch</div>
+                <div class="wizard-card" data-cuisine="mix">Mix</div>
+                <div class="wizard-card" data-cuisine="westlich">Westlich</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wizard-nav">
+          <button type="button" class="btn btn--outline" id="back4">Zurück</button>
+          <button type="button" class="btn btn--gold" id="next4">Weiter</button>
+        </div>
+      </div>
+
+      <!-- STEP 5: Besondere Wünsche -->
+      <div class="wizard-step" data-step="5">
+        <div class="wizard-step__header">
+          <p class="wizard-step__label">Schritt 5 von 5</p>
+          <h2 class="wizard-step__title">Besondere Wünsche</h2>
+        </div>
+        <div class="form-group" style="max-width:520px; width:100%;">
+          <label class="form-label" for="specialInput">Ihre Nachricht (optional)</label>
+          <textarea id="specialInput" class="form-textarea" rows="5" placeholder="Allergien, besondere Wünsche, Anmerkungen..."></textarea>
+        </div>
+        <div class="wizard-nav">
+          <button type="button" class="btn btn--outline" id="back5">Zurück</button>
+          <button type="submit" class="btn btn--gold" id="submitBtn">Anfrage senden</button>
+        </div>
+      </div>
+    </form>
   </main>
+
   <script th:src="@{/portal/js/portal.js}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script th:inline="javascript">
+  (function() {
+    /* ── Config ── */
+    var EMAILJS_PK   = /*[[${emailjsPublicKey}]]*/ '';
+    var EMAILJS_SID  = /*[[${emailjsServiceId}]]*/ '';
+    var EMAILJS_TID  = /*[[${emailjsConfirmTemplateId}]]*/ '';
+    var CUST_EMAIL   = /*[[${customerEmail}]]*/ '';
+    var CUST_NAME    = /*[[${customerName}]]*/ '';
+
+    /* ── State ── */
+    var currentStep = 1;
+    var state = {
+      bookingType:'', eventDate:'', eventTimeSlot:'', guestCount:'',
+      budget:'', menuSelection:'', deliveryAddress:'', cateringPackage:'',
+      foodOption:'', foodSubOption:'', cuisineStyle:'', specialRequests:''
+    };
+    var calYear, calMonth, availData = [];
+
+    /* ── Elements ── */
+    var steps = document.querySelectorAll('.wizard-step');
+    var progressSteps = document.querySelectorAll('.wizard-progress__step');
+
+    function showStep(n) {
+      steps.forEach(function(s) { s.classList.remove('is-active'); });
+      var target = document.querySelector('.wizard-step[data-step="'+n+'"]');
+      if (target) target.classList.add('is-active');
+      currentStep = n;
+      updateProgress();
+      if (n === 2 && !calYear) initCalendar();
+      if (n === 4) setupStep4();
+    }
+
+    function updateProgress() {
+      progressSteps.forEach(function(s, i) {
+        s.classList.remove('is-active','is-done');
+        if (i + 1 < currentStep) s.classList.add('is-done');
+        else if (i + 1 === currentStep) s.classList.add('is-active');
+      });
+    }
+
+    /* ── STEP 1: Event-Typ ── */
+    document.querySelectorAll('.wizard-card[data-type]').forEach(function(card) {
+      card.addEventListener('click', function() {
+        document.querySelectorAll('.wizard-card[data-type]').forEach(function(c) { c.classList.remove('is-selected'); });
+        card.classList.add('is-selected');
+        state.bookingType = card.dataset.type;
+        document.getElementById('next1').disabled = false;
+      });
+    });
+    document.getElementById('next1').addEventListener('click', function() { showStep(2); });
+
+    /* ── STEP 2: Kalender + Zeitslots ── */
+    var monthNames = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+
+    /* Slot-Definitionen je Wochentag (0=So, 1=Mo, ..., 6=Sa) */
+    function getSlotsForDay(dayOfWeek) {
+      if (dayOfWeek === 0 || dayOfWeek === 6) {
+        /* Wochenende: nur Ganztags */
+        return [{ value:'Ganztags', label:'Ganztags', sub:'ganzer Tag', multi:false }];
+      }
+      if (dayOfWeek === 5) {
+        /* Freitag: alle Optionen */
+        return [
+          { value:'15:00-20:00', label:'Nachmittag', sub:'15-20 Uhr', multi:true },
+          { value:'20:00-24:00', label:'Abend', sub:'20-24 Uhr', multi:true },
+          { value:'16:00-24:00', label:'Freitagabend', sub:'16-24 Uhr', multi:false },
+          { value:'Ganztags', label:'Ganztags', sub:'ganzer Tag', multi:false }
+        ];
+      }
+      /* Mo-Do */
+      return [
+        { value:'15:00-20:00', label:'Nachmittag', sub:'15-20 Uhr', multi:true },
+        { value:'20:00-24:00', label:'Abend', sub:'20-24 Uhr', multi:true },
+        { value:'Ganztags', label:'Ganztags', sub:'ganzer Tag', multi:false }
+      ];
+    }
+
+    var selectedDay = null;
+
+    function initCalendar() {
+      var now = new Date();
+      calYear = now.getFullYear();
+      calMonth = now.getMonth() + 1;
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      document.getElementById('calMonthLabel').textContent = monthNames[calMonth - 1] + ' ' + calYear;
+      fetchAvailability(calYear, calMonth, function() { buildCalGrid(); });
+    }
+
+    function fetchAvailability(y, m, cb) {
+      fetch('/portal/api/availability?year=' + y + '&month=' + m)
+        .then(function(r) { return r.json(); })
+        .then(function(data) { availData = data; cb(); })
+        .catch(function() { availData = []; cb(); });
+    }
+
+    function buildCalGrid() {
+      var grid = document.getElementById('wizCalGrid');
+      var headers = grid.querySelectorAll('.cal-header');
+      grid.innerHTML = '';
+      headers.forEach(function(h) { grid.appendChild(h); });
+
+      var firstDay = new Date(calYear, calMonth - 1, 1).getDay();
+      var startOffset = (firstDay === 0) ? 6 : firstDay - 1;
+      var daysInMonth = new Date(calYear, calMonth, 0).getDate();
+      var today = new Date(); today.setHours(0,0,0,0);
+
+      /* Gebuchte Slots pro Tag */
+      var bookedByDay = {};
+      var eventsByDay = {};
+      availData.forEach(function(ev) {
+        var d = ev.event_date || ev.EVENT_DATE;
+        var slot = ev.event_time_slot || ev.EVENT_TIME_SLOT || '';
+        var type = ev.booking_type || ev.BOOKING_TYPE || '';
+        if (d) {
+          var day = parseInt(d.substring(8, 10), 10);
+          if (!bookedByDay[day]) bookedByDay[day] = [];
+          if (!eventsByDay[day]) eventsByDay[day] = [];
+          if (slot) bookedByDay[day].push(slot);
+          eventsByDay[day].push({ slot: slot, type: type });
+        }
+      });
+
+      for (var i = 0; i < startOffset; i++) {
+        var empty = document.createElement('div');
+        empty.className = 'cal-day cal-day--empty';
+        grid.appendChild(empty);
+      }
+
+      for (var d = 1; d <= daysInMonth; d++) {
+        var cell = document.createElement('div');
+        var cellDate = new Date(calYear, calMonth - 1, d);
+        var dayOfWeek = cellDate.getDay();
+        var isPast = cellDate < today;
+        var bookedSlots = bookedByDay[d] || [];
+        var daySlots = getSlotsForDay(dayOfWeek);
+        var allBooked = true;
+        daySlots.forEach(function(ds) {
+          if (bookedSlots.indexOf(ds.value) === -1) allBooked = false;
+        });
+
+        cell.className = 'cal-day';
+        if (isPast) cell.classList.add('is-past');
+        else if (allBooked) cell.classList.add('is-full');
+        else cell.classList.add('is-selectable');
+
+        /* Tagesnummer */
+        var num = document.createElement('div');
+        num.className = 'cal-day__num';
+        num.textContent = d;
+        cell.appendChild(num);
+
+        /* Gebuchte Events anzeigen */
+        var events = eventsByDay[d] || [];
+        if (events.length > 0 && !isPast) {
+          var slotsDiv = document.createElement('div');
+          slotsDiv.className = 'cal-day__slots';
+          events.forEach(function(ev) {
+            var dot = document.createElement('span');
+            dot.className = 'cal-day__dot';
+            if (ev.type === 'HOCHZEIT') dot.classList.add('cal-day__dot--gold');
+            else if (ev.type === 'CORPORATE') dot.classList.add('cal-day__dot--blue');
+            else dot.classList.add('cal-day__dot--green');
+            slotsDiv.appendChild(dot);
+          });
+          cell.appendChild(slotsDiv);
+        }
+
+        /* Status-Text */
+        if (bookedSlots.length > 0 && !isPast) {
+          var statusDiv = document.createElement('div');
+          statusDiv.className = 'cal-day__status';
+          if (allBooked) {
+            statusDiv.textContent = 'belegt';
+            statusDiv.classList.add('cal-day__status--full');
+          } else {
+            var freeCount = daySlots.length - bookedSlots.filter(function(bs) {
+              return daySlots.some(function(ds) { return ds.value === bs; });
+            }).length;
+            statusDiv.textContent = freeCount + ' frei';
+          }
+          cell.appendChild(statusDiv);
+        }
+
+        if (!isPast && !allBooked) {
+          (function(day, dateStr, dow) {
+            cell.addEventListener('click', function() {
+              grid.querySelectorAll('.cal-day').forEach(function(c) { c.classList.remove('is-selected'); });
+              cell.classList.add('is-selected');
+              state.eventDate = dateStr;
+              selectedDay = { num: day, dow: dow };
+              showTimeSlots(day, dow);
+            });
+          })(d, calYear + '-' + String(calMonth).padStart(2,'0') + '-' + String(d).padStart(2,'0'), dayOfWeek);
+        }
+
+        grid.appendChild(cell);
+      }
+
+      var totalCells = startOffset + daysInMonth;
+      var remainder = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+      for (var r = 0; r < remainder; r++) {
+        var emptyEnd = document.createElement('div');
+        emptyEnd.className = 'cal-day cal-day--empty';
+        grid.appendChild(emptyEnd);
+      }
+    }
+
+    function showTimeSlots(day, dayOfWeek) {
+      var slotsWrap = document.getElementById('wizSlots');
+      var slotGrid = document.getElementById('wizSlotGrid');
+      slotsWrap.style.display = 'block';
+      slotGrid.innerHTML = '';
+
+      var bookedSlots = [];
+      availData.forEach(function(ev) {
+        var d = ev.event_date || ev.EVENT_DATE;
+        var slot = ev.event_time_slot || ev.EVENT_TIME_SLOT || '';
+        if (d && parseInt(d.substring(8,10),10) === day && slot) bookedSlots.push(slot);
+      });
+
+      var daySlots = getSlotsForDay(dayOfWeek);
+      var selectedSlots = [];
+      state.eventTimeSlot = '';
+      document.getElementById('next2').disabled = true;
+
+      /* Hinweis für Multi-Select */
+      var isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
+      var hint = document.getElementById('slotHint');
+      if (!hint) {
+        hint = document.createElement('p');
+        hint.id = 'slotHint';
+        hint.className = 'wizard-hint';
+        hint.style.textAlign = 'center';
+        hint.style.marginBottom = '8px';
+        slotsWrap.insertBefore(hint, slotGrid);
+      }
+      if (dayOfWeek === 0 || dayOfWeek === 6) {
+        hint.textContent = 'Am Wochenende ist nur Ganztags buchbar.';
+      } else {
+        hint.textContent = 'Sie können mehrere Zeitfenster auswählen.';
+      }
+
+      daySlots.forEach(function(sd) {
+        var btn = document.createElement('div');
+        btn.className = 'wizard-slot';
+        btn.innerHTML = sd.label + '<small>' + sd.sub + '</small>';
+        var isBooked = bookedSlots.indexOf(sd.value) !== -1;
+
+        if (isBooked) {
+          btn.classList.add('is-booked');
+        } else {
+          btn.addEventListener('click', function() {
+            if (sd.multi) {
+              /* Multi-select: toggle */
+              btn.classList.toggle('is-selected');
+              var idx = selectedSlots.indexOf(sd.value);
+              if (idx !== -1) selectedSlots.splice(idx, 1);
+              else selectedSlots.push(sd.value);
+              /* Deselect Ganztags/Freitagabend wenn Einzelslots gewählt */
+              slotGrid.querySelectorAll('.wizard-slot').forEach(function(s) {
+                if (s.dataset && s.dataset.exclusive === 'true' && s !== btn) s.classList.remove('is-selected');
+              });
+              selectedSlots = selectedSlots.filter(function(v) { return v !== 'Ganztags' && v !== '16:00-24:00'; });
+            } else {
+              /* Exclusive: deselect alles andere */
+              slotGrid.querySelectorAll('.wizard-slot').forEach(function(s) { s.classList.remove('is-selected'); });
+              btn.classList.add('is-selected');
+              selectedSlots = [sd.value];
+            }
+            state.eventTimeSlot = selectedSlots.join(', ');
+            document.getElementById('next2').disabled = selectedSlots.length === 0;
+          });
+          if (!sd.multi) btn.dataset.exclusive = 'true';
+        }
+        slotGrid.appendChild(btn);
+      });
+    }
+
+    document.getElementById('calPrev').addEventListener('click', function() {
+      calMonth--;
+      if (calMonth < 1) { calMonth = 12; calYear--; }
+      state.eventDate = ''; state.eventTimeSlot = '';
+      selectedDay = null;
+      document.getElementById('wizSlots').style.display = 'none';
+      document.getElementById('next2').disabled = true;
+      renderCalendar();
+    });
+    document.getElementById('calNext').addEventListener('click', function() {
+      calMonth++;
+      if (calMonth > 12) { calMonth = 1; calYear++; }
+      state.eventDate = ''; state.eventTimeSlot = '';
+      selectedDay = null;
+      document.getElementById('wizSlots').style.display = 'none';
+      document.getElementById('next2').disabled = true;
+      renderCalendar();
+    });
+    document.getElementById('back2').addEventListener('click', function() { showStep(1); });
+    document.getElementById('next2').addEventListener('click', function() { showStep(3); });
+
+    /* ── STEP 3: Gäste ── */
+    var guestInput = document.getElementById('guestInput');
+    guestInput.addEventListener('input', function() {
+      var v = parseInt(guestInput.value, 10);
+      document.getElementById('next3').disabled = !(v >= 1);
+      if (v >= 1) state.guestCount = v;
+    });
+    document.getElementById('back3').addEventListener('click', function() { showStep(2); });
+    document.getElementById('next3').addEventListener('click', function() { showStep(4); });
+
+    /* ── STEP 4: Konditional ── */
+    function setupStep4() {
+      var isCatering = state.bookingType === 'KANTINE';
+      var cs = document.getElementById('cateringSection');
+      var es = document.getElementById('eventSection');
+      cs.classList.toggle('is-visible', isCatering);
+      es.classList.toggle('is-visible', !isCatering);
+      document.getElementById('step4Title').textContent = isCatering
+        ? 'Catering-Paket und Lieferadresse'
+        : 'Budget und Essensauswahl';
+    }
+
+    document.querySelectorAll('.wizard-card[data-package]').forEach(function(card) {
+      card.addEventListener('click', function() {
+        document.querySelectorAll('.wizard-card[data-package]').forEach(function(c) { c.classList.remove('is-selected'); });
+        card.classList.add('is-selected');
+        state.cateringPackage = card.dataset.package;
+      });
+    });
+
+    var budgetRange = document.getElementById('budgetRange');
+    var budgetDisplay = document.getElementById('budgetDisplay');
+    budgetRange.addEventListener('input', function() {
+      var v = parseInt(budgetRange.value, 10);
+      budgetDisplay.textContent = v.toLocaleString('de-DE') + ' EUR';
+      state.budget = v;
+    });
+
+    document.querySelectorAll('.wizard-card[data-food]').forEach(function(card) {
+      card.addEventListener('click', function() {
+        document.querySelectorAll('.wizard-card[data-food]').forEach(function(c) { c.classList.remove('is-selected'); });
+        card.classList.add('is-selected');
+        state.foodOption = card.dataset.food;
+        document.getElementById('foodSubOptions').classList.toggle('is-visible', card.dataset.food === 'JA');
+        if (card.dataset.food === 'NEIN') {
+          state.foodSubOption = '';
+          state.cuisineStyle = '';
+          document.querySelectorAll('.wizard-card[data-sub]').forEach(function(c) { c.classList.remove('is-selected'); });
+          document.querySelectorAll('.wizard-card[data-cuisine]').forEach(function(c) { c.classList.remove('is-selected'); });
+        }
+      });
+    });
+
+    document.querySelectorAll('.wizard-card[data-sub]').forEach(function(card) {
+      card.addEventListener('click', function() {
+        document.querySelectorAll('.wizard-card[data-sub]').forEach(function(c) { c.classList.remove('is-selected'); });
+        card.classList.add('is-selected');
+        state.foodSubOption = card.dataset.sub;
+      });
+    });
+
+    document.querySelectorAll('.wizard-card[data-cuisine]').forEach(function(card) {
+      card.addEventListener('click', function() {
+        document.querySelectorAll('.wizard-card[data-cuisine]').forEach(function(c) { c.classList.remove('is-selected'); });
+        card.classList.add('is-selected');
+        state.cuisineStyle = card.dataset.cuisine;
+      });
+    });
+
+    document.getElementById('back4').addEventListener('click', function() { showStep(3); });
+    document.getElementById('next4').addEventListener('click', function() { showStep(5); });
+
+    /* ── STEP 5: Besondere Wünsche + Submit ── */
+    document.getElementById('back5').addEventListener('click', function() { showStep(4); });
+
+    document.getElementById('inquiryForm').addEventListener('submit', function() {
+      document.getElementById('hBookingType').value = state.bookingType;
+      document.getElementById('hEventDate').value = state.eventDate;
+      document.getElementById('hEventTimeSlot').value = state.eventTimeSlot;
+      document.getElementById('hGuestCount').value = state.guestCount;
+      document.getElementById('hBudget').value = state.budget || '';
+      document.getElementById('hMenuSelection').value = state.menuSelection;
+      document.getElementById('hDeliveryAddress').value = document.getElementById('deliveryAddr') ? document.getElementById('deliveryAddr').value : '';
+      document.getElementById('hCateringPackage').value = state.cateringPackage;
+      document.getElementById('hFoodOption').value = state.foodOption;
+      document.getElementById('hFoodSubOption').value = state.foodSubOption;
+      document.getElementById('hCuisineStyle').value = state.cuisineStyle;
+      document.getElementById('hSpecialRequests').value = document.getElementById('specialInput').value || '';
+
+      if (EMAILJS_PK && EMAILJS_PK !== 'YOUR_PUBLIC_KEY' && typeof emailjs !== 'undefined') {
+        try {
+          emailjs.init(EMAILJS_PK);
+          emailjs.send(EMAILJS_SID, EMAILJS_TID, {
+            to_email: CUST_EMAIL,
+            to_name: CUST_NAME,
+            message: 'Deine Anfrage ist eingegangen und wir werden uns bald bei dir melden. Für optimale Kommunikation bitten wir dich, in unserem Kundenportal einzuloggen und deine Anfrage mit zu verfolgen.',
+            login_link: window.location.origin + '/portal/login',
+            from_name: 'Elysee Events'
+          });
+        } catch(ex) { /* silent */ }
+      }
+    });
+
+  })();
+  </script>
 </body>
 </html>

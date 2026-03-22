@@ -67,6 +67,10 @@ public class BookingService {
         return bookingRepository.findRecent(limit);
     }
 
+    public java.util.List<java.util.Map<String, Object>> availabilityData(int year, int month) {
+        return bookingRepository.availabilityData(year, month);
+    }
+
     public java.util.List<java.util.Map<String, Object>> calendarData(int year, int month) {
         return bookingRepository.calendarData(year, month);
     }

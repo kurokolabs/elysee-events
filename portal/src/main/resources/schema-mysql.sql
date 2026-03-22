@@ -150,3 +150,10 @@ CREATE TABLE IF NOT EXISTS weekly_menus (
     sent_at     DATETIME,
     created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Wizard-Felder (Anfrage-Formular v2)
+ALTER TABLE bookings ADD COLUMN delivery_address TEXT;
+ALTER TABLE bookings ADD COLUMN catering_package VARCHAR(20);
+ALTER TABLE bookings ADD COLUMN food_option VARCHAR(20);
+ALTER TABLE bookings ADD COLUMN food_sub_option VARCHAR(20);
+ALTER TABLE bookings ADD COLUMN cuisine_style VARCHAR(30);

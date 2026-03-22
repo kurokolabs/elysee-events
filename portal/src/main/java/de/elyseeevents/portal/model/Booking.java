@@ -12,6 +12,11 @@ public class Booking {
     private String menuSelection;
     private String specialRequests;
     private String adminNotes;
+    private String deliveryAddress;
+    private String cateringPackage;
+    private String foodOption;
+    private String foodSubOption;
+    private String cuisineStyle;
     private String createdAt;
     private String updatedAt;
 
@@ -51,6 +56,21 @@ public class Booking {
 
     public String getAdminNotes() { return adminNotes; }
     public void setAdminNotes(String adminNotes) { this.adminNotes = adminNotes; }
+
+    public String getDeliveryAddress() { return deliveryAddress; }
+    public void setDeliveryAddress(String deliveryAddress) { this.deliveryAddress = deliveryAddress; }
+
+    public String getCateringPackage() { return cateringPackage; }
+    public void setCateringPackage(String cateringPackage) { this.cateringPackage = cateringPackage; }
+
+    public String getFoodOption() { return foodOption; }
+    public void setFoodOption(String foodOption) { this.foodOption = foodOption; }
+
+    public String getFoodSubOption() { return foodSubOption; }
+    public void setFoodSubOption(String foodSubOption) { this.foodSubOption = foodSubOption; }
+
+    public String getCuisineStyle() { return cuisineStyle; }
+    public void setCuisineStyle(String cuisineStyle) { this.cuisineStyle = cuisineStyle; }
 
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }

@@ -32,6 +32,11 @@ public class BookingRepository {
         b.setMenuSelection(rs.getString("menu_selection"));
         b.setSpecialRequests(rs.getString("special_requests"));
         b.setAdminNotes(rs.getString("admin_notes"));
+        b.setDeliveryAddress(rs.getString("delivery_address"));
+        b.setCateringPackage(rs.getString("catering_package"));
+        b.setFoodOption(rs.getString("food_option"));
+        b.setFoodSubOption(rs.getString("food_sub_option"));
+        b.setCuisineStyle(rs.getString("cuisine_style"));
         b.setCreatedAt(rs.getString("created_at"));
         b.setUpdatedAt(rs.getString("updated_at"));
         return b;
@@ -100,7 +105,7 @@ public class BookingRepository {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbc.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO bookings (customer_id, booking_type, status, event_date, event_time_slot, guest_count, budget, menu_selection, special_requests, admin_notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO bookings (customer_id, booking_type, status, event_date, event_time_slot, guest_count, budget, menu_selection, special_requests, admin_notes, delivery_address, catering_package, food_option, food_sub_option, cuisine_style) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
                 ps.setLong(1, b.getCustomerId());
                 ps.setString(2, b.getBookingType());
@@ -112,14 +117,21 @@ public class BookingRepository {
                 ps.setString(8, b.getMenuSelection());
                 ps.setString(9, b.getSpecialRequests());
                 ps.setString(10, b.getAdminNotes());
+                ps.setString(11, b.getDeliveryAddress());
+                ps.setString(12, b.getCateringPackage());
+                ps.setString(13, b.getFoodOption());
+                ps.setString(14, b.getFoodSubOption());
+                ps.setString(15, b.getCuisineStyle());
                 return ps;
             }, keyHolder);
             b.setId(keyHolder.getKey().longValue());
         } else {
-            jdbc.update("UPDATE bookings SET customer_id = ?, booking_type = ?, status = ?, event_date = ?, event_time_slot = ?, guest_count = ?, budget = ?, menu_selection = ?, special_requests = ?, admin_notes = ?, updated_at = datetime('now') WHERE id = ?",
+            jdbc.update("UPDATE bookings SET customer_id = ?, booking_type = ?, status = ?, event_date = ?, event_time_slot = ?, guest_count = ?, budget = ?, menu_selection = ?, special_requests = ?, admin_notes = ?, delivery_address = ?, catering_package = ?, food_option = ?, food_sub_option = ?, cuisine_style = ?, updated_at = datetime('now') WHERE id = ?",
                     b.getCustomerId(), b.getBookingType(), b.getStatus(),
                     b.getEventDate(), b.getEventTimeSlot(), b.getGuestCount(), b.getBudget(),
-                    b.getMenuSelection(), b.getSpecialRequests(), b.getAdminNotes(), b.getId());
+                    b.getMenuSelection(), b.getSpecialRequests(), b.getAdminNotes(),
+                    b.getDeliveryAddress(), b.getCateringPackage(), b.getFoodOption(),
+                    b.getFoodSubOption(), b.getCuisineStyle(), b.getId());
         }
         return b;
     }
@@ -167,6 +179,15 @@ public class BookingRepository {
                 "SELECT b.*, (c.first_name || ' ' || c.last_name) AS customer_name, c.company AS customer_company " +
                 "FROM bookings b JOIN customers c ON b.customer_id = c.id ORDER BY b.created_at DESC LIMIT ?",
                 rowMapperWithCustomer, limit);
+    }
+
+    public List<Map<String, Object>> availabilityData(int year, int month) {
+        String monthStr = String.format("%04d-%02d", year, month);
+        return jdbc.queryForList(
+                "SELECT event_date, event_time_slot, booking_type " +
+                "FROM bookings WHERE strftime('%Y-%m', event_date) = ? " +
+                "AND status NOT IN ('STORNIERT') ORDER BY event_date",
+                monthStr);
     }
 
     public List<Map<String, Object>> calendarData(int year, int month) {

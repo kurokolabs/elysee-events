@@ -199,165 +199,219 @@
       font-size: 14px;
     }
 
-    /* ===================== NAVIGATION ===================== */
+    /* ── Navigation ──────────────────────────────────────── */
     .nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 900;
-      padding: 0 48px;
-      height: 76px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: background 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 68px;
+      background: linear-gradient(180deg, rgba(8,8,7,.97) 0%, rgba(14,13,12,.94) 100%);
+      backdrop-filter: blur(32px) saturate(180%);
+      -webkit-backdrop-filter: blur(32px) saturate(180%);
+      z-index: 9000;
+      animation: navReveal .8s cubic-bezier(.22,1,.36,1) both;
     }
-    .nav.scrolled {
-      background: rgba(26, 26, 26, 0.97);
-      box-shadow: 0 1px 0 rgba(201,168,76,.15);
+    @keyframes navReveal { from { opacity:0; transform:translateY(-100%); } to { opacity:1; transform:none; } }
+
+    .nav::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background: linear-gradient(90deg, transparent 0%, #C9A84C 15%, #e8d48b 50%, #C9A84C 85%, transparent 100%);
+      opacity:.6;
     }
-    .nav-logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.375rem;
-      font-weight: 600;
-      color: var(--white);
-      letter-spacing: 0.04em;
+
+    .nav::after {
+      content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");
     }
-    .nav-logo span { color: var(--gold); }
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 40px;
+
+    .nav__inner {
+      position:relative; z-index:1;
+      display:flex; align-items:center; justify-content:space-between;
+      height:100%; max-width:1400px; margin:0 auto; padding:0 44px;
     }
-    .nav-links a {
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.7);
-      transition: color 0.2s ease;
-      position: relative;
+
+    .nav__logo, .nav-logo {
+      display:flex; align-items:center; gap:16px;
+      text-decoration:none;
     }
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -4px; left: 0;
-      width: 0; height: 1px;
-      background: var(--gold);
-      transition: width 0.3s var(--ease-out);
+
+    .nav__logo-mark { width:42px; height:42px; flex-shrink:0; transition:transform .4s cubic-bezier(.22,1,.36,1); }
+    .nav__logo:hover .nav__logo-mark, .nav-logo:hover .nav__logo-mark { transform:scale(1.06); }
+
+    .nav__logo img, .nav-logo img {
+      height:40px; width:auto; border-radius:3px;
+      filter:brightness(1.05);
+      transition: transform .4s cubic-bezier(.22,1,.36,1), filter .3s ease;
     }
-    .nav-links a:hover { color: var(--white); }
-    .nav-links a:hover::after { width: 100%; }
-    .nav-links a[aria-current="page"] {
-      color: var(--gold);
+    .nav__logo:hover img, .nav-logo:hover img { transform:scale(1.05); filter:brightness(1.15); }
+
+    .nav__brand {
+      display:flex; flex-direction:column; gap:1px;
+      padding-left:16px;
+      border-left:1px solid rgba(201,168,76,.2);
     }
-    .nav-links a[aria-current="page"]::after { width: 100%; }
-    .nav-cta {
-      padding: 10px 24px;
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-weight: 500;
-      background: var(--gold);
-      color: var(--dark);
-      border-radius: 2px;
-      transition: background 0.2s ease;
-      white-space: nowrap;
+
+    .nav__brandname {
+      font-family:'Cormorant Garamond',serif;
+      font-size:16px; font-weight:400; font-style:italic;
+      letter-spacing:.06em;
+      color:rgba(255,255,255,.88);
+      line-height:1;
     }
-    .nav-cta:hover { background: var(--gold-dark); color: var(--dark); }
+
+    .nav__brandtag {
+      font-size:8px; font-weight:600;
+      letter-spacing:.24em;
+      text-transform:uppercase;
+      color:rgba(201,168,76,.55);
+      line-height:1; margin-top:3px;
+    }
+
+    .nav__links, .nav-links {
+      display:flex; align-items:center; gap:6px;
+      list-style:none;
+      position:absolute; left:50%; transform:translateX(-50%);
+    }
+    .nav__links li, .nav-links li { list-style:none; }
+
+    .nav__links a, .nav-links a {
+      font-size:11px; font-weight:500;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.45);
+      padding:7px 16px;
+      border-radius:100px;
+      transition: color .3s ease, background .3s ease;
+      text-decoration:none;
+    }
+
+    .nav__links a:hover, .nav-links a:hover {
+      color:rgba(255,255,255,.9);
+      background:rgba(255,255,255,.06);
+    }
+
+    .nav__links a[aria-current="page"], .nav-links a[aria-current="page"] {
+      color:#C9A84C;
+      background:rgba(201,168,76,.1);
+    }
+
+    .nav__links a::after, .nav-links a::after { display:none; }
+
+    .nav__actions {
+      display:flex; align-items:center; gap:10px;
+    }
+
     .nav__portal-btn {
-      background: transparent;
-      color: var(--gold);
-      font-size: 11px; font-weight: 500;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      padding: 9px 22px;
-      border: 1px solid var(--gold);
-      border-radius: 2px;
-      cursor: pointer;
-      transition: background .25s ease, color .25s ease, transform .25s ease, box-shadow .25s ease;
-      text-decoration: none;
-      white-space: nowrap;
+      font-size:10px; font-weight:500;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.4);
+      border:1px solid rgba(255,255,255,.08);
+      padding:8px 20px;
+      border-radius:100px;
+      text-decoration:none;
+      transition: all .35s cubic-bezier(.22,1,.36,1);
     }
     .nav__portal-btn:hover {
-      background: var(--gold);
-      color: var(--white);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(201,168,76,.35);
+      border-color:rgba(201,168,76,.4);
+      color:#C9A84C;
+      background:rgba(201,168,76,.06);
     }
 
-    /* Hamburger */
-    .nav-hamburger {
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      gap: 5px;
-      width: 36px;
-      height: 36px;
-      background: none;
-      border: none;
-      padding: 6px;
+    .nav__cta, .nav-cta {
+      font-size:10px; font-weight:600;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:#0a0a0a;
+      background: linear-gradient(135deg, #C9A84C 0%, #e0c56a 100%);
+      padding:9px 22px;
+      border-radius:100px; border:none;
+      text-decoration:none;
+      transition: all .35s cubic-bezier(.22,1,.36,1);
+      box-shadow: 0 2px 12px rgba(201,168,76,.2);
     }
-    .nav-hamburger span {
-      display: block;
-      height: 1.5px;
-      background: var(--white);
-      transition: all 0.3s var(--ease-out);
-      transform-origin: center;
+    .nav__cta:hover, .nav-cta:hover {
+      background: linear-gradient(135deg, #d4b558 0%, #ebd37a 100%);
+      transform:translateY(-1px);
+      box-shadow: 0 4px 20px rgba(201,168,76,.3);
+      color:#0a0a0a;
     }
-    .nav-hamburger.is-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-    .nav-hamburger.is-open span:nth-child(2) { opacity: 0; }
-    .nav-hamburger.is-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
-    /* Drawer */
-    .nav-drawer {
-      position: fixed;
-      top: 0; right: 0;
-      width: 300px;
-      height: 100vh;
-      background: var(--dark);
-      z-index: 850;
-      display: flex;
-      flex-direction: column;
-      padding: 100px 40px 48px;
-      gap: 32px;
-      transform: translateX(100%);
-      transition: transform 0.45s var(--ease-out);
-      border-left: 1px solid rgba(201,168,76,.1);
+    .nav__hamburger, .nav__burger, .nav-hamburger {
+      display:none;
+      background:none; border:none; cursor:pointer;
+      padding:8px; border-radius:50%;
+      transition: background .25s ease;
+      position:relative; z-index:1;
     }
-    .nav-drawer.is-open { transform: translateX(0); }
-    .nav-drawer a {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.5rem;
-      font-weight: 400;
-      color: rgba(255,255,255,0.75);
-      transition: color 0.2s ease;
+    .nav__hamburger:hover, .nav__burger:hover, .nav-hamburger:hover { background:rgba(255,255,255,.06); }
+
+    .nav__hamburger span, .nav__burger span, .nav-hamburger span {
+      display:block; width:18px; height:1.5px;
+      background:rgba(201,168,76,.7);
+      transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .2s ease;
+      margin:4px 0;
     }
-    .nav-drawer a:hover { color: var(--gold); }
-    .nav-drawer a[aria-current="page"] { color: var(--gold); }
-    .nav-drawer .drawer-cta {
-      margin-top: 16px;
-      display: inline-block;
-      padding: 14px 28px;
-      background: var(--gold);
-      color: var(--dark);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      border-radius: 2px;
-      width: fit-content;
+
+    .nav__hamburger.is-open span:nth-child(1), .nav__burger.is-open span:first-child, .nav-hamburger.is-open span:nth-child(1) { transform:translateY(5.5px) rotate(45deg); }
+    .nav__hamburger.is-open span:nth-child(2), .nav__burger.is-open span:nth-child(2), .nav-hamburger.is-open span:nth-child(2) { opacity:0; }
+    .nav__hamburger.is-open span:nth-child(3), .nav__burger.is-open span:last-child, .nav-hamburger.is-open span:nth-child(3) { transform:translateY(-5.5px) rotate(-45deg); }
+
+    .nav-drawer, .nav__drawer, .nav__mobile {
+      position:fixed; top:68px; left:0; right:0;
+      background: linear-gradient(180deg, rgba(14,13,12,.98) 0%, rgba(8,8,7,.99) 100%);
+      backdrop-filter:blur(32px);
+      padding:16px 24px 28px;
+      z-index:8999;
+      display:none;
+      border-bottom:1px solid rgba(201,168,76,.08);
+      animation: navReveal .3s ease both;
     }
-    .nav-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 840;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
+    .nav-drawer.is-open, .nav__drawer.is-open, .nav__mobile.is-open { display:block; }
+
+    .nav-drawer a, .nav__drawer a, .nav__mobile a, .nav__drawer-links li a {
+      display:block;
+      padding:14px 18px;
+      font-size:12px; font-weight:500;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.5);
+      border-radius:8px;
+      text-decoration:none;
+      transition: all .25s ease;
+      list-style:none;
     }
-    .nav-overlay.is-open { opacity: 1; pointer-events: all; }
+    .nav-drawer a:hover, .nav__drawer a:hover, .nav__mobile a:hover, .nav__drawer-links li a:hover,
+    .nav-drawer a[aria-current="page"], .nav__drawer a[aria-current="page"], .nav__mobile a[aria-current="page"], .nav__drawer-links li a[aria-current="page"] {
+      color:#C9A84C;
+      background:rgba(201,168,76,.06);
+    }
+
+    .nav__drawer-links { list-style:none; padding:0; margin:0; }
+    .nav__drawer-links li { list-style:none; }
+
+    .nav__drawer-cta, .drawer-cta, .nav__mobile .btn {
+      display:block; margin-top:12px; padding:14px;
+      text-align:center;
+      font-size:11px; font-weight:600;
+      letter-spacing:.14em; text-transform:uppercase;
+      color:#0a0a0a;
+      background: linear-gradient(135deg, #C9A84C 0%, #e0c56a 100%);
+      border-radius:100px; text-decoration:none;
+    }
+
+    .nav-overlay, .nav__mobile-overlay, .nav__drawer-overlay {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.5);
+      z-index:8998;
+      display:none;
+    }
+    .nav-overlay.is-open, .nav__mobile-overlay.is-open, .nav__drawer-overlay.is-open { display:block; }
+
+    @media(max-width:900px) {
+      .nav__links, .nav-links { display:none; }
+      .nav__hamburger, .nav__burger, .nav-hamburger { display:flex; flex-direction:column; }
+      .nav__actions { display:none; }
+      .nav__inner { padding:0 20px; }
+    }
 
     /* ===================== HERO ===================== */
     .hero {
@@ -1040,9 +1094,7 @@
     }
 
     @media (max-width: 768px) {
-      .nav { padding: 0 24px; }
-      .nav-links, .nav-cta, .nav__portal-btn { display: none; }
-      .nav-hamburger { display: flex; }
+      /* nav handled by 900px breakpoint above */
 
       .section { padding: 72px 24px; }
       .cta-section { padding: 72px 24px; }
@@ -1442,18 +1494,20 @@
     outline-offset: 2px;
   }
 
-  /* card grid (used for budget) */
-  .bk__cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; width: 100%; }
-  .bk__card {
-    border: 1px solid rgba(201,168,76,.2); border-radius: 2px;
-    padding: 20px 16px; text-align: center;
-    transition: border-color .25s, background .25s, transform .25s;
-    background: rgba(255,255,255,.02);
-  }
-  .bk__card:hover { border-color: rgba(201,168,76,.5); background: rgba(201,168,76,.05); transform: translateY(-2px); }
-  .bk__card.is-selected { border-color: var(--gold); background: rgba(201,168,76,.08); }
-  .bk__card__icon { font-size: 1.6rem; margin-bottom: 8px; }
-  .bk__card__label { font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.75); }
+  /* card grid */
+  .bk__cards { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; width:100%; max-width:520px; margin-bottom:1.6rem; }
+  .bk__card { border:1px solid rgba(201,168,76,.2); border-radius:2px; padding:28px 18px; text-align:center; cursor:pointer; transition:all .3s ease; }
+  .bk__card:hover { border-color:var(--gold,#C9A84C); transform:translateY(-2px); box-shadow:0 6px 20px rgba(201,168,76,.1); }
+  .bk__card.is-selected { border-color:var(--gold,#C9A84C); background:rgba(201,168,76,.06); box-shadow:0 0 0 2px var(--gold,#C9A84C); }
+  .bk__card__icon { margin-bottom:14px; }
+  .bk__card__icon svg { width:40px; height:40px; stroke:rgba(201,168,76,.7); stroke-width:1.2; fill:none; }
+  .bk__card__title { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:400; color:#fff; margin-bottom:4px; }
+  .bk__card__desc { font-size:.78rem; color:rgba(255,255,255,.45); }
+  .bk__card__price { font-size:.65rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--gold,#C9A84C); margin-bottom:6px; }
+  .bk__cards--small { grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); }
+  .bk__cards--small .bk__card { padding:18px 14px; font-size:1rem; font-weight:500; color:rgba(255,255,255,.85); }
+  .bk__cards--4col { grid-template-columns:repeat(4,1fr); }
+  @media(max-width:600px) { .bk__cards { grid-template-columns:1fr; } .bk__cards--4col { grid-template-columns:1fr 1fr; } }
 
   /* time slots */
   .bk__slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; width: 100%; margin-top: 1.6rem; margin-bottom: .4rem; }
@@ -1465,6 +1519,7 @@
     transition: border-color .25s, background .25s;
   }
   .bk__slot:hover, .bk__slot.is-selected { border-color: var(--gold); background: rgba(201,168,76,.08); color: #fff; }
+  .bk__slot.is-booked { opacity:.5; pointer-events:none; background:rgba(198,40,40,.15); border-color:rgba(198,40,40,.4); color:rgba(255,255,255,.4); text-decoration:line-through; }
 
   /* date cascade */
   .bk__date-wrap { width: 100%; max-width: 320px; }
@@ -1591,6 +1646,22 @@
     .bk__field-row { grid-template-columns: 1fr; }
     .bk__cards { grid-template-columns: repeat(2, 1fr); }
   }
+  .bk__calendar { width:100%; max-width:520px; margin:0 auto 1.6rem; }
+  .bk__cal-nav { display:flex; align-items:center; gap:16px; justify-content:center; margin-bottom:16px; }
+  .bk__cal-month { font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:300; color:#fff; min-width:180px; text-align:center; letter-spacing:.06em; }
+  .bk__cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+  .bk__cal-header { font-size:9px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--gold,#C9A84C); text-align:center; padding:8px; opacity:.6; }
+  .bk__cal-day { min-height:52px; padding:6px; background:rgba(255,255,255,.04); border:1px solid rgba(201,168,76,.08); border-radius:3px; font-size:11px; text-align:center; transition:all .25s ease; }
+  .bk__cal-day--empty { background:transparent; border-color:transparent; }
+  .bk__cal-day__num { font-weight:600; font-size:14px; color:rgba(255,255,255,.7); margin-bottom:2px; }
+  .bk__cal-day.is-past { opacity:.2; pointer-events:none; }
+  .bk__cal-day.is-selectable { cursor:pointer; }
+  .bk__cal-day.is-selectable:hover { border-color:var(--gold,#C9A84C); background:rgba(201,168,76,.06); transform:translateY(-1px); }
+  .bk__cal-day.is-selected { border-color:var(--gold,#C9A84C); background:rgba(201,168,76,.12); box-shadow:0 0 0 1px var(--gold,#C9A84C); }
+  .bk__slots-wrap { margin-top:1.6rem; animation:bkSlideIn .4s ease both; }
+  @keyframes bkSlideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+  .bk__reveal { max-height:0; overflow:hidden; opacity:0; transition:max-height .5s cubic-bezier(.22,1,.36,1), opacity .4s ease; }
+  .bk__reveal.is-visible { max-height:800px; opacity:1; }
   /* ── END BOOKING OVERLAY ─────────────────────────────────────────── */
 
 /* === PERFORMANCE & MOBILE IMPROVEMENTS === */
@@ -1875,36 +1946,37 @@ section:not(.hero):not(:first-of-type) {
   <div class="cursor-dot" aria-hidden="true"></div>
   <div class="cursor-ring" aria-hidden="true"></div>
 
-  <!-- Nav overlay -->
   <div class="nav-overlay" id="navOverlay" aria-hidden="true"></div>
-
-  <!-- Navigation -->
-  <nav class="nav" id="mainNav" role="navigation" aria-label="Hauptnavigation">
-    <a href="elysee-events.html" class="nav-logo">
-      <img src="img/elysee-logo.jpg" alt="Élysée Events" style="height:44px;">
-    </a>
-    <ul class="nav-links" role="list">
-      <li><a href="kantine.html">Die Kantine</a></li>
-      <li><a href="hochzeit.html" aria-current="page">Hochzeiten</a></li>
-      <li><a href="corporate.html">Corporate</a></li>
-    </ul>
-    <div style="display:flex;align-items:center;gap:12px;">
-      <a href="/portal/login" class="nav__portal-btn">Kundenportal</a>
-      <a href="javascript:void(0)" data-anfrage-open class="nav-cta">Kostenlos anfragen</a>
-    </div>
-    <button class="nav-hamburger" id="hamburgerBtn" aria-label="Menü öffnen" aria-expanded="false" aria-controls="navDrawer">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </nav>
-
-  <!-- Mobile Drawer -->
   <nav class="nav-drawer" id="navDrawer" aria-label="Mobile Navigation" aria-hidden="true">
     <a href="kantine.html">Die Kantine</a>
     <a href="hochzeit.html" aria-current="page">Hochzeiten</a>
     <a href="corporate.html">Corporate</a>
+    <a href="/portal/login">Kundenportal</a>
     <a href="javascript:void(0)" data-anfrage-open class="drawer-cta">Kostenlos anfragen</a>
+  </nav>
+
+  <nav class="nav" id="mainNav" role="navigation" aria-label="Hauptnavigation">
+    <div class="nav__inner">
+      <a href="elysee-events.html" class="nav-logo">
+        <svg class="nav__logo-mark" viewBox="0 0 42 42" fill="none"><rect x=".5" y=".5" width="41" height="41" rx="8" stroke="rgba(201,168,76,.4)" stroke-width="1"/><text x="50%" y="54%" text-anchor="middle" dominant-baseline="central" font-family="'Cormorant Garamond',serif" font-size="15" font-weight="600" font-style="italic" fill="#C9A84C">EE</text></svg>
+        <div class="nav__brand">
+          <span class="nav__brandname">Élysée Events</span>
+          <span class="nav__brandtag">Catering &amp; Events</span>
+        </div>
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="kantine.html">Die Kantine</a></li>
+        <li><a href="hochzeit.html" aria-current="page">Hochzeiten</a></li>
+        <li><a href="corporate.html">Corporate</a></li>
+      </ul>
+      <div class="nav__actions">
+        <a href="/portal/login" class="nav__portal-btn">Kundenportal</a>
+        <a href="javascript:void(0)" data-anfrage-open class="nav-cta">Kostenlos anfragen</a>
+      </div>
+      <button class="nav-hamburger" id="hamburgerBtn" aria-label="Menü öffnen" aria-expanded="false" aria-controls="navDrawer">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </nav>
 
   <main id="main-content">
@@ -2655,85 +2727,86 @@ section:not(.hero):not(:first-of-type) {
 
     <!-- Step 1: Event type -->
     <div class="bk__step is-active" data-step="1">
-      <p class="bk__step-subtitle">Schritt 1 von 6</p>
+      <p class="bk__step-subtitle">Schritt 1 von 7</p>
       <h2 class="bk__step-title">Welche Art von Event?</h2>
-      <ul class="bk__list">
-        <li class="bk__list-item" tabindex="0" role="button" data-field="eventType" data-value="Hochzeit">Hochzeit</li>
-        <li class="bk__list-item" tabindex="0" role="button" data-field="eventType" data-value="Firmenfeier">Firmenfeier</li>
-        <li class="bk__list-item" tabindex="0" role="button" data-field="eventType" data-value="Gala & Dinner">Gala &amp; Dinner</li>
-        <li class="bk__list-item" tabindex="0" role="button" data-field="eventType" data-value="Tagung / Seminar">Tagung &amp; Seminar</li>
-        <li class="bk__list-item" tabindex="0" role="button" data-field="eventType" data-value="Sonstiges">Sonstiges</li>
-      </ul>
-      <div class="bk__nav">
-        <button class="bk__btn bk__btn--gold" id="bkNext1">Weiter</button>
+      <div class="bk__cards">
+        <div class="bk__card" tabindex="0" role="button" data-field="eventType" data-value="Corporate Event">
+          <div class="bk__card__icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="6" y="14" width="36" height="28" rx="2"/><path d="M16 14V8a2 2 0 012-2h12a2 2 0 012 2v6"/><line x1="6" y1="26" x2="42" y2="26"/><rect x="20" y="22" width="8" height="8" rx="1"/></svg></div>
+          <div class="bk__card__title">Corporate Event</div>
+          <div class="bk__card__desc">Firmenfeier, Tagung, Gala</div>
+        </div>
+        <div class="bk__card" tabindex="0" role="button" data-field="eventType" data-value="Hochzeit">
+          <div class="bk__card__icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="17" cy="20" r="8"/><circle cx="31" cy="20" r="8"/><path d="M24 28c-8 0-16 4-16 10v4h32v-4c0-6-8-10-16-10z"/></svg></div>
+          <div class="bk__card__title">Hochzeit</div>
+          <div class="bk__card__desc">Ihr besonderer Tag</div>
+        </div>
+        <div class="bk__card" tabindex="0" role="button" data-field="eventType" data-value="Catering">
+          <div class="bk__card__icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><ellipse cx="24" cy="30" rx="18" ry="6"/><path d="M6 30c0 3.3 8 6 18 6s18-2.7 18-6"/><path d="M10 18c0-6 6-10 14-10s14 4 14 10"/><line x1="24" y1="8" x2="24" y2="12"/><path d="M18 12c0-2 2.7-4 6-4s6 2 6 4"/></svg></div>
+          <div class="bk__card__title">Catering</div>
+          <div class="bk__card__desc">Lieferung und Buffet-Service</div>
+        </div>
       </div>
+      <div class="bk__nav"><button class="bk__btn bk__btn--gold" id="bkNext1">Weiter</button></div>
     </div>
 
-    <!-- Step 2: Date -->
+    <!-- Step 2: Calendar + Time slots -->
     <div class="bk__step" data-step="2">
-      <p class="bk__step-subtitle">Schritt 2 von 6</p>
-      <h2 class="bk__step-title">Wann findet das Event statt?</h2>
-      <div class="bk__date-cascade">
-        <div class="bk__date-col">
-          <label class="bk__field-label">Jahr</label>
-          <select class="bk__select" id="bkYear"><option value="">Jahr</option></select>
+      <p class="bk__step-subtitle">Schritt 2 von 7</p>
+      <h2 class="bk__step-title">Wann soll das Event stattfinden?</h2>
+      <div class="bk__calendar">
+        <div class="bk__cal-nav">
+          <button class="bk__btn bk__btn--back" id="bkCalPrev" type="button" style="padding:8px 14px;">&larr;</button>
+          <div class="bk__cal-month" id="bkCalMonth"></div>
+          <button class="bk__btn bk__btn--back" id="bkCalNext" type="button" style="padding:8px 14px;">&rarr;</button>
         </div>
-        <div class="bk__date-col">
-          <label class="bk__field-label">Monat</label>
-          <select class="bk__select" id="bkMonth" disabled><option value="">Monat</option></select>
+        <div class="bk__cal-grid" id="bkCalGrid">
+          <div class="bk__cal-header">Mo</div><div class="bk__cal-header">Di</div><div class="bk__cal-header">Mi</div><div class="bk__cal-header">Do</div><div class="bk__cal-header">Fr</div><div class="bk__cal-header">Sa</div><div class="bk__cal-header">So</div>
         </div>
-        <div class="bk__date-col">
-          <label class="bk__field-label">Tag</label>
-          <select class="bk__select" id="bkDay" disabled><option value="">Tag</option></select>
-        </div>
+      </div>
+      <div class="bk__slots-wrap" id="bkSlotsWrap" style="display:none;">
+        <p class="bk__field-label" style="text-align:center; margin-bottom:8px;" id="bkSlotHint"></p>
+        <div class="bk__slots" id="bkSlotGrid"></div>
       </div>
       <div class="bk__nav">
         <button class="bk__btn bk__btn--back" id="bkBack2">Zurück</button>
-        <button class="bk__btn bk__btn--gold" id="bkNext2">Weiter</button>
+        <button class="bk__btn bk__btn--gold" id="bkNext2" disabled>Weiter</button>
       </div>
     </div>
 
-    <!-- Step 3: Time slot -->
+    <!-- Step 3: Guests -->
     <div class="bk__step" data-step="3">
-      <p class="bk__step-subtitle">Schritt 3 von 6</p>
-      <h2 class="bk__step-title">Welcher Zeitslot?</h2>
-      <div class="bk__slots">
-        <button class="bk__slot" data-field="timeSlot" data-value="Vormittag (9–12 Uhr)">Vormittag<br><small>9–12 Uhr</small></button>
-        <button class="bk__slot" data-field="timeSlot" data-value="Mittag (12–15 Uhr)">Mittag<br><small>12–15 Uhr</small></button>
-        <button class="bk__slot" data-field="timeSlot" data-value="Nachmittag (15–18 Uhr)">Nachmittag<br><small>15–18 Uhr</small></button>
-        <button class="bk__slot" data-field="timeSlot" data-value="Abend (18–23 Uhr)">Abend<br><small>18–23 Uhr</small></button>
-        <button class="bk__slot" data-field="timeSlot" data-value="Ganztags">Ganztags<br><small>flexibel</small></button>
-      </div>
-      <div class="bk__nav">
-        <button class="bk__btn bk__btn--back" id="bkBack3">Zurück</button>
-        <button class="bk__btn bk__btn--gold" id="bkNext3">Weiter</button>
-      </div>
+      <p class="bk__step-subtitle">Schritt 3 von 7</p>
+      <h2 class="bk__step-title">Wie viele Gäste?</h2>
+      <div class="bk__fields" style="max-width:320px;"><div><label class="bk__field-label" for="bkGuests">Anzahl Gäste</label><input class="bk__input" type="number" id="bkGuests" name="guests" min="1" placeholder="z.B. 50"></div></div>
+      <div class="bk__nav"><button class="bk__btn bk__btn--back" id="bkBack3">Zurück</button><button class="bk__btn bk__btn--gold" id="bkNext3">Weiter</button></div>
     </div>
 
-    <!-- Step 4: Budget -->
+    <!-- Step 4: Budget / Menu conditional -->
     <div class="bk__step" data-step="4">
-      <p class="bk__step-subtitle">Schritt 4 von 6</p>
-      <h2 class="bk__step-title">Welches Budget?</h2>
-      <div class="bk__budget-wrap">
-        <div class="bk__budget-display" id="bkBudgetDisplay">0 €</div>
-        <div class="bk__budget-track-outer">
-          <input class="bk__budget-range" type="range" id="bkBudgetRange"
-                 min="0" max="50000" step="500" value="0">
+      <p class="bk__step-subtitle">Schritt 4 von 7</p>
+      <h2 class="bk__step-title" id="bkStep5Title">Budget und Essensauswahl</h2>
+      <div id="bkCateringSection" class="bk__reveal">
+        <div class="bk__cards">
+          <div class="bk__card" data-field="cateringPackage" data-value="Basic"><div class="bk__card__price">ab 18 EUR / Person</div><div class="bk__card__title">Basic</div><div class="bk__card__desc">Fingerfood -- ab 20 Pers.</div></div>
+          <div class="bk__card" data-field="cateringPackage" data-value="Klassik"><div class="bk__card__price">ab 32 EUR / Person</div><div class="bk__card__title">Klassik</div><div class="bk__card__desc">2-Gang-Buffet -- ab 30 Pers.</div></div>
+          <div class="bk__card" data-field="cateringPackage" data-value="Premium"><div class="bk__card__price">ab 55 EUR / Person</div><div class="bk__card__title">Premium</div><div class="bk__card__desc">3-Gang-Menü -- ab 40 Pers.</div></div>
         </div>
-        <div class="bk__budget-ends">
-          <span>0 €</span><span>50.000 €</span>
+        <div class="bk__fields" style="margin-top:1.2rem;"><div><label class="bk__field-label" for="bkDeliveryAddr">Lieferadresse *</label><input class="bk__input" type="text" id="bkDeliveryAddr" name="deliveryAddress" placeholder="Straße, PLZ, Ort"></div></div>
+      </div>
+      <div id="bkEventSection" class="bk__reveal">
+        <div class="bk__budget-wrap"><div class="bk__budget-display" id="bkBudgetDisplay">0 EUR</div><div class="bk__budget-track-outer"><input class="bk__budget-range" type="range" id="bkBudgetRange" min="0" max="50000" step="500" value="0"></div><div class="bk__budget-ends"><span>0 EUR</span><span>50.000 EUR</span></div></div>
+        <div style="margin-top:1.6rem;"><p class="bk__field-label" style="text-align:center;">Essen gewünscht?</p><div class="bk__cards bk__cards--small" style="max-width:360px; margin:12px auto 0;"><div class="bk__card" data-field="foodOption" data-value="JA">Ja, Essen gewünscht</div><div class="bk__card" data-field="foodOption" data-value="NEIN">Kein Essen</div></div></div>
+        <div id="bkFoodSubOptions" class="bk__reveal">
+          <div style="margin-top:1.2rem;"><p class="bk__field-label" style="text-align:center;">Art des Essens</p><div class="bk__cards bk__cards--small" style="max-width:360px; margin:12px auto 0;"><div class="bk__card" data-field="foodSubOption" data-value="Buffet">Buffet</div><div class="bk__card" data-field="foodSubOption" data-value="A la Carte">A la Carte</div></div></div>
+          <div style="margin-top:1.2rem;"><p class="bk__field-label" style="text-align:center;">Küchenstil</p><div class="bk__cards bk__cards--small" style="max-width:480px; margin:12px auto 0;"><div class="bk__card" data-field="cuisineStyle" data-value="Persisch">Persisch</div><div class="bk__card" data-field="cuisineStyle" data-value="Mix">Mix</div><div class="bk__card" data-field="cuisineStyle" data-value="Westlich">Westlich</div></div></div>
         </div>
       </div>
-      <div class="bk__nav">
-        <button class="bk__btn bk__btn--back" id="bkBack4">Zurück</button>
-        <button class="bk__btn bk__btn--gold" id="bkNext4">Weiter</button>
-      </div>
-      <p class="bk__skip-hint">Budget noch unklar? <a href="#" id="bkSkipBudget" style="color:var(--gold,#C9A84C);text-decoration:underline;">Überspringen</a></p>
+      <div class="bk__nav"><button class="bk__btn bk__btn--back" id="bkBack4">Zurück</button><button class="bk__btn bk__btn--gold" id="bkNext4">Weiter</button></div>
     </div>
 
     <!-- Step 5: Contact -->
     <div class="bk__step" data-step="5">
-      <p class="bk__step-subtitle">Schritt 5 von 6</p>
+      <p class="bk__step-subtitle">Schritt 5 von 7</p>
       <h2 class="bk__step-title">Ihre Kontaktdaten</h2>
       <div class="bk__fields">
         <div class="bk__field-row">
@@ -2759,12 +2832,12 @@ section:not(.hero):not(:first-of-type) {
 
     <!-- Step 6: Extras + submit -->
     <div class="bk__step" data-step="6">
-      <p class="bk__step-subtitle">Schritt 6 von 6</p>
+      <p class="bk__step-subtitle">Schritt 6 von 7</p>
       <h2 class="bk__step-title">Besondere Wünsche?</h2>
       <div class="bk__fields">
         <div>
           <label class="bk__field-label" for="bkExtras">Ihre Nachricht (optional)</label>
-          <textarea class="bk__input bk__textarea" id="bkExtras" name="extras" placeholder="Besondere Anforderungen, Dekorwünsche, Allergien …"></textarea>
+          <textarea class="bk__input bk__textarea" id="bkExtras" name="extras" placeholder="Besondere Anforderungen, Dekorwünsche, Allergien ..."></textarea>
         </div>
       </div>
       <div class="bk__nav">
@@ -2780,7 +2853,8 @@ section:not(.hero):not(:first-of-type) {
       </div>
       <div class="bk__thanks-divider"></div>
       <h2 class="bk__thanks-title">Vielen Dank!</h2>
-      <p class="bk__thanks-sub">Ihre Anfrage ist bei uns eingegangen. Wir melden uns innerhalb von 24 Stunden bei Ihnen.</p>
+      <p class="bk__thanks-sub">Ihre Anfrage ist bei uns eingegangen. Wir werden uns in Kürze bei Ihnen melden. Für optimale Kommunikation bitten wir Sie, sich in unserem Kundenportal einzuloggen und Ihre Anfrage zu verfolgen.</p>
+      <a href="/portal/login" style="display:inline-block; margin-top:1rem; color:var(--gold,#C9A84C); font-size:.88rem; text-decoration:underline;">Zum Kundenportal</a>
       <div class="bk__nav" style="margin-top:2.4rem">
         <button class="bk__btn bk__btn--gold" id="bkDone">Schließen</button>
       </div>
@@ -2801,6 +2875,12 @@ section:not(.hero):not(:first-of-type) {
     <input type="hidden" id="hfEmail" name="Email" value="">
     <input type="hidden" id="hfPhone" name="Telefon" value="">
     <input type="hidden" id="hfExtras" name="Extras" value="">
+    <input type="hidden" id="hfGuests" name="Gäste" value="">
+    <input type="hidden" id="hfCateringPackage" name="Catering-Paket" value="">
+    <input type="hidden" id="hfDeliveryAddress" name="Lieferadresse" value="">
+    <input type="hidden" id="hfFoodOption" name="Essen-Option" value="">
+    <input type="hidden" id="hfFoodSubOption" name="Essen-Art" value="">
+    <input type="hidden" id="hfCuisineStyle" name="Küchenstil" value="">
     <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
   </form>
 </div><!-- /bookingOverlay -->
@@ -3049,38 +3129,27 @@ section:not(.hero):not(:first-of-type) {
 
   // ── State ────────────────────────────────────────────────────────
   var currentStep = 1;
-  var formData = { eventType:'', datum:'', timeSlot:'', budget:'', name:'', email:'', telefon:'', extras:'' };
+  var formData = { eventType:'', datum:'', timeSlot:'', budget:'', name:'', email:'', telefon:'', extras:'', guestCount:'', cateringPackage:'', deliveryAddress:'', foodOption:'', foodSubOption:'', cuisineStyle:'' };
   var morphTimer = null;  // setTimeout handle for morph start
   var morphGen   = 0;     // generation counter — invalidates stale rAF loops
 
-  // ── Date cascade ─────────────────────────────────────────────────
-  var bkYearSel  = document.getElementById('bkYear');
-  var bkMonthSel = document.getElementById('bkMonth');
-  var bkDaySel   = document.getElementById('bkDay');
-  var BK_MONTHS  = ['Januar','Februar','März','April','Mai','Juni',
-                    'Juli','August','September','Oktober','November','Dezember'];
-
-  (function initDateCascade() {
-    var yr = new Date().getFullYear();
-    for(var y = yr; y <= yr + 6; y++) bkYearSel.appendChild(new Option(y, y));
-
-    bkYearSel.addEventListener('change', function() {
-      bkMonthSel.innerHTML = '<option value="">Monat</option>';
-      bkDaySel.innerHTML   = '<option value="">Tag</option>';
-      bkDaySel.disabled = true;
-      if(!this.value){ bkMonthSel.disabled = true; return; }
-      BK_MONTHS.forEach(function(m,i){ bkMonthSel.appendChild(new Option(m, i+1)); });
-      bkMonthSel.disabled = false;
-    });
-
-    bkMonthSel.addEventListener('change', function() {
-      bkDaySel.innerHTML = '<option value="">Tag</option>';
-      if(!this.value){ bkDaySel.disabled = true; return; }
-      var days = new Date(+bkYearSel.value, +this.value, 0).getDate();
-      for(var d = 1; d <= days; d++) bkDaySel.appendChild(new Option(d, d));
-      bkDaySel.disabled = false;
-    });
-  })();
+  // ── Calendar ─────────────────────────────────────────────────
+  var BK_MONTHS=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  var bkCalYear,bkCalMonth,bkSelectedSlots=[],bkCalInitialized=false;
+  function getSlotsForDay(dow) {
+    if (dow === 0 || dow === 6) return [{value:'Ganztags', label:'Ganztags', sub:'ganzer Tag', multi:false}];
+    if (dow === 5) return [{value:'16:00-24:00', label:'Freitagabend', sub:'16-24 Uhr', multi:false}];
+    return [
+      {value:'15:00-20:00', label:'Nachmittag', sub:'15-20 Uhr', multi:true},
+      {value:'20:00-24:00', label:'Abend', sub:'20-24 Uhr', multi:true}
+    ];
+  }
+  function initBkCalendar(){var n=new Date();bkCalYear=n.getFullYear();bkCalMonth=n.getMonth()+1;bkCalInitialized=true;renderBkCalendar();}
+  function renderBkCalendar(){document.getElementById('bkCalMonth').textContent=BK_MONTHS[bkCalMonth-1]+' '+bkCalYear;buildBkCalGrid();}
+  function buildBkCalGrid(){var grid=document.getElementById('bkCalGrid');var hd=grid.querySelectorAll('.bk__cal-header');grid.innerHTML='';hd.forEach(function(h){grid.appendChild(h);});var fd=new Date(bkCalYear,bkCalMonth-1,1).getDay();var so=(fd===0)?6:fd-1;var dim=new Date(bkCalYear,bkCalMonth,0).getDate();var today=new Date();today.setHours(0,0,0,0);for(var i=0;i<so;i++){var e=document.createElement('div');e.className='bk__cal-day bk__cal-day--empty';grid.appendChild(e);}for(var d=1;d<=dim;d++){var cell=document.createElement('div');var cd=new Date(bkCalYear,bkCalMonth-1,d);cell.className='bk__cal-day';if(cd<today)cell.classList.add('is-past');else cell.classList.add('is-selectable');var num=document.createElement('div');num.className='bk__cal-day__num';num.textContent=d;cell.appendChild(num);if(cd>=today){(function(day,ds,dow,el){el.addEventListener('click',function(){grid.querySelectorAll('.bk__cal-day').forEach(function(c){c.classList.remove('is-selected');});el.classList.add('is-selected');formData.datum=ds;showBkTimeSlots(day,dow);});})(d,bkCalYear+'-'+String(bkCalMonth).padStart(2,'0')+'-'+String(d).padStart(2,'0'),cd.getDay(),cell);}grid.appendChild(cell);}var tc=so+dim;var rem=tc%7===0?0:7-(tc%7);for(var r=0;r<rem;r++){var e=document.createElement('div');e.className='bk__cal-day bk__cal-day--empty';grid.appendChild(e);}}
+  function showBkTimeSlots(day,dow){var wrap=document.getElementById('bkSlotsWrap');var grid=document.getElementById('bkSlotGrid');wrap.style.display='block';wrap.style.animation='none';wrap.offsetHeight;wrap.style.animation='';grid.innerHTML='';bkSelectedSlots=[];formData.timeSlot='';document.getElementById('bkNext2').disabled=true;var hint=document.getElementById('bkSlotHint');var slots=getSlotsForDay(dow);hint.textContent=(dow===0||dow===6)?'Am Wochenende ist nur Ganztags buchbar.':'Sie können mehrere Zeitfenster auswählen.';slots.forEach(function(sd){var btn=document.createElement('button');btn.className='bk__slot';btn.type='button';btn.innerHTML=sd.label+'<br><small>'+sd.sub+'</small>';btn.addEventListener('click',function(){if(sd.multi){btn.classList.toggle('is-selected');var idx=bkSelectedSlots.indexOf(sd.value);if(idx!==-1)bkSelectedSlots.splice(idx,1);else bkSelectedSlots.push(sd.value);grid.querySelectorAll('.bk__slot[data-exclusive]').forEach(function(s){s.classList.remove('is-selected');});bkSelectedSlots=bkSelectedSlots.filter(function(v){return v!=='Ganztags'&&v!=='16:00-24:00';});}else{grid.querySelectorAll('.bk__slot').forEach(function(s){s.classList.remove('is-selected');});btn.classList.add('is-selected');bkSelectedSlots=[sd.value];}formData.timeSlot=bkSelectedSlots.join(', ');document.getElementById('bkNext2').disabled=bkSelectedSlots.length===0;});if(!sd.multi)btn.dataset.exclusive='true';grid.appendChild(btn);});}
+  document.getElementById('bkCalPrev').addEventListener('click',function(){bkCalMonth--;if(bkCalMonth<1){bkCalMonth=12;bkCalYear--;}formData.datum='';formData.timeSlot='';bkSelectedSlots=[];document.getElementById('bkSlotsWrap').style.display='none';document.getElementById('bkNext2').disabled=true;renderBkCalendar();});
+  document.getElementById('bkCalNext').addEventListener('click',function(){bkCalMonth++;if(bkCalMonth>12){bkCalMonth=1;bkCalYear++;}formData.datum='';formData.timeSlot='';bkSelectedSlots=[];document.getElementById('bkSlotsWrap').style.display='none';document.getElementById('bkNext2').disabled=true;renderBkCalendar();});
 
   // ── Budget slider ─────────────────────────────────────────────────
   var budgetRange   = document.getElementById('bkBudgetRange');
@@ -3126,8 +3195,8 @@ section:not(.hero):not(:first-of-type) {
     budgetRange.style.background =
       'linear-gradient(to right, var(--gold) 0%, var(--gold) ' + pct +
       '%, rgba(201,168,76,.18) ' + pct + '%, rgba(201,168,76,.18) 100%)';
-    budgetDisplay.textContent = val === 0 ? '0 €'
-      : val.toLocaleString('de-DE') + ' €';
+    budgetDisplay.textContent = val === 0 ? '0 EUR'
+      : val.toLocaleString('de-DE') + ' EUR';
   }
 
   if(budgetRange) {
@@ -3180,7 +3249,19 @@ section:not(.hero):not(:first-of-type) {
         target.classList.add('is-active');
       }
       currentStep = n;
+      if(n===2&&!bkCalInitialized)initBkCalendar();
       if(n === 7) buildThanksFlower();
+      if(n === 4) {
+        if(formData.eventType === 'Catering') {
+          document.getElementById('bkCateringSection').classList.add('is-visible');
+          document.getElementById('bkEventSection').classList.remove('is-visible');
+          document.getElementById('bkStep5Title').textContent = 'Catering-Paket und Lieferung';
+        } else {
+          document.getElementById('bkCateringSection').classList.remove('is-visible');
+          document.getElementById('bkEventSection').classList.add('is-visible');
+          document.getElementById('bkStep5Title').textContent = 'Budget und Essensauswahl';
+        }
+      }
       if(morphDone && n <= 6) setActiveFlower(n - 1);
     }
     if(prev && prev.dataset.step != n) {
@@ -3210,14 +3291,17 @@ section:not(.hero):not(:first-of-type) {
     // Cancel any pending morph from a previous open
     clearTimeout(morphTimer);
 
-    formData = { eventType:'', datum:'', timeSlot:'', budget:'', name:'', email:'', telefon:'', extras:'' };
+    formData = { eventType:'', datum:'', timeSlot:'', budget:'', name:'', email:'', telefon:'', extras:'', guestCount:'', cateringPackage:'', deliveryAddress:'', foodOption:'', foodSubOption:'', cuisineStyle:'' };
     history.pushState({ bkOverlay: true }, '');
     _overlayHistoryPushed = true;
     showStep(1);
     document.body.style.overflow = 'hidden';
     document.querySelectorAll('.bk__card, .bk__slot, .bk__list-item').forEach(function(c){ c.classList.remove('is-selected'); });
-    bkYearSel.value = ''; bkMonthSel.value = ''; bkDaySel.value = '';
-    bkMonthSel.disabled = true; bkDaySel.disabled = true;
+    document.getElementById('bkSlotsWrap').style.display='none';
+    document.getElementById('bkNext2').disabled=true;
+    bkSelectedSlots=[];
+    bkCalInitialized=false;
+    initBkCalendar();
     if(budgetRange){ budgetRange.value = '0'; lastBudgetVal = 0; updateBudget(0); }
 
     // Reset SVG while overlay is still off-screen (translateY(-100%))
@@ -3291,6 +3375,11 @@ section:not(.hero):not(:first-of-type) {
     overlay.querySelectorAll('[data-field="'+field+'"]').forEach(function(c){ c.classList.remove('is-selected'); });
     card.classList.add('is-selected');
     formData[field] = val;
+    if (field === 'foodOption') {
+      if(val === 'JA') { document.getElementById('bkFoodSubOptions').classList.add('is-visible'); }
+      else { document.getElementById('bkFoodSubOptions').classList.remove('is-visible'); }
+      if (val === 'NEIN') { formData.foodSubOption = ''; formData.cuisineStyle = ''; overlay.querySelectorAll('.bk__card[data-field="foodSubOption"],.bk__card[data-field="cuisineStyle"]').forEach(function(c) { c.classList.remove('is-selected'); }); }
+    }
   });
 
   // Keyboard activation for list items and slots
@@ -3311,47 +3400,33 @@ section:not(.hero):not(:first-of-type) {
 
   document.getElementById('bkNext1').addEventListener('click', function(){
     if(!formData.eventType) {
-      var list = overlay.querySelector('.bk__step[data-step="1"] .bk__list');
-      list.classList.remove('bk__shake'); void list.offsetWidth; list.classList.add('bk__shake');
+      var cards = overlay.querySelector('.bk__step[data-step="1"] .bk__cards');
+      cards.classList.remove('bk__shake'); void cards.offsetWidth; cards.classList.add('bk__shake');
       return;
     }
     showStep(2);
   });
-  document.getElementById('bkBack2').addEventListener('click', function(){ safePrev(2); });
+  document.getElementById('bkBack2').addEventListener('click', function(){ showStep(1); });
   document.getElementById('bkNext2').addEventListener('click', function(){
-    var y = bkYearSel.value, m = bkMonthSel.value, d = bkDaySel.value;
-    [bkYearSel, bkMonthSel, bkDaySel].forEach(function(s) { s.classList.remove('bk__select--error'); });
-    if(!y) { bkYearSel.classList.add('bk__select--error'); return; }
-    if(!m) { bkMonthSel.classList.add('bk__select--error'); return; }
-    if(!d) { bkDaySel.classList.add('bk__select--error'); return; }
-    formData.datum = y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    if(!formData.datum||!formData.timeSlot) return;
     showStep(3);
   });
-  document.getElementById('bkBack3').addEventListener('click', function(){ safePrev(3); });
+  document.getElementById('bkBack3').addEventListener('click', function(){ showStep(2); });
   document.getElementById('bkNext3').addEventListener('click', function(){
-    if(!formData.timeSlot) {
-      var slots = overlay.querySelector('.bk__step[data-step="3"] .bk__slots');
-      slots.classList.remove('bk__shake'); void slots.offsetWidth; slots.classList.add('bk__shake');
-      return;
-    }
+    formData.guestCount = document.getElementById('bkGuests').value.trim();
     showStep(4);
   });
-  document.getElementById('bkBack4').addEventListener('click', function(){ safePrev(4); });
+  document.getElementById('bkBack4').addEventListener('click', function(){ showStep(3); });
   document.getElementById('bkNext4').addEventListener('click', function(){
-    var val = parseInt(budgetRange.value);
-    formData.budget = val === 0 ? 'Noch offen'
-      : val.toLocaleString('de-DE') + ' €';
+    if(formData.eventType === 'Catering') {
+      formData.deliveryAddress = document.getElementById('bkDeliveryAddr').value.trim();
+    } else {
+      var val = parseInt(budgetRange.value);
+      formData.budget = val === 0 ? 'Noch offen' : val.toLocaleString('de-DE') + ' EUR';
+    }
     showStep(5);
   });
-  var skipBudget = document.getElementById('bkSkipBudget');
-  if(skipBudget) {
-    skipBudget.addEventListener('click', function(e){
-      e.preventDefault();
-      formData.budget = 'Noch offen';
-      showStep(5);
-    });
-  }
-  document.getElementById('bkBack5').addEventListener('click', function(){ safePrev(5); });
+  document.getElementById('bkBack5').addEventListener('click', function(){ showStep(4); });
   document.getElementById('bkNext5').addEventListener('click', function(){
     var nameEl = document.getElementById('bkName');
     var emailEl = document.getElementById('bkEmail');
@@ -3367,7 +3442,7 @@ section:not(.hero):not(:first-of-type) {
     formData.telefon = document.getElementById('bkPhone').value.trim();
     showStep(6);
   });
-  document.getElementById('bkBack6').addEventListener('click', function(){ safePrev(6); });
+  document.getElementById('bkBack6').addEventListener('click', function(){ showStep(5); });
   document.getElementById('bkSubmit').addEventListener('click', function(){
     formData.extras = document.getElementById('bkExtras').value.trim();
     submitForm();
@@ -3384,6 +3459,12 @@ section:not(.hero):not(:first-of-type) {
     document.getElementById('hfEmail').value = formData.email;
     document.getElementById('hfPhone').value = formData.telefon;
     document.getElementById('hfExtras').value = formData.extras;
+    document.getElementById('hfGuests').value = formData.guestCount;
+    document.getElementById('hfCateringPackage').value = formData.cateringPackage;
+    document.getElementById('hfDeliveryAddress').value = formData.deliveryAddress;
+    document.getElementById('hfFoodOption').value = formData.foodOption;
+    document.getElementById('hfFoodSubOption').value = formData.foodSubOption;
+    document.getElementById('hfCuisineStyle').value = formData.cuisineStyle;
 
     // Submit via fetch (AJAX — no page redirect)
     var fd = new FormData(document.getElementById('bkHiddenForm'));

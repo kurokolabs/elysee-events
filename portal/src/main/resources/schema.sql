@@ -157,3 +157,10 @@ CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
 CREATE INDEX IF NOT EXISTS idx_bookings_type ON bookings(booking_type);
 CREATE INDEX IF NOT EXISTS idx_bookings_event_date ON bookings(event_date);
 CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON bookings(created_at);
+
+-- Wizard-Felder (Anfrage-Formular v2)
+ALTER TABLE bookings ADD COLUMN delivery_address TEXT;
+ALTER TABLE bookings ADD COLUMN catering_package TEXT;
+ALTER TABLE bookings ADD COLUMN food_option TEXT;
+ALTER TABLE bookings ADD COLUMN food_sub_option TEXT;
+ALTER TABLE bookings ADD COLUMN cuisine_style TEXT;

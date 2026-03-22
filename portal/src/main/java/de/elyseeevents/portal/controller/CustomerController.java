@@ -50,6 +50,9 @@ public class CustomerController {
     private final QuotePdfService quotePdfService;
     private final DocumentRepository documentRepository;
     private final Path uploadPath;
+    private final String emailjsPublicKey;
+    private final String emailjsServiceId;
+    private final String emailjsConfirmTemplateId;
 
     public CustomerController(CustomerService customerService, BookingService bookingService,
                              UserRepository userRepository, InvoiceRepository invoiceRepository,
@@ -57,7 +60,10 @@ public class CustomerController {
                              InvoicePdfService pdfService,
                              QuoteRepository quoteRepository, QuoteItemRepository quoteItemRepository,
                              QuotePdfService quotePdfService, DocumentRepository documentRepository,
-                             @Value("${app.upload.path:./uploads}") String uploadDir) {
+                             @Value("${app.upload.path:./uploads}") String uploadDir,
+                             @Value("${app.emailjs.public-key:YOUR_PUBLIC_KEY}") String emailjsPublicKey,
+                             @Value("${app.emailjs.service-id:YOUR_SERVICE_ID}") String emailjsServiceId,
+                             @Value("${app.emailjs.confirm-template-id:YOUR_CONFIRM_TEMPLATE_ID}") String emailjsConfirmTemplateId) {
         this.customerService = customerService;
         this.bookingService = bookingService;
         this.userRepository = userRepository;
@@ -69,6 +75,9 @@ public class CustomerController {
         this.quotePdfService = quotePdfService;
         this.documentRepository = documentRepository;
         this.uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        this.emailjsPublicKey = emailjsPublicKey;
+        this.emailjsServiceId = emailjsServiceId;
+        this.emailjsConfirmTemplateId = emailjsConfirmTemplateId;
     }
 
     @GetMapping("/dashboard")
@@ -97,6 +106,16 @@ public class CustomerController {
         return "customer/booking-detail";
     }
 
+    // ── Verfuegbarkeit (JSON-API) ────────────────────────────
+    @GetMapping("/api/availability")
+    @ResponseBody
+    public java.util.List<java.util.Map<String, Object>> calendarAvailability(
+            @RequestParam int year, @RequestParam int month,
+            Authentication authentication) {
+        if (authentication == null) return java.util.List.of();
+        return bookingService.availabilityData(year, month);
+    }
+
     // ── Neue Anfrage senden ────────────────────────────────
     @GetMapping("/anfrage")
     public String inquiryForm(Authentication authentication, Model model) {
@@ -106,6 +125,11 @@ public class CustomerController {
         model.addAttribute("activeNav", "anfrage");
         model.addAttribute("customer", customer);
         model.addAttribute("bookingTypes", BookingType.values());
+        model.addAttribute("emailjsPublicKey", emailjsPublicKey);
+        model.addAttribute("emailjsServiceId", emailjsServiceId);
+        model.addAttribute("emailjsConfirmTemplateId", emailjsConfirmTemplateId);
+        model.addAttribute("customerEmail", authentication.getName());
+        model.addAttribute("customerName", customer.getFirstName() + " " + customer.getLastName());
         return "customer/inquiry-form";
     }
 
@@ -117,17 +141,22 @@ public class CustomerController {
                                @RequestParam(required = false) Double budget,
                                @RequestParam(required = false) String menuSelection,
                                @RequestParam(required = false) String specialRequests,
+                               @RequestParam(required = false) String deliveryAddress,
+                               @RequestParam(required = false) String cateringPackage,
+                               @RequestParam(required = false) String foodOption,
+                               @RequestParam(required = false) String foodSubOption,
+                               @RequestParam(required = false) String cuisineStyle,
                                Authentication authentication,
                                RedirectAttributes redirectAttributes) {
         Customer customer = getCustomer(authentication);
         if (customer == null) return "redirect:/portal/login";
 
         if (!Set.of("KANTINE", "HOCHZEIT", "CORPORATE").contains(bookingType)) {
-            redirectAttributes.addFlashAttribute("error", "Ungültiger Buchungstyp.");
+            redirectAttributes.addFlashAttribute("error", "Ung\u00fcltiger Buchungstyp.");
             return "redirect:/portal/anfrage";
         }
         if (guestCount != null && guestCount < 1) {
-            redirectAttributes.addFlashAttribute("error", "Gästeanzahl muss mindestens 1 sein.");
+            redirectAttributes.addFlashAttribute("error", "G\u00e4steanzahl muss mindestens 1 sein.");
             return "redirect:/portal/anfrage";
         }
         if (budget != null && budget < 0) {
@@ -145,6 +174,11 @@ public class CustomerController {
         booking.setBudget(budget);
         booking.setMenuSelection(menuSelection);
         booking.setSpecialRequests(specialRequests);
+        booking.setDeliveryAddress(deliveryAddress);
+        booking.setCateringPackage(cateringPackage);
+        booking.setFoodOption(foodOption);
+        booking.setFoodSubOption(foodSubOption);
+        booking.setCuisineStyle(cuisineStyle);
         bookingService.save(booking);
 
         redirectAttributes.addFlashAttribute("message", "Ihre Anfrage wurde erfolgreich gesendet!");
