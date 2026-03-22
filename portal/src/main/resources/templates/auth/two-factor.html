@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; connect-src 'self' https://api.emailjs.com; img-src 'self' data: blob:;">
+  <title>Zwei-Faktor-Authentifizierung - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+  <style>
+    .twofa-code-inputs {
+      display: flex; gap: 8px; justify-content: center; margin: 24px 0;
+    }
+    .twofa-code-inputs input {
+      width: 48px; height: 56px;
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px; font-weight: 500;
+      color: var(--dark);
+      background: var(--white);
+      border: 1px solid rgba(201,168,76,.25);
+      border-radius: 2px;
+      outline: none;
+      transition: border-color .25s ease, box-shadow .25s ease, transform .2s ease;
+    }
+    .twofa-code-inputs input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,168,76,.1);
+      transform: translateY(-2px);
+    }
+    .twofa-code-inputs input.filled {
+      border-color: var(--gold);
+      background: rgba(201,168,76,.04);
+    }
+    .twofa-info {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+    .twofa-email {
+      font-weight: 500;
+      color: var(--dark);
+    }
+    .twofa-resend {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .twofa-resend button {
+      background: none; border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; color: var(--muted);
+      cursor: pointer;
+      transition: color .25s ease;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .twofa-resend button:hover { color: var(--gold); }
+    .twofa-resend button:disabled { opacity: .4; cursor: default; }
+    .twofa-timer {
+      font-size: 12px; color: var(--muted);
+      text-align: center; margin-top: 8px;
+    }
+    .twofa-status {
+      text-align: center;
+      font-size: 12px;
+      margin-top: 12px;
+      min-height: 18px;
+    }
+    .twofa-status--sending { color: var(--muted); }
+    .twofa-status--sent { color: var(--success); }
+    .twofa-status--error { color: var(--danger); }
+    #hiddenCode { position: absolute; left: -9999px; }
+  </style>
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-card" style="max-width:440px;">
+      <div class="login-card__logo">
+        <div class="login-card__monogram">EE</div>
+      </div>
+      <h1 class="login-card__title" style="font-size:24px;">Verifizierung</h1>
+
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+
+      <p class="twofa-info">
+        Ein 6-stelliger Code wurde an<br>
+        <span class="twofa-email" th:text="${email}">user@example.de</span><br>
+        gesendet.
+      </p>
+
+      <div class="twofa-status" id="emailStatus"></div>
+
+      <form th:action="@{/portal/2fa}" method="post" id="twoFaForm">
+        <input type="hidden" name="code" id="hiddenCode">
+        <div class="twofa-code-inputs">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-digit" data-index="0" autofocus>
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-digit" data-index="1">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-digit" data-index="2">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-digit" data-index="3">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-digit" data-index="4">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" class="code-digit" data-index="5">
+        </div>
+
+        <button type="submit" class="btn btn--gold" style="width:100%;" id="verifyBtn" disabled>Code prüfen</button>
+      </form>
+
+      <div class="twofa-resend">
+        <form th:action="@{/portal/2fa/resend}" method="post" style="display:inline;">
+          <button type="submit" id="resendBtn">Code erneut senden</button>
+        </form>
+      </div>
+      <div class="twofa-timer" id="timerDisplay"></div>
+
+      <div style="text-align:center; margin-top:24px;">
+        <a th:href="@{/portal/logout}" style="font-size:12px; color:var(--muted);">Abbrechen und abmelden</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+
+    // ── EmailJS Configuration (aus .env / application.properties) ──
+    var EMAILJS_PUBLIC_KEY = /*[[${emailjsPublicKey}]]*/ 'YOUR_PUBLIC_KEY';
+    var EMAILJS_SERVICE_ID = /*[[${emailjsServiceId}]]*/ 'YOUR_SERVICE_ID';
+    var EMAILJS_TEMPLATE_ID = /*[[${emailjsTemplateId}]]*/ 'YOUR_TEMPLATE_ID';
+
+    var userEmail = /*[[${email}]]*/ '';
+    var verificationCode = /*[[${code}]]*/ '';
+
+    // ── Send code via EmailJS ──────────────────────────────
+    function sendCodeEmail() {
+      var statusEl = document.getElementById('emailStatus');
+
+      if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+        // Demo mode - show code directly
+        statusEl.className = 'twofa-status twofa-status--sent';
+        statusEl.textContent = 'Demo-Modus: Code ist ' + verificationCode;
+        return;
+      }
+
+      statusEl.className = 'twofa-status twofa-status--sending';
+      statusEl.textContent = 'Code wird gesendet...';
+
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email: userEmail,
+        verification_code: verificationCode,
+        to_name: userEmail.split('@')[0],
+        from_name: 'Elysee Events Portal'
+      }).then(function() {
+        statusEl.className = 'twofa-status twofa-status--sent';
+        statusEl.textContent = 'Code erfolgreich gesendet.';
+      }, function(error) {
+        statusEl.className = 'twofa-status twofa-status--error';
+        statusEl.textContent = 'Fehler beim Senden. Code: ' + verificationCode;
+        console.error('EmailJS error:', error);
+      });
+    }
+
+    // ── Code Input Logic ───────────────────────────────────
+    var digits = document.querySelectorAll('.code-digit');
+    var hiddenCode = document.getElementById('hiddenCode');
+    var verifyBtn = document.getElementById('verifyBtn');
+
+    function updateHiddenCode() {
+      var code = '';
+      digits.forEach(function(d) { code += d.value; });
+      hiddenCode.value = code;
+      verifyBtn.disabled = code.length < 6;
+    }
+
+    digits.forEach(function(input, idx) {
+      input.addEventListener('input', function(e) {
+        var val = this.value.replace(/[^0-9]/g, '');
+        this.value = val.charAt(0) || '';
+        if (val && idx < 5) {
+          digits[idx + 1].focus();
+        }
+        this.classList.toggle('filled', !!this.value);
+        updateHiddenCode();
+
+        // Auto-submit on last digit
+        if (idx === 5 && this.value) {
+          updateHiddenCode();
+          if (hiddenCode.value.length === 6) {
+            setTimeout(function() { document.getElementById('twoFaForm').submit(); }, 200);
+          }
+        }
+      });
+
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' && !this.value && idx > 0) {
+          digits[idx - 1].focus();
+          digits[idx - 1].value = '';
+          digits[idx - 1].classList.remove('filled');
+          updateHiddenCode();
+        }
+      });
+
+      input.addEventListener('paste', function(e) {
+        e.preventDefault();
+        var paste = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
+        for (var i = 0; i < Math.min(paste.length, 6); i++) {
+          digits[i].value = paste.charAt(i);
+          digits[i].classList.add('filled');
+        }
+        if (paste.length >= 6) digits[5].focus();
+        else if (paste.length > 0) digits[Math.min(paste.length, 5)].focus();
+        updateHiddenCode();
+        if (hiddenCode.value.length === 6) {
+          setTimeout(function() { document.getElementById('twoFaForm').submit(); }, 200);
+        }
+      });
+    });
+
+    // ── Timer ──────────────────────────────────────────────
+    var timerSeconds = 600;
+    var timerEl = document.getElementById('timerDisplay');
+
+    function updateTimer() {
+      if (timerSeconds <= 0) {
+        timerEl.textContent = 'Code abgelaufen.';
+        verifyBtn.disabled = true;
+        return;
+      }
+      var min = Math.floor(timerSeconds / 60);
+      var sec = timerSeconds % 60;
+      timerEl.textContent = 'Code gültig für ' + min + ':' + (sec < 10 ? '0' : '') + sec;
+      timerSeconds--;
+      setTimeout(updateTimer, 1000);
+    }
+
+    // ── Initialize ─────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', function() {
+      sendCodeEmail();
+      updateTimer();
+      digits[0].focus();
+    });
+
+    /*]]>*/
+  </script>
+</body>
+</html>

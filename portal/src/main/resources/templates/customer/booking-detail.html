@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buchung Details - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: customer-topnav}"></div>
+  <main class="portal-main">
+    <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+    <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+    <div class="portal-header">
+      <h1 class="portal-header__title" th:text="'Buchung #' + ${booking.id}">Buchung #1</h1>
+      <div class="portal-header__actions">
+        <a th:href="@{/portal/dashboard}" class="btn btn--outline btn--sm">Zurück zum Dashboard</a>
+      </div>
+    </div>
+
+    <div style="margin-bottom:24px;">
+      <span class="status-badge" th:classappend="'status-badge--' + ${booking.status}"
+            th:text="${booking.statusEnum.label}" style="font-size:12px; padding:8px 20px;">Anfrage</span>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-card__title">Event-Details</div>
+        <div class="detail-field">
+          <div class="detail-field__label">Buchungstyp</div>
+          <div class="detail-field__value" th:text="${booking.bookingTypeEnum.label}">Hochzeit</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field__label">Datum</div>
+          <div class="detail-field__value" th:text="${booking.eventDate != null ? @dateUtil.format(booking.eventDate) : 'Noch nicht festgelegt'}">2024-06-15</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field__label">Zeitfenster</div>
+          <div class="detail-field__value" th:text="${booking.eventTimeSlot ?: 'Noch nicht festgelegt'}">Abend</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field__label">Anzahl Gäste</div>
+          <div class="detail-field__value" th:text="${booking.guestCount ?: 'Noch nicht festgelegt'}">120</div>
+        </div>
+        <div class="detail-field" th:if="${booking.budget != null}">
+          <div class="detail-field__label">Budget</div>
+          <div class="detail-field__value" th:text="${#numbers.formatDecimal(booking.budget, 0, 'COMMA', 0, 'POINT')} + ' EUR'">5.000 EUR</div>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-card__title">Weitere Informationen</div>
+        <div class="detail-field" th:if="${booking.menuSelection}">
+          <div class="detail-field__label">Menüwahl</div>
+          <div class="detail-field__value" th:text="${booking.menuSelection}">-</div>
+        </div>
+        <div class="detail-field" th:if="${booking.specialRequests}">
+          <div class="detail-field__label">Besondere Wünsche</div>
+          <div class="detail-field__value" th:text="${booking.specialRequests}">-</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field__label">Erstellt am</div>
+          <div class="detail-field__value" th:text="${@dateUtil.format(booking.createdAt)}">2024-01-15</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field__label">Zuletzt aktualisiert</div>
+          <div class="detail-field__value" th:text="${@dateUtil.format(booking.updatedAt)}">2024-01-15</div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

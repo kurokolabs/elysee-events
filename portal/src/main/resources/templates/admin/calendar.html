@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalender - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+  <style>
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+    .cal-header { font-size:9px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); text-align:center; padding:8px; }
+    .cal-day { min-height:80px; padding:6px; background:var(--white); border:1px solid rgba(201,168,76,.08); font-size:11px; }
+    .cal-day--empty { background:var(--surface); opacity:.5; }
+    .cal-day__num { font-weight:600; color:var(--dark); margin-bottom:4px; }
+    .cal-day__event { font-size:9px; padding:2px 4px; border-radius:2px; margin-bottom:2px; display:block; text-decoration:none; color:#fff; }
+    .cal-day__event--HOCHZEIT { background:#C9A84C; }
+    .cal-day__event--CORPORATE { background:#1565C0; }
+    .cal-day__event--KANTINE { background:#2E7D32; }
+    .cal-nav { display:flex; align-items:center; gap:16px; margin-bottom:20px; }
+    .cal-nav__month { font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:400; min-width:200px; text-align:center; }
+  </style>
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+      <div class="portal-header">
+        <h1 class="portal-header__title">Kalender</h1>
+      </div>
+
+      <!-- Navigation -->
+      <div class="cal-nav">
+        <a th:href="@{/portal/admin/kalender(year=${month == 1 ? year - 1 : year}, month=${month == 1 ? 12 : month - 1})}"
+           class="btn btn--outline btn--sm">&larr;</a>
+        <div class="cal-nav__month" id="calMonthLabel"></div>
+        <a th:href="@{/portal/admin/kalender(year=${month == 12 ? year + 1 : year}, month=${month == 12 ? 1 : month + 1})}"
+           class="btn btn--outline btn--sm">&rarr;</a>
+      </div>
+
+      <!-- Calendar Grid -->
+      <div class="cal-grid" id="calGrid">
+        <div class="cal-header">Mo</div>
+        <div class="cal-header">Di</div>
+        <div class="cal-header">Mi</div>
+        <div class="cal-header">Do</div>
+        <div class="cal-header">Fr</div>
+        <div class="cal-header">Sa</div>
+        <div class="cal-header">So</div>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/portal/js/portal.js}"></script>
+  <script th:inline="javascript">
+    (function() {
+      var year = /*[[${year}]]*/ 2026;
+      var month = /*[[${month}]]*/ 1;
+      var events = /*[[${events}]]*/ [];
+      var monthNames = ['Januar','Februar','M\u00e4rz','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+
+      document.getElementById('calMonthLabel').textContent = monthNames[month - 1] + ' ' + year;
+
+      var grid = document.getElementById('calGrid');
+      var firstDay = new Date(year, month - 1, 1).getDay();
+      var startOffset = (firstDay === 0) ? 6 : firstDay - 1;
+      var daysInMonth = new Date(year, month, 0).getDate();
+
+      var eventsByDay = {};
+      events.forEach(function(ev) {
+        var d = ev.event_date || ev.EVENT_DATE;
+        if (d) {
+          var day = parseInt(d.substring(8, 10), 10);
+          if (!eventsByDay[day]) eventsByDay[day] = [];
+          eventsByDay[day].push(ev);
+        }
+      });
+
+      for (var i = 0; i < startOffset; i++) {
+        var empty = document.createElement('div');
+        empty.className = 'cal-day cal-day--empty';
+        grid.appendChild(empty);
+      }
+
+      for (var d = 1; d <= daysInMonth; d++) {
+        var cell = document.createElement('div');
+        cell.className = 'cal-day';
+        var num = document.createElement('div');
+        num.className = 'cal-day__num';
+        num.textContent = d;
+        cell.appendChild(num);
+
+        if (eventsByDay[d]) {
+          eventsByDay[d].forEach(function(ev) {
+            var a = document.createElement('a');
+            var bookingType = ev.booking_type || ev.BOOKING_TYPE || '';
+            var customerName = ev.customer_name || ev.CUSTOMER_NAME || '';
+            var evId = ev.id || ev.ID;
+            a.className = 'cal-day__event cal-day__event--' + bookingType;
+            a.textContent = customerName;
+            a.href = '/portal/admin/buchung/' + evId;
+            a.title = bookingType + ' - ' + customerName;
+            cell.appendChild(a);
+          });
+        }
+
+        grid.appendChild(cell);
+      }
+
+      var totalCells = startOffset + daysInMonth;
+      var remainder = totalCells % 7;
+      if (remainder > 0) {
+        for (var i = 0; i < 7 - remainder; i++) {
+          var empty = document.createElement('div');
+          empty.className = 'cal-day cal-day--empty';
+          grid.appendChild(empty);
+        }
+      }
+    })();
+  </script>
+</body>
+</html>

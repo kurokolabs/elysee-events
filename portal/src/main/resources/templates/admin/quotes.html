@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Angebote - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+      <div class="portal-header">
+        <h1 class="portal-header__title">Angebote</h1>
+        <p class="portal-header__subtitle" th:text="${#lists.size(quotes)} + ' Angebote'">0 Angebote</p>
+        <div class="portal-header__actions">
+          <a th:href="@{/portal/admin/angebot/neu}" class="btn btn--gold">Neues Angebot</a>
+        </div>
+      </div>
+
+      <div th:if="${#lists.isEmpty(quotes)}" class="empty-state">
+        <div class="empty-state__title">Keine Angebote vorhanden</div>
+        <div class="empty-state__text">Erstellen Sie ein neues Angebot &uuml;ber den Button oben.</div>
+      </div>
+
+      <div class="table-wrap" th:if="${!#lists.isEmpty(quotes)}">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nr.</th>
+              <th>Kunde</th>
+              <th>Netto</th>
+              <th>Gesamt</th>
+              <th>G&uuml;ltig bis</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="q : ${quotes}">
+              <td><a th:href="@{/portal/admin/angebot/{id}(id=${q.id})}" th:text="${q.quoteNumber}">AN-001</a></td>
+              <td th:text="${q.customerName}">Max Mustermann</td>
+              <td th:text="${#numbers.formatDecimal(q.amount, 0, 'COMMA', 2, 'POINT')} + ' EUR'">1.000,00 EUR</td>
+              <td th:text="${#numbers.formatDecimal(q.total, 0, 'COMMA', 2, 'POINT')} + ' EUR'">1.190,00 EUR</td>
+              <td th:text="${q.validUntil}">2024-07-01</td>
+              <td>
+                <span class="status-badge"
+                      th:classappend="'status-badge--' + ${q.status}"
+                      th:text="${q.status}">OFFEN</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mein Profil - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: customer-topnav}"></div>
+  <main class="portal-main">
+    <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+    <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+    <div class="portal-header">
+      <h1 class="portal-header__title">Mein Profil</h1>
+      <p class="portal-header__subtitle" th:text="${email}">user@email.de</p>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-card__title">Kontaktdaten</div>
+        <form th:action="@{/portal/profil}" method="post">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Vorname</label>
+              <input type="text" name="firstName" class="form-input" th:value="${customer.firstName}" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nachname</label>
+              <input type="text" name="lastName" class="form-input" th:value="${customer.lastName}" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Firma</label>
+              <input type="text" name="company" class="form-input" th:value="${customer.company}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Telefon</label>
+              <input type="tel" name="phone" class="form-input" th:value="${customer.phone}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Adresse</label>
+            <input type="text" name="address" class="form-input" th:value="${customer.address}">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">PLZ</label>
+              <input type="text" name="postalCode" class="form-input" th:value="${customer.postalCode}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Stadt</label>
+              <input type="text" name="city" class="form-input" th:value="${customer.city}">
+            </div>
+          </div>
+          <button type="submit" class="btn btn--gold" style="margin-top:12px;">Speichern</button>
+        </form>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-card__title">Passwort ändern</div>
+        <form th:action="@{/portal/passwort-aendern}" method="post">
+          <div class="form-group">
+            <label class="form-label">Aktuelles Passwort</label>
+            <input type="password" name="currentPassword" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Neues Passwort</label>
+            <input type="password" name="newPassword" class="form-input" minlength="8" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Passwort bestätigen</label>
+            <input type="password" name="confirmPassword" class="form-input" minlength="8" required>
+          </div>
+          <button type="submit" class="btn btn--outline" style="margin-top:12px;">Passwort ändern</button>
+        </form>
+      </div>
+    </div>
+  </main>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

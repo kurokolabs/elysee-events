@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buchungen - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+      <div class="portal-header">
+        <h1 class="portal-header__title">Buchungen</h1>
+        <p class="portal-header__subtitle" th:text="${#lists.size(bookings)} + ' Buchungen'">0 Buchungen</p>
+        <div class="portal-header__actions">
+          <a th:href="@{/portal/admin/buchung/neu}" class="btn btn--gold">Neue Buchung</a>
+        </div>
+      </div>
+
+      <form th:action="@{/portal/admin/buchungen}" method="get">
+        <div class="filter-bar">
+          <div class="form-group">
+            <label class="form-label">Typ</label>
+            <select name="type" class="form-select">
+              <option value="">Alle Typen</option>
+              <option th:each="t : ${bookingTypes}" th:value="${t.name()}" th:text="${t.label}"
+                      th:selected="${filterType == t.name()}">Typ</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-select">
+              <option value="">Alle Status</option>
+              <option th:each="s : ${bookingStatuses}" th:value="${s.name()}" th:text="${s.label}"
+                      th:selected="${filterStatus == s.name()}">Status</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Von</label>
+            <input type="date" name="dateFrom" class="form-input" th:value="${filterDateFrom}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bis</label>
+            <input type="date" name="dateTo" class="form-input" th:value="${filterDateTo}">
+          </div>
+          <button type="submit" class="btn btn--outline btn--sm">Filtern</button>
+          <a th:href="@{/portal/admin/buchungen}" class="btn btn--outline btn--sm">Zurücksetzen</a>
+        </div>
+      </form>
+
+      <div th:if="${#lists.isEmpty(bookings)}" class="empty-state">
+        <div class="empty-state__title">Keine Buchungen gefunden</div>
+        <div class="empty-state__text">Erstellen Sie eine neue Buchung oder passen Sie die Filter an.</div>
+      </div>
+
+      <div class="table-wrap" th:if="${!#lists.isEmpty(bookings)}">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nr.</th>
+              <th>Kunde</th>
+              <th>Typ</th>
+              <th>Datum</th>
+              <th>Gäste</th>
+              <th>Budget</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="b : ${bookings}">
+              <td><a th:href="@{/portal/admin/buchung/{id}(id=${b.id})}" th:text="'#' + ${b.id}">#1</a></td>
+              <td th:text="${b.customerName}">Max Mustermann</td>
+              <td th:text="${b.bookingTypeEnum.label}">Hochzeit</td>
+              <td th:text="${b.eventDate != null ? @dateUtil.format(b.eventDate) : '-'}">2024-06-15</td>
+              <td th:text="${b.guestCount ?: '-'}">120</td>
+              <td th:text="${b.budget != null ? #numbers.formatDecimal(b.budget, 0, 'COMMA', 0, 'POINT') + ' EUR' : '-'}">5.000 EUR</td>
+              <td><span class="status-badge" th:classappend="'status-badge--' + ${b.status}" th:text="${b.statusEnum.label}">Anfrage</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

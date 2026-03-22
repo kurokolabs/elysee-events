@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kunden - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+      <div class="portal-header">
+        <h1 class="portal-header__title">Kunden</h1>
+        <p class="portal-header__subtitle" th:text="${#lists.size(customers)} + ' Kunden'">0 Kunden</p>
+        <div class="portal-header__actions">
+          <a th:href="@{/portal/admin/kunde/neu}" class="btn btn--gold">Neuer Kunde</a>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <form th:action="@{/portal/admin/kunden}" method="get" style="display:flex; gap:12px; align-items:flex-end;">
+          <div class="form-group">
+            <label class="form-label">Suche</label>
+            <input type="text" name="q" class="form-input" placeholder="Name, Firma, Stadt..."
+                   th:value="${searchQuery}">
+          </div>
+          <button type="submit" class="btn btn--outline btn--sm">Suchen</button>
+        </form>
+      </div>
+
+      <div th:if="${#lists.isEmpty(customers)}" class="empty-state">
+        <div class="empty-state__title">Keine Kunden gefunden</div>
+        <div class="empty-state__text">Legen Sie einen neuen Kunden an.</div>
+      </div>
+
+      <div class="table-wrap" th:if="${!#lists.isEmpty(customers)}">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Firma</th>
+              <th>E-Mail</th>
+              <th>Telefon</th>
+              <th>Stadt</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="c : ${customers}">
+              <td><a th:href="@{/portal/admin/kunde/{id}(id=${c.id})}" th:text="${c.fullName}">Max Mustermann</a></td>
+              <td th:text="${c.company ?: '-'}">Firma GmbH</td>
+              <td th:text="${c.email ?: '-'}">email@example.de</td>
+              <td th:text="${c.phone ?: '-'}">0821 12345</td>
+              <td th:text="${c.city ?: '-'}">Augsburg</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suchergebnisse - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+      <div class="portal-header">
+        <h1 class="portal-header__title" th:text="'Suchergebnisse f&uuml;r \'' + ${query} + '\''">Suchergebnisse</h1>
+      </div>
+
+      <!-- Suchleiste -->
+      <div style="margin-bottom:32px; max-width:600px;">
+        <form th:action="@{/portal/admin/suche}" method="get" style="display:flex; gap:8px;">
+          <input type="text" name="q" class="form-input" th:value="${query}" placeholder="Kunden, Buchungen, Rechnungen, Angebote suchen..." style="flex:1;">
+          <button type="submit" class="btn btn--gold">Suchen</button>
+        </form>
+      </div>
+
+      <!-- Kunden -->
+      <th:block th:if="${customers != null and !customers.isEmpty()}">
+        <h2 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:400; margin-bottom:16px;">Kunden</h2>
+        <div class="table-wrap" style="margin-bottom:32px;">
+          <table class="data-table">
+            <thead>
+              <tr><th>Name</th><th>Firma</th><th>E-Mail</th><th>Stadt</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="c : ${customers}">
+                <td><a th:href="@{/portal/admin/kunde/{id}(id=${c.id})}" th:text="${c.fullName}">Max Mustermann</a></td>
+                <td th:text="${c.company ?: '-'}">-</td>
+                <td th:text="${c.email}">email@example.de</td>
+                <td th:text="${c.city ?: '-'}">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </th:block>
+
+      <!-- Buchungen -->
+      <th:block th:if="${bookings != null and !bookings.isEmpty()}">
+        <h2 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:400; margin-bottom:16px;">Buchungen</h2>
+        <div class="table-wrap" style="margin-bottom:32px;">
+          <table class="data-table">
+            <thead>
+              <tr><th>Nr.</th><th>Kunde</th><th>Typ</th><th>Datum</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="b : ${bookings}">
+                <td><a th:href="@{/portal/admin/buchung/{id}(id=${b.id})}" th:text="'#' + ${b.id}">#1</a></td>
+                <td th:text="${b.customerName}">Kunde</td>
+                <td th:text="${b.bookingTypeEnum.label}">Hochzeit</td>
+                <td th:text="${b.eventDate != null ? b.eventDate : '-'}">-</td>
+                <td><span class="status-badge" th:classappend="'status-badge--' + ${b.status}" th:text="${b.statusEnum.label}">Status</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </th:block>
+
+      <!-- Rechnungen -->
+      <th:block th:if="${invoices != null and !invoices.isEmpty()}">
+        <h2 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:400; margin-bottom:16px;">Rechnungen</h2>
+        <div class="table-wrap" style="margin-bottom:32px;">
+          <table class="data-table">
+            <thead>
+              <tr><th>Nr.</th><th>Kunde</th><th>Gesamt</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="inv : ${invoices}">
+                <td><a th:href="@{/portal/admin/rechnung/{id}(id=${inv.id})}" th:text="${inv.invoiceNumber}">RE-001</a></td>
+                <td th:text="${inv.customerName}">Max Mustermann</td>
+                <td th:text="${#numbers.formatDecimal(inv.total, 0, 'COMMA', 2, 'POINT')} + ' EUR'">1.190,00 EUR</td>
+                <td><span class="status-badge" th:classappend="'status-badge--' + ${inv.status}" th:text="${inv.status}">OFFEN</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </th:block>
+
+      <!-- Angebote -->
+      <th:block th:if="${quotes != null and !quotes.isEmpty()}">
+        <h2 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:400; margin-bottom:16px;">Angebote</h2>
+        <div class="table-wrap" style="margin-bottom:32px;">
+          <table class="data-table">
+            <thead>
+              <tr><th>Nr.</th><th>Kunde</th><th>Gesamt</th><th>G&uuml;ltig bis</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="q : ${quotes}">
+                <td><a th:href="@{/portal/admin/angebot/{id}(id=${q.id})}" th:text="${q.quoteNumber}">AN-001</a></td>
+                <td th:text="${q.customerName}">Max Mustermann</td>
+                <td th:text="${#numbers.formatDecimal(q.total, 0, 'COMMA', 2, 'POINT')} + ' EUR'">1.190,00 EUR</td>
+                <td th:text="${q.validUntil}">2026-04-01</td>
+                <td><span class="status-badge" th:classappend="'status-badge--' + ${q.status}" th:text="${q.status}">OFFEN</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </th:block>
+
+      <!-- Keine Ergebnisse -->
+      <div th:if="${(customers == null or customers.isEmpty()) and (bookings == null or bookings.isEmpty()) and (invoices == null or invoices.isEmpty()) and (quotes == null or quotes.isEmpty())}" class="empty-state">
+        <div class="empty-state__title">Keine Ergebnisse</div>
+        <div class="empty-state__text" th:text="'F&uuml;r \'' + ${query} + '\' wurden keine Ergebnisse gefunden.'">Keine Ergebnisse gefunden.</div>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

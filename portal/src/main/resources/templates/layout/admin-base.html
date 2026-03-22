@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: blob:;">
+  <title th:text="${pageTitle != null ? pageTitle + ' - Admin Portal' : 'Admin Portal'}">Admin Portal</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <nav class="portal-nav">
+    <a th:href="@{/portal/admin}" class="portal-nav__logo">
+      <div class="portal-nav__monogram">EE</div>
+      <div class="portal-nav__wordmark">Admin Portal</div>
+    </a>
+
+    <div class="portal-nav__user">
+      <span class="portal-nav__username" sec:authentication="name">admin</span>
+      <form th:action="@{/portal/logout}" method="post" style="display:inline">
+        <button type="submit" class="portal-nav__logout">Abmelden</button>
+      </form>
+    </div>
+  </nav>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar__section">
+        <div class="admin-sidebar__label">Navigation</div>
+        <ul class="admin-sidebar__nav">
+          <li><a th:href="@{/portal/admin}" th:classappend="${activeNav == 'dashboard'} ? 'active'">Dashboard</a></li>
+          <li><a th:href="@{/portal/admin/buchungen}" th:classappend="${activeNav == 'buchungen'} ? 'active'">Buchungen</a></li>
+          <li><a th:href="@{/portal/admin/kunden}" th:classappend="${activeNav == 'kunden'} ? 'active'">Kunden</a></li>
+        </ul>
+      </div>
+      <div class="admin-sidebar__section">
+        <div class="admin-sidebar__label">Konto</div>
+        <ul class="admin-sidebar__nav">
+          <li><a th:href="@{/portal/passwort-aendern}">Passwort ändern</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+      <div th:replace="${content}">Content</div>
+    </div>
+  </div>
+
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

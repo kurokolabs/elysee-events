@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neue Anfrage - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: customer-topnav}"></div>
+  <main class="portal-main">
+    <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+    <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+    <div class="portal-header">
+      <h1 class="portal-header__title">Neue Anfrage</h1>
+      <p class="portal-header__subtitle">Stellen Sie eine neue Anfrage für Ihr Event</p>
+    </div>
+
+    <div class="detail-card" style="max-width:720px;">
+      <div class="detail-card__title">Anfrage-Details</div>
+      <form th:action="@{/portal/anfrage}" method="post">
+        <div class="form-group">
+          <label class="form-label" for="bookingType">Buchungstyp *</label>
+          <select id="bookingType" name="bookingType" class="form-select" required>
+            <option value="">Bitte wählen...</option>
+            <option th:each="t : ${bookingTypes}" th:value="${t.name()}" th:text="${t.label}">Typ</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="eventDate">Eventdatum *</label>
+          <input type="date" id="eventDate" name="eventDate" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="eventTimeSlot">Zeitfenster</label>
+          <select id="eventTimeSlot" name="eventTimeSlot" class="form-select">
+            <option value="">Bitte wählen...</option>
+            <option value="Vormittag (9-12 Uhr)">Vormittag (9-12 Uhr)</option>
+            <option value="Mittag (12-15 Uhr)">Mittag (12-15 Uhr)</option>
+            <option value="Nachmittag (15-18 Uhr)">Nachmittag (15-18 Uhr)</option>
+            <option value="Abend (18-23 Uhr)">Abend (18-23 Uhr)</option>
+            <option value="Ganztags">Ganztags</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="guestCount">Anzahl Gäste *</label>
+          <input type="number" id="guestCount" name="guestCount" class="form-input" min="1" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="budget">Budget (EUR)</label>
+          <input type="number" id="budget" name="budget" class="form-input" min="0" step="100">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="menuSelection">Menüwahl</label>
+          <textarea id="menuSelection" name="menuSelection" class="form-textarea" placeholder="Gewünschte Speisen, Getränke..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="specialRequests">Besondere Wünsche</label>
+          <textarea id="specialRequests" name="specialRequests" class="form-textarea" placeholder="Allergien, besondere Wünsche..."></textarea>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:24px;">
+          <button type="submit" class="btn btn--gold">Anfrage senden</button>
+          <a th:href="@{/portal/dashboard}" class="btn btn--outline">Abbrechen</a>
+        </div>
+      </form>
+    </div>
+  </main>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpass}
+      MYSQL_DATABASE: elysee_portal
+      MYSQL_USER: ${DB_USER:-elysee_portal}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-changeme}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./portal/src/main/resources/schema-mysql.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  portal:
+    build:
+      context: .
+      dockerfile: portal/Dockerfile
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:mysql://db:3306/elysee_portal?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Berlin&characterEncoding=utf8mb4
+      DB_USER: ${DB_USER:-elysee_portal}
+      DB_PASSWORD: ${DB_PASSWORD:-changeme}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@elysee-events.de}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Admin2024!}
+      UPLOAD_PATH: /app/uploads
+      LOG_PATH: /app/logs/portal.log
+      COMPANY_NAME: ${COMPANY_NAME:-Elysee Event GmbH}
+      COMPANY_STREET: ${COMPANY_STREET:-Werner-von-Siemensstraße 6, Haus 12}
+      COMPANY_CITY: ${COMPANY_CITY:-86159 Augsburg}
+      COMPANY_PHONE: ${COMPANY_PHONE:-0821 555 0000}
+      COMPANY_EMAIL: ${COMPANY_EMAIL:-info@elysee-events.de}
+      COMPANY_WEB: ${COMPANY_WEB:-www.elysee-events.de}
+      COMPANY_TAX_ID: ${COMPANY_TAX_ID:-DE123456789}
+      COMPANY_HRB: ${COMPANY_HRB:-HRB 12345}
+      COMPANY_COURT: ${COMPANY_COURT:-Amtsgericht Augsburg}
+      COMPANY_BANK: ${COMPANY_BANK:-Stadtsparkasse Augsburg}
+      COMPANY_IBAN: ${COMPANY_IBAN:-DE89 7205 0000 0000 1234 56}
+      COMPANY_BIC: ${COMPANY_BIC:-AUGSDE77XXX}
+      COMPANY_CEO: ${COMPANY_CEO:-Aziza Furmoly}
+      EMAILJS_PUBLIC_KEY: ${EMAILJS_PUBLIC_KEY:-YOUR_PUBLIC_KEY}
+      EMAILJS_SERVICE_ID: ${EMAILJS_SERVICE_ID:-YOUR_SERVICE_ID}
+      EMAILJS_TEMPLATE_ID: ${EMAILJS_TEMPLATE_ID:-YOUR_TEMPLATE_ID}
+    volumes:
+      - uploads_data:/app/uploads
+      - logs_data:/app/logs
+
+volumes:
+  mysql_data:
+  uploads_data:
+  logs_data:

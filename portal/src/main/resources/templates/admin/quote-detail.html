@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="'Angebot ' + ${quote.quoteNumber} + ' - Elysee Events'">Angebot</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+      <div class="portal-header">
+        <h1 class="portal-header__title" th:text="'Angebot ' + ${quote.quoteNumber}">Angebot</h1>
+        <p class="portal-header__subtitle" th:text="${quote.customerName}">Kunde</p>
+        <div class="portal-header__actions">
+          <a th:href="@{/portal/admin/angebote}" class="btn btn--outline btn--sm">Zur&uuml;ck zur Liste</a>
+          <a th:href="@{/portal/admin/angebot/{id}/pdf(id=${quote.id})}" class="btn btn--gold btn--sm">PDF herunterladen</a>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div style="margin-bottom:24px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <span style="font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted);">Status:</span>
+        <span class="status-badge" th:classappend="'status-badge--' + ${quote.status}" th:text="${quote.status}">OFFEN</span>
+        <form th:action="@{/portal/admin/angebot/{id}/status(id=${quote.id})}" method="post" style="display:flex; gap:8px; margin-left:16px;">
+          <select name="status" class="form-select" style="min-width:160px; padding:8px 12px; font-size:12px;">
+            <option value="OFFEN" th:selected="${quote.status == 'OFFEN'}">Offen</option>
+            <option value="ANGENOMMEN" th:selected="${quote.status == 'ANGENOMMEN'}">Angenommen</option>
+            <option value="ABGELEHNT" th:selected="${quote.status == 'ABGELEHNT'}">Abgelehnt</option>
+            <option value="ABGELAUFEN" th:selected="${quote.status == 'ABGELAUFEN'}">Abgelaufen</option>
+          </select>
+          <button type="submit" class="btn btn--outline btn--sm">&Auml;ndern</button>
+        </form>
+      </div>
+
+      <!-- Positionen -->
+      <div class="detail-card" style="margin-bottom:24px;" th:if="${items != null and !items.isEmpty()}">
+        <div class="detail-card__title">Positionen</div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Position</th><th>Menge</th><th style="text-align:right">Einzelpreis</th><th style="text-align:right">Betrag</th></tr>
+          </thead>
+          <tbody>
+            <tr th:each="item : ${items}">
+              <td th:text="${item.description}">Saalmiete</td>
+              <td th:text="${#numbers.formatDecimal(item.quantity, 0, 'COMMA', 2, 'POINT')}">1</td>
+              <td style="text-align:right" th:text="${#numbers.formatDecimal(item.unitPrice, 0, 'COMMA', 2, 'POINT')} + ' EUR'">500,00 EUR</td>
+              <td style="text-align:right" th:text="${#numbers.formatDecimal(item.total, 0, 'COMMA', 2, 'POINT')} + ' EUR'">500,00 EUR</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-card">
+          <div class="detail-card__title">Betr&auml;ge</div>
+          <div class="detail-field">
+            <div class="detail-field__label">Netto</div>
+            <div class="detail-field__value" th:text="${#numbers.formatDecimal(quote.amount, 0, 'COMMA', 2, 'POINT')} + ' EUR'">0,00 EUR</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field__label" th:text="'MwSt. ' + ${#numbers.formatDecimal(quote.taxRate, 0, 'COMMA', 1, 'POINT')} + ' %'">MwSt. 19,0 %</div>
+            <div class="detail-field__value" th:text="${#numbers.formatDecimal(quote.taxAmount, 0, 'COMMA', 2, 'POINT')} + ' EUR'">0,00 EUR</div>
+          </div>
+          <div class="detail-field" style="border-top:2px solid var(--gold); padding-top:12px; margin-top:8px;">
+            <div class="detail-field__label">Gesamtbetrag</div>
+            <div class="detail-field__value" style="font-size:22px; font-family:'Cormorant Garamond',serif; color:var(--gold);"
+                 th:text="${#numbers.formatDecimal(quote.total, 0, 'COMMA', 2, 'POINT')} + ' EUR'">0,00 EUR</div>
+          </div>
+          <div class="detail-field" style="margin-top:16px;">
+            <div class="detail-field__label">G&uuml;ltig bis</div>
+            <div class="detail-field__value" th:text="${quote.validUntil ?: '-'}">-</div>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-card__title">Informationen</div>
+          <div class="detail-field">
+            <div class="detail-field__label">Kunde</div>
+            <div class="detail-field__value">
+              <a th:href="@{/portal/admin/kunde/{id}(id=${quote.customerId})}" th:text="${quote.customerName}">Kunde</a>
+            </div>
+          </div>
+          <div class="detail-field" th:if="${quote.notes != null and !quote.notes.isEmpty()}">
+            <div class="detail-field__label">Notizen</div>
+            <div class="detail-field__value" th:text="${quote.notes}">-</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field__label">Erstellt am</div>
+            <div class="detail-field__value" th:text="${quote.createdAt}">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

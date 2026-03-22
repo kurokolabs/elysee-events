@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="'Dokumente - ' + ${customer.fullName} + ' - Elysee Events'">Dokumente - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+      <div class="portal-header">
+        <h1 class="portal-header__title" th:text="'Dokumente — ' + ${customer.fullName}">Dokumente</h1>
+        <p class="portal-header__subtitle" th:text="${#lists.size(documents)} + ' Dokumente'">0 Dokumente</p>
+        <div class="portal-header__actions">
+          <a th:href="@{/portal/admin/kunde/{id}(id=${customer.id})}" class="btn btn--outline btn--sm">Zur&uuml;ck zum Kunden</a>
+        </div>
+      </div>
+
+      <!-- Upload-Formular -->
+      <div class="detail-card" style="margin-bottom:32px; max-width:680px;">
+        <div class="detail-card__title">Dokument hochladen</div>
+        <form th:action="@{/portal/admin/kunde/{id}/dokument/upload(id=${customer.id})}" method="post" enctype="multipart/form-data">
+          <div class="form-group">
+            <label class="form-label" for="file">Datei</label>
+            <input type="file" id="file" name="file" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="description">Beschreibung</label>
+            <input type="text" id="description" name="description" class="form-input" placeholder="z.B. Vertrag, Men&uuml;karte, Anfahrtsplan...">
+          </div>
+          <button type="submit" class="btn btn--gold">Hochladen</button>
+        </form>
+      </div>
+
+      <div th:if="${#lists.isEmpty(documents)}" class="empty-state">
+        <div class="empty-state__title">Keine Dokumente vorhanden</div>
+        <div class="empty-state__text">Laden Sie ein Dokument &uuml;ber das Formular oben hoch.</div>
+      </div>
+
+      <div class="table-wrap" th:if="${!#lists.isEmpty(documents)}">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Dateiname</th>
+              <th>Typ</th>
+              <th>Gr&ouml;&szlig;e</th>
+              <th>Beschreibung</th>
+              <th>Hochgeladen von</th>
+              <th>Datum</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="doc : ${documents}">
+              <td th:text="${doc.fileName}">vertrag.pdf</td>
+              <td th:text="${doc.fileType}">pdf</td>
+              <td th:text="${doc.fileSize &lt; 1024 ? doc.fileSize + ' B' : (doc.fileSize &lt; 1048576 ? #numbers.formatDecimal(doc.fileSize / 1024.0, 0, 'COMMA', 1, 'POINT') + ' KB' : #numbers.formatDecimal(doc.fileSize / 1048576.0, 0, 'COMMA', 1, 'POINT') + ' MB')}">12,5 KB</td>
+              <td th:text="${doc.description ?: '-'}">-</td>
+              <td th:text="${doc.uploadedBy}">ADMIN</td>
+              <td th:text="${doc.createdAt}">2026-03-22</td>
+              <td style="white-space:nowrap;">
+                <a th:href="@{/portal/admin/dokument/{id}/download(id=${doc.id})}" class="btn btn--outline btn--sm">Download</a>
+                <form th:action="@{/portal/admin/dokument/{id}/delete(id=${doc.id})}" method="post" style="display:inline;">
+                  <button type="submit" class="btn btn--danger btn--sm" onclick="return confirm('Dokument wirklich l\u00f6schen?')">L&ouml;schen</button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

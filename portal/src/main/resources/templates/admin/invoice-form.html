@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neue Rechnung - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+      <div class="portal-header">
+        <h1 class="portal-header__title">Neue Rechnung</h1>
+        <p class="portal-header__subtitle">Erstellen Sie eine neue Rechnung für eine Buchung</p>
+      </div>
+
+      <div th:if="${#lists.isEmpty(bookings)}" class="alert alert--info">
+        Es gibt noch keine Buchungen. <a th:href="@{/portal/admin/buchung/neu}">Legen Sie zuerst eine Buchung an.</a>
+      </div>
+
+      <div class="detail-card" style="max-width:720px;" th:if="${!#lists.isEmpty(bookings)}">
+        <div class="detail-card__title">Rechnungsdaten</div>
+        <form th:action="@{/portal/admin/rechnung/neu}" method="post">
+          <div class="form-group">
+            <label class="form-label" for="bookingId">Buchung *</label>
+            <select id="bookingId" name="bookingId" class="form-select" required>
+              <option value="">Buchung wählen...</option>
+              <option th:each="b : ${bookings}"
+                      th:value="${b.id}"
+                      th:selected="${selectedBookingId != null and selectedBookingId == b.id}"
+                      th:text="'#' + ${b.id} + ' - ' + ${b.customerName} + ' (' + ${b.bookingTypeEnum.label} + ')'">
+                #1 - Max Mustermann (Hochzeit)
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="amount">Nettobetrag (EUR) *</label>
+            <input type="number" id="amount" name="amount" class="form-input" min="0" step="0.01" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="taxRate">MwSt.-Satz (%) *</label>
+            <input type="number" id="taxRate" name="taxRate" class="form-input" min="0" step="0.01" value="19.0" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="dueDate">Fälligkeitsdatum *</label>
+            <input type="date" id="dueDate" name="dueDate" class="form-input" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="notes">Notizen</label>
+            <textarea id="notes" name="notes" class="form-textarea" placeholder="Zusätzliche Hinweise zur Rechnung..."></textarea>
+          </div>
+
+          <div style="display:flex; gap:12px; margin-top:24px;">
+            <button type="submit" class="btn btn--gold">Rechnung erstellen</button>
+            <a th:href="@{/portal/admin/rechnungen}" class="btn btn--outline">Abbrechen</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

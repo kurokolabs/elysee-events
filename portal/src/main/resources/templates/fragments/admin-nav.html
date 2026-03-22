@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<nav th:fragment="topnav" class="portal-nav">
+  <a th:href="@{/portal/admin}" class="portal-nav__logo">
+    <div class="portal-nav__monogram">ÉE</div>
+    <div class="portal-nav__wordmark">Admin Portal</div>
+  </a>
+  <div class="portal-nav__user">
+    <span class="portal-nav__username" sec:authentication="name">admin</span>
+    <form th:action="@{/portal/logout}" method="post" style="display:inline">
+      <button type="submit" class="portal-nav__logout">Abmelden</button>
+    </form>
+  </div>
+  <button class="portal-nav__burger" onclick="var sb=document.querySelector('.admin-sidebar'); if(sb){sb.classList.toggle('is-open');} this.classList.toggle('is-open');" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<aside th:fragment="sidebar" class="admin-sidebar">
+  <div class="admin-sidebar__section">
+    <div class="admin-sidebar__label">Navigation</div>
+    <ul class="admin-sidebar__nav">
+      <li><a th:href="@{/portal/admin}" th:classappend="${activeNav == 'dashboard'} ? 'active'">Dashboard</a></li>
+      <li><a th:href="@{/portal/admin/buchungen}" th:classappend="${activeNav == 'buchungen'} ? 'active'">Buchungen</a></li>
+      <li><a th:href="@{/portal/admin/kalender}" th:classappend="${activeNav == 'kalender'} ? 'active'">Kalender</a></li>
+      <li><a th:href="@{/portal/admin/kunden}" th:classappend="${activeNav == 'kunden'} ? 'active'">Kunden</a></li>
+      <li><a th:href="@{/portal/admin/rechnungen}" th:classappend="${activeNav == 'rechnungen'} ? 'active'">Rechnungen</a></li>
+      <li><a th:href="@{/portal/admin/angebote}" th:classappend="${activeNav == 'angebote'} ? 'active'">Angebote</a></li>
+      <li><a th:href="@{/portal/admin/suche}" th:classappend="${activeNav == 'suche'} ? 'active'">Suche</a></li>
+    </ul>
+  </div>
+  <div class="admin-sidebar__section">
+    <div class="admin-sidebar__label">Konto</div>
+    <ul class="admin-sidebar__nav">
+      <li><a th:href="@{/portal/passwort-aendern}">Passwort ändern</a></li>
+    </ul>
+  </div>
+</aside>
+
+<nav th:fragment="customer-topnav" class="portal-nav">
+  <a th:href="@{/portal/dashboard}" class="portal-nav__logo">
+    <div class="portal-nav__monogram">ÉE</div>
+    <div class="portal-nav__wordmark">Kundenportal</div>
+  </a>
+  <ul class="portal-nav__links">
+    <li><a th:href="@{/portal/dashboard}" th:classappend="${activeNav == 'dashboard'} ? 'active'">Dashboard</a></li>
+    <li><a th:href="@{/portal/anfrage}" th:classappend="${activeNav == 'anfrage'} ? 'active'">Neue Anfrage</a></li>
+    <li><a th:href="@{/portal/rechnungen}" th:classappend="${activeNav == 'rechnungen'} ? 'active'">Rechnungen</a></li>
+    <li><a th:href="@{/portal/angebote}" th:classappend="${activeNav == 'angebote'} ? 'active'">Angebote</a></li>
+    <li><a th:href="@{/portal/dokumente}" th:classappend="${activeNav == 'dokumente'} ? 'active'">Dokumente</a></li>
+    <li><a th:href="@{/portal/profil}" th:classappend="${activeNav == 'profil'} ? 'active'">Profil</a></li>
+  </ul>
+  <div class="portal-nav__user">
+    <span class="portal-nav__username" sec:authentication="name">user</span>
+    <form th:action="@{/portal/logout}" method="post" style="display:inline">
+      <button type="submit" class="portal-nav__logout">Abmelden</button>
+    </form>
+  </div>
+  <button class="portal-nav__burger" onclick="document.getElementById('mobileMenu').classList.toggle('is-open'); this.classList.toggle('is-open');" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="portal-mobile-menu" id="mobileMenu">
+  <a th:href="@{/portal/dashboard}">Dashboard</a>
+  <a th:href="@{/portal/anfrage}">Neue Anfrage</a>
+  <a th:href="@{/portal/rechnungen}">Rechnungen</a>
+  <a th:href="@{/portal/angebote}">Angebote</a>
+  <a th:href="@{/portal/dokumente}">Dokumente</a>
+  <a th:href="@{/portal/profil}">Profil</a>
+</div>
+</body>
+</html>

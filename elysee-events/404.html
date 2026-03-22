@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#C9A84C">
+  <title>Seite nicht gefunden — Élysée Events Augsburg</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.json">
+
+  <link rel="stylesheet" href="css/fonts.css">
+
+  <style>
+    :root {
+      --gold: #C9A84C;
+      --dark: #1A1A1A;
+      --white: #FFFFFF;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--dark);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      scrollbar-width: none;
+    }
+    html::-webkit-scrollbar { display: none; }
+
+    /* Nav */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      border-bottom: 1px solid rgba(201,168,76,0.1);
+      background: rgba(26,26,26,0.9);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav__logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+
+    .nav__logo span { color: var(--gold); }
+
+    .nav__links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav__links a {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav__links a:hover { color: var(--gold); }
+
+    /* 404 main */
+    .page-404 {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle grain */
+    .page-404::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px;
+      pointer-events: none;
+    }
+
+    .label-404 {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+
+    .label-404::before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0.7;
+    }
+
+    .num-404 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(7rem, 20vw, 14rem);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 0.9;
+      color: rgba(255,255,255,0.06);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .heading-404 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--white);
+      line-height: 1.1;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .rule-404 {
+      width: 40px;
+      height: 1px;
+      background: rgba(201,168,76,0.4);
+      margin: 0 auto 20px;
+    }
+
+    .sub-404 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9375rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.7;
+      max-width: 380px;
+      margin-bottom: 44px;
+    }
+
+    .btn-group { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background-color 0.25s, color 0.25s, border-color 0.25s, transform 0.25s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-gold {
+      background: var(--gold);
+      color: var(--dark);
+    }
+
+    .btn-gold:hover { background: #b8952e; transform: translateY(-1px); }
+
+    .btn-outline {
+      background: transparent;
+      color: rgba(255,255,255,0.75);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* Footer strip */
+    .footer-strip {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(201,168,76,0.1);
+    }
+
+    .footer-strip p {
+      font-size: 0.625rem;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.25);
+      text-transform: uppercase;
+    }
+
+    .footer-strip nav { display: flex; gap: 20px; }
+
+    .footer-strip nav a {
+      font-size: 0.625rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-strip nav a:hover { color: var(--gold); }
+
+    .footer__social { display: flex; gap: 16px; margin-top: 12px; justify-content: center; }
+    .footer__social a { color: rgba(255,255,255,.45); transition: color .3s ease; }
+    .footer__social a:hover { color: var(--gold, #C9A84C); }
+
+    @media (max-width: 600px) {
+      .nav { padding: 16px 20px; }
+      .nav__links { display: none; }
+      .footer-strip { padding: 16px 20px; flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="nav" role="banner">
+    <a href="elysee-events.html" class="nav__logo" aria-label="Élysée Events — Zur Startseite">
+      <span>Élysée</span> Events
+    </a>
+    <ul class="nav__links">
+      <li><a href="kantine.html">Die Kantine</a></li>
+      <li><a href="hochzeit.html">Hochzeiten</a></li>
+      <li><a href="corporate.html">Corporate</a></li>
+    </ul>
+  </header>
+
+  <main class="page-404" role="main">
+    <div class="num-404" aria-hidden="true">404</div>
+
+    <span class="label-404">Fehler 404</span>
+    <h1 class="heading-404">Seite nicht<br>gefunden</h1>
+    <div class="rule-404" aria-hidden="true"></div>
+    <p class="sub-404">Diese Seite existiert nicht oder wurde verschoben. Bitte gehen Sie zurück zur Startseite.</p>
+
+    <div class="btn-group">
+      <a href="elysee-events.html" class="btn btn-gold">Zur Startseite</a>
+      <a href="kantine.html" class="btn btn-outline">Die Kantine</a>
+    </div>
+
+    <footer class="footer-strip" role="contentinfo">
+      <p>&copy; 2026 Élysée Events. Alle Rechte vorbehalten.</p>
+      <nav aria-label="Rechtliche Links">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+        <a href="agb.html">AGB</a>
+      </nav>
+      <div class="footer__social">
+        <a href="https://instagram.com/elysee.events" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://facebook.com/elyseeevents" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+      </div>
+    </footer>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rechnungsvorschau - Élysée Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+  <style>
+    .inv { background:#fff; border:1px solid rgba(201,168,76,.15); border-radius:2px; padding:52px; max-width:820px; font-family:'DM Sans',sans-serif; color:#1A1A1A; }
+
+    /* Absender-Zeile (klein, über Empfänger) */
+    .inv__sender-line { font-size:8px; color:#6B6560; letter-spacing:.04em; border-bottom:1px solid #C9A84C; display:inline-block; padding-bottom:2px; margin-bottom:14px; }
+
+    /* Header: 2 Spalten */
+    .inv__header { display:flex; justify-content:space-between; gap:32px; margin-bottom:28px; }
+    .inv__brand { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:600; color:#C9A84C; letter-spacing:.06em; }
+    .inv__brand-sub { font-size:9px; color:#6B6560; letter-spacing:.1em; text-transform:uppercase; margin-bottom:4px; }
+    .inv__brand-addr { font-size:9px; color:#6B6560; line-height:1.6; }
+
+    .inv__divider { height:2px; background:#C9A84C; margin-bottom:28px; }
+
+    .inv__columns { display:flex; justify-content:space-between; gap:32px; margin-bottom:28px; }
+    .inv__addr-label { font-size:8px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#6B6560; margin-bottom:8px; }
+    .inv__addr { font-size:12px; line-height:1.7; }
+
+    .inv__meta { text-align:right; }
+    .inv__meta-title { font-size:24px; font-weight:700; margin-bottom:14px; }
+    .inv__meta-line { font-size:11px; margin-bottom:3px; }
+    .inv__meta-label { color:#6B6560; }
+
+    /* Tabelle */
+    .inv__table { width:100%; border-collapse:collapse; margin-bottom:8px; }
+    .inv__table th { font-size:9px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#6B6560; padding:10px 12px; border-bottom:1px solid rgba(201,168,76,.25); background:#F2EFE9; }
+    .inv__table td { padding:10px 12px; font-size:12px; border-bottom:1px solid rgba(201,168,76,.08); }
+    .inv__table .r { text-align:right; }
+
+    /* Summen */
+    .inv__sums { display:flex; justify-content:flex-end; margin-bottom:24px; }
+    .inv__sums-inner { width:280px; }
+    .inv__sum-row { display:flex; justify-content:space-between; padding:4px 0; font-size:12px; color:#6B6560; }
+    .inv__sum-row span:last-child { color:#1A1A1A; font-weight:500; }
+    .inv__total-row { display:flex; justify-content:space-between; padding:12px 0 0; margin-top:6px; border-top:2px solid #C9A84C; }
+    .inv__total-label { font-size:13px; font-weight:600; }
+    .inv__total-value { font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:600; color:#C9A84C; }
+
+    /* Notizen */
+    .inv__notes { padding-top:16px; border-top:1px solid rgba(201,168,76,.1); font-size:11px; color:#6B6560; margin-bottom:20px; }
+
+    /* Bank */
+    .inv__bank-title { font-size:8px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#6B6560; margin-bottom:8px; }
+    .inv__bank { display:grid; grid-template-columns:100px 1fr; gap:2px 12px; font-size:11px; margin-bottom:24px; }
+    .inv__bank dt { color:#6B6560; }
+    .inv__bank dd { margin:0; }
+
+    /* Footer */
+    .inv__footer { border-top:1px solid #C9A84C; padding-top:12px; font-size:8px; color:#6B6560; text-align:center; line-height:1.6; }
+
+    .preview-actions { display:flex; gap:12px; margin-top:32px; max-width:820px; }
+  </style>
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div class="portal-header">
+        <h1 class="portal-header__title">Rechnungsvorschau</h1>
+        <p class="portal-header__subtitle">Prüfen Sie die Rechnung vor dem Versand</p>
+      </div>
+
+      <div class="inv">
+        <!-- Absender + Marke -->
+        <div class="inv__header">
+          <div>
+            <div class="inv__brand">ÉLYSÉE EVENTS</div>
+            <div class="inv__brand-sub">Exklusives Catering &amp; Eventservice</div>
+            <div class="inv__brand-addr">
+              <span th:text="${companyName}">Elysee Event GmbH</span><br>
+              <span th:text="${companyStreet}">Werner-von-Siemensstraße 6</span><br>
+              <span th:text="${companyCity}">86159 Augsburg</span>
+            </div>
+          </div>
+          <div style="text-align:right; font-size:9px; color:#6B6560; line-height:1.6;">
+            Tel: <span th:text="${companyPhone}">0821 555 0000</span><br>
+            <span th:text="${companyEmail}">info@elysee-events.de</span><br>
+            <span th:text="${companyWeb}">www.elysee-events.de</span><br><br>
+            USt-IdNr.: <span th:text="${companyTaxId}">DE123456789</span><br>
+            <span th:text="${companyHrb}">HRB 12345</span> | <span th:text="${companyCourt}">AG Augsburg</span>
+          </div>
+        </div>
+
+        <div class="inv__divider"></div>
+
+        <!-- Absender-Kurzzeile + Empfänger + Rechnungsinfo -->
+        <div class="inv__columns">
+          <div>
+            <div class="inv__sender-line" th:text="${companyName + ' | ' + companyStreet + ' | ' + companyCity}">Elysee Event GmbH | Werner-von-Siemensstraße 6, Haus 12 | 86159 Augsburg</div>
+            <div class="inv__addr-label">Rechnung an</div>
+            <div class="inv__addr">
+              <strong th:text="${customer.fullName}">Name</strong><br>
+              <span th:if="${customer.company != null and !customer.company.isEmpty()}" th:text="${customer.company}"></span>
+              <br th:if="${customer.company != null and !customer.company.isEmpty()}">
+              <span th:if="${customer.address != null and !customer.address.isEmpty()}" th:text="${customer.address}"></span>
+              <br th:if="${customer.address != null and !customer.address.isEmpty()}">
+              <span th:text="${(customer.postalCode != null ? customer.postalCode + ' ' : '') + (customer.city != null ? customer.city : '')}"></span>
+            </div>
+          </div>
+          <div class="inv__meta">
+            <div class="inv__meta-title">RECHNUNG</div>
+            <div class="inv__meta-line"><span class="inv__meta-label">Rechnungs-Nr.: </span><span th:text="${invoiceNumber}">RE-2026-0001</span></div>
+            <div class="inv__meta-line"><span class="inv__meta-label">Rechnungsdatum: </span><span th:text="${T(java.time.LocalDate).now().toString()}">2026-03-22</span></div>
+            <div class="inv__meta-line"><span class="inv__meta-label">Leistungsdatum: </span><span th:text="${dueDate != null and !dueDate.isEmpty() ? dueDate : T(java.time.LocalDate).now().toString()}">2026-03-22</span></div>
+            <div class="inv__meta-line" th:if="${dueDate != null and !dueDate.isEmpty()}"><span class="inv__meta-label">Fällig bis: </span><span th:text="${dueDate}">2026-04-01</span></div>
+          </div>
+        </div>
+
+        <!-- Positionstabelle -->
+        <table class="inv__table">
+          <thead>
+            <tr>
+              <th style="text-align:left; width:5%">Nr.</th>
+              <th style="text-align:left">Beschreibung</th>
+              <th class="r">Menge</th>
+              <th class="r">Einzelpreis</th>
+              <th class="r">Betrag</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="item, idx : ${items}">
+              <td th:text="${idx.count}">1</td>
+              <td th:text="${item.description}">Saalmiete</td>
+              <td class="r" th:text="${#numbers.formatDecimal(item.quantity, 0, 'COMMA', 2, 'POINT')}">1,00</td>
+              <td class="r" th:text="${#numbers.formatDecimal(item.unitPrice, 0, 'COMMA', 2, 'POINT')} + ' EUR'">500,00 EUR</td>
+              <td class="r" th:text="${#numbers.formatDecimal(item.total, 0, 'COMMA', 2, 'POINT')} + ' EUR'">500,00 EUR</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Summen -->
+        <div class="inv__sums">
+          <div class="inv__sums-inner">
+            <div class="inv__sum-row">
+              <span>Zwischensumme (Netto)</span>
+              <span th:text="${#numbers.formatDecimal(netto, 0, 'COMMA', 2, 'POINT')} + ' EUR'">1.000,00 EUR</span>
+            </div>
+            <div class="inv__sum-row">
+              <span th:text="'MwSt. ' + ${#numbers.formatDecimal(taxRate, 0, 'COMMA', 1, 'POINT')} + ' %'">MwSt. 19,0 %</span>
+              <span th:text="${#numbers.formatDecimal(taxAmount, 0, 'COMMA', 2, 'POINT')} + ' EUR'">190,00 EUR</span>
+            </div>
+            <div class="inv__total-row">
+              <span class="inv__total-label">Gesamtbetrag</span>
+              <span class="inv__total-value" th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')} + ' EUR'">1.190,00 EUR</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notizen -->
+        <div th:if="${notes != null and !notes.isEmpty()}" class="inv__notes">
+          <strong>Hinweise:</strong> <span th:text="${notes}"></span>
+        </div>
+
+        <!-- Bankverbindung -->
+        <div class="inv__bank-title">Zahlungsinformationen</div>
+        <dl class="inv__bank">
+          <dt>Empfänger</dt><dd th:text="${companyName}">Elysee Event GmbH</dd>
+          <dt>Bank</dt><dd th:text="${companyBank}">Stadtsparkasse Augsburg</dd>
+          <dt>IBAN</dt><dd th:text="${companyIban}">DE89 7205 0000 0000 1234 56</dd>
+          <dt>BIC</dt><dd th:text="${companyBic}">AUGSDE77XXX</dd>
+          <dt>Verwendungszweck</dt><dd th:text="${invoiceNumber}">RE-2026-0001</dd>
+        </dl>
+
+        <!-- Footer -->
+        <div class="inv__footer" th:text="${companyName + ' | ' + companyStreet + ' | ' + companyCity + ' | Geschäftsführerin: ' + companyCeo + ' | ' + companyCourt + ' ' + companyHrb + ' | USt-IdNr.: ' + companyTaxId}">
+          Elysee Event GmbH | Werner-von-Siemensstraße 6, Haus 12 | 86159 Augsburg |
+          Geschäftsführerin: Aziza Furmoly | Amtsgericht Augsburg HRB 12345 | USt-IdNr.: DE123456789
+        </div>
+      </div>
+
+      <!-- Aktionen -->
+      <div class="preview-actions">
+        <a th:href="@{/portal/admin/rechnung/neu/{id}(id=${customer.id})}" class="btn btn--outline">Zurück bearbeiten</a>
+        <form th:action="@{/portal/admin/rechnung/approve}" method="post" style="margin:0;">
+          <input type="hidden" name="customerId" th:value="${customer.id}">
+          <input type="hidden" name="bookingId" th:value="${bookingId}">
+          <input type="hidden" name="taxRate" th:value="${taxRate}">
+          <input type="hidden" name="netto" th:value="${netto}">
+          <input type="hidden" name="taxAmount" th:value="${taxAmount}">
+          <input type="hidden" name="total" th:value="${total}">
+          <input type="hidden" name="dueDate" th:value="${dueDate}">
+          <input type="hidden" name="notes" th:value="${notes}">
+          <th:block th:each="item : ${items}">
+            <input type="hidden" name="itemDesc" th:value="${item.description}">
+            <input type="hidden" name="itemQty" th:value="${item.quantity}">
+            <input type="hidden" name="itemPrice" th:value="${item.unitPrice}">
+          </th:block>
+          <button type="submit" class="btn btn--gold">Rechnung erstellen &amp; senden</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

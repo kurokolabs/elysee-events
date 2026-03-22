@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <!-- Subtle radial gradient for background depth -->
+    <radialGradient id="bgGrad" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#242424"/>
+      <stop offset="100%" stop-color="#1A1A1A"/>
+    </radialGradient>
+    <!-- Gold gradient for accents -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4B455"/>
+      <stop offset="50%" stop-color="#C9A84C"/>
+      <stop offset="100%" stop-color="#B8943F"/>
+    </linearGradient>
+    <!-- Subtle gold shimmer -->
+    <linearGradient id="goldShimmer" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#B8943F"/>
+      <stop offset="40%" stop-color="#E0C76A"/>
+      <stop offset="60%" stop-color="#E0C76A"/>
+      <stop offset="100%" stop-color="#B8943F"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+
+  <!-- Outer gold frame -->
+  <rect x="20" y="20" width="1160" height="590" rx="2" ry="2"
+        fill="none" stroke="#C9A84C" stroke-width="1" opacity="0.6"/>
+  <!-- Inner gold frame -->
+  <rect x="35" y="35" width="1130" height="560" rx="1" ry="1"
+        fill="none" stroke="#C9A84C" stroke-width="0.5" opacity="0.35"/>
+
+  <!-- Corner ornaments - top left -->
+  <g transform="translate(35,35)" opacity="0.7">
+    <path d="M0,30 L0,0 L30,0" fill="none" stroke="#C9A84C" stroke-width="1.5"/>
+    <path d="M0,0 Q15,8 30,0" fill="none" stroke="#C9A84C" stroke-width="0.8" opacity="0.5"/>
+    <circle cx="0" cy="0" r="2" fill="#C9A84C"/>
+  </g>
+  <!-- Corner ornaments - top right -->
+  <g transform="translate(1165,35)" opacity="0.7">
+    <path d="M0,30 L0,0 L-30,0" fill="none" stroke="#C9A84C" stroke-width="1.5"/>
+    <path d="M0,0 Q-15,8 -30,0" fill="none" stroke="#C9A84C" stroke-width="0.8" opacity="0.5"/>
+    <circle cx="0" cy="0" r="2" fill="#C9A84C"/>
+  </g>
+  <!-- Corner ornaments - bottom left -->
+  <g transform="translate(35,595)" opacity="0.7">
+    <path d="M0,-30 L0,0 L30,0" fill="none" stroke="#C9A84C" stroke-width="1.5"/>
+    <path d="M0,0 Q15,-8 30,0" fill="none" stroke="#C9A84C" stroke-width="0.8" opacity="0.5"/>
+    <circle cx="0" cy="0" r="2" fill="#C9A84C"/>
+  </g>
+  <!-- Corner ornaments - bottom right -->
+  <g transform="translate(1165,595)" opacity="0.7">
+    <path d="M0,-30 L0,0 L-30,0" fill="none" stroke="#C9A84C" stroke-width="1.5"/>
+    <path d="M0,0 Q-15,-8 -30,0" fill="none" stroke="#C9A84C" stroke-width="0.8" opacity="0.5"/>
+    <circle cx="0" cy="0" r="2" fill="#C9A84C"/>
+  </g>
+
+  <!-- Top decorative ornament -->
+  <g transform="translate(600,140)" opacity="0.4">
+    <!-- Central floral/art-deco motif -->
+    <path d="M0,-45 C8,-35 12,-20 0,-8 C-12,-20 -8,-35 0,-45Z" fill="#C9A84C"/>
+    <path d="M0,-8 C8,4 12,19 0,31 C-12,19 -8,4 0,-8Z" fill="#C9A84C"/>
+    <!-- Side leaves -->
+    <path d="M0,-8 C20,-25 40,-20 45,-5 C30,-10 15,-5 0,-8Z" fill="#C9A84C"/>
+    <path d="M0,-8 C-20,-25 -40,-20 -45,-5 C-30,-10 -15,-5 0,-8Z" fill="#C9A84C"/>
+    <!-- Outer tendrils -->
+    <path d="M45,-5 Q55,0 60,10" fill="none" stroke="#C9A84C" stroke-width="1"/>
+    <path d="M-45,-5 Q-55,0 -60,10" fill="none" stroke="#C9A84C" stroke-width="1"/>
+  </g>
+
+  <!-- Main title -->
+  <text x="600" y="290" font-family="Georgia, 'Times New Roman', 'Palatino Linotype', serif"
+        font-size="72" font-weight="400" letter-spacing="8" fill="url(#goldShimmer)"
+        text-anchor="middle" font-style="normal">
+    <tspan>&#201;lys&#233;e Events</tspan>
+  </text>
+
+  <!-- Decorative divider line -->
+  <g transform="translate(600,320)" opacity="0.6">
+    <line x1="-180" y1="0" x2="-20" y2="0" stroke="#C9A84C" stroke-width="0.8"/>
+    <line x1="20" y1="0" x2="180" y2="0" stroke="#C9A84C" stroke-width="0.8"/>
+    <!-- Center diamond -->
+    <path d="M-8,0 L0,-5 L8,0 L0,5Z" fill="#C9A84C" opacity="0.8"/>
+    <!-- Small dots -->
+    <circle cx="-20" cy="0" r="1.5" fill="#C9A84C" opacity="0.6"/>
+    <circle cx="20" cy="0" r="1.5" fill="#C9A84C" opacity="0.6"/>
+  </g>
+
+  <!-- Subtitle -->
+  <text x="600" y="370" font-family="Georgia, 'Times New Roman', 'Palatino Linotype', serif"
+        font-size="24" font-weight="400" letter-spacing="6" fill="#C9A84C"
+        text-anchor="middle" opacity="0.75">
+    Premium-Eventlocation &#183; Augsburg
+  </text>
+
+  <!-- Bottom decorative ornament - Art Deco fan -->
+  <g transform="translate(600,460)" opacity="0.3">
+    <!-- Fan rays -->
+    <path d="M0,0 L-50,-40 L-40,-42Z" fill="#C9A84C"/>
+    <path d="M0,0 L-35,-48 L-25,-48Z" fill="#C9A84C"/>
+    <path d="M0,0 L-15,-52 L-5,-52Z" fill="#C9A84C"/>
+    <path d="M0,0 L5,-52 L15,-52Z" fill="#C9A84C"/>
+    <path d="M0,0 L25,-48 L35,-48Z" fill="#C9A84C"/>
+    <path d="M0,0 L40,-42 L50,-40Z" fill="#C9A84C"/>
+    <!-- Base arc -->
+    <path d="M-55,-35 Q0,-60 55,-35" fill="none" stroke="#C9A84C" stroke-width="0.8"/>
+    <!-- Small base dot -->
+    <circle cx="0" cy="3" r="2.5" fill="#C9A84C"/>
+  </g>
+
+  <!-- Bottom decorative scrollwork -->
+  <g transform="translate(600,520)" opacity="0.25">
+    <!-- Scrolling flourish left -->
+    <path d="M-200,0 Q-150,-15 -100,0 Q-80,8 -60,0 Q-40,-8 -20,0"
+          fill="none" stroke="#C9A84C" stroke-width="0.8"/>
+    <!-- Scrolling flourish right -->
+    <path d="M200,0 Q150,-15 100,0 Q80,8 60,0 Q40,-8 20,0"
+          fill="none" stroke="#C9A84C" stroke-width="0.8"/>
+    <!-- Center element -->
+    <circle cx="0" cy="0" r="2" fill="#C9A84C"/>
+  </g>
+</svg>

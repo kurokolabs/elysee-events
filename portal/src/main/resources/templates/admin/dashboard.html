@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Élysée Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+  <style>
+    .chart-card {
+      background: var(--white);
+      border: 1px solid rgba(201,168,76,.15);
+      border-radius: 2px;
+      padding: 28px 28px 20px;
+      margin-bottom: 32px;
+    }
+    .chart-card__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .chart-card__title {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .chart-card__total {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--dark);
+    }
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 240px;
+    }
+    .chart-wrap canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  </style>
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+      <div class="portal-header">
+        <h1 class="portal-header__title">Dashboard</h1>
+        <p class="portal-header__subtitle">Übersicht aller Buchungen und Kunden</p>
+      </div>
+
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-card__label">Buchungen Gesamt</div>
+          <div class="stat-card__value" th:text="${totalBookings}">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Offene Anfragen</div>
+          <div class="stat-card__value" th:text="${openInquiries}">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Diesen Monat</div>
+          <div class="stat-card__value" th:text="${thisMonth}">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Kunden</div>
+          <div class="stat-card__value" th:text="${totalCustomers}">0</div>
+        </div>
+      </div>
+
+      <!-- Umsatz-Diagramm -->
+      <div class="chart-card">
+        <div class="chart-card__header">
+          <div class="chart-card__title">Umsatz (letzte 12 Monate)</div>
+          <div class="chart-card__total" th:text="${#numbers.formatDecimal(totalBudget, 0, 'COMMA', 0, 'POINT')} + ' EUR'">0 EUR</div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="revenueChart"></canvas>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:12px; margin-bottom:24px;">
+        <a th:href="@{/portal/admin/buchung/neu}" class="btn btn--gold">Neue Buchung</a>
+        <a th:href="@{/portal/admin/kunde/neu}" class="btn btn--outline">Neuer Kunde</a>
+      </div>
+
+      <h2 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:400; margin-bottom:16px;">Aktuelle Buchungen</h2>
+
+      <div th:if="${#lists.isEmpty(recentBookings)}" class="empty-state">
+        <div class="empty-state__title">Keine Buchungen</div>
+        <div class="empty-state__text">Erstellen Sie eine erste Buchung.</div>
+      </div>
+
+      <div class="table-wrap" th:if="${!#lists.isEmpty(recentBookings)}">
+        <table class="data-table">
+          <thead>
+            <tr><th>Nr.</th><th>Kunde</th><th>Typ</th><th>Datum</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr th:each="b : ${recentBookings}">
+              <td><a th:href="@{/portal/admin/buchung/{id}(id=${b.id})}" th:text="'#' + ${b.id}">#1</a></td>
+              <td th:text="${b.customerName}">Kunde</td>
+              <td th:text="${b.bookingTypeEnum.label}">Typ</td>
+              <td th:text="${b.eventDate != null ? @dateUtil.format(b.eventDate) : '-'}">-</td>
+              <td><span class="status-badge" th:classappend="'status-badge--' + ${b.status}" th:text="${b.statusEnum.label}">Status</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script th:src="@{/portal/js/portal.js}"></script>
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    (function() {
+      var data = /*[[${monthlyRevenue}]]*/ [];
+      var canvas = document.getElementById('revenueChart');
+      if (!canvas || !data.length) return;
+
+      var ctx = canvas.getContext('2d');
+      var dpr = window.devicePixelRatio || 1;
+      var rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      var W = rect.width;
+      var H = rect.height;
+      var pad = { top: 20, right: 20, bottom: 44, left: 64 };
+      var cW = W - pad.left - pad.right;
+      var cH = H - pad.top - pad.bottom;
+
+      var labels = [];
+      var values = [];
+      var monthNames = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+
+      for (var i = 0; i < data.length; i++) {
+        var m = data[i].month || data[i].MONTH;
+        var r = data[i].revenue || data[i].REVENUE || 0;
+        var parts = m.split('-');
+        labels.push(monthNames[parseInt(parts[1], 10) - 1] + ' ' + parts[0].slice(2));
+        values.push(typeof r === 'number' ? r : parseFloat(r));
+      }
+
+      var maxVal = Math.max.apply(null, values);
+      if (maxVal === 0) maxVal = 1000;
+      maxVal = Math.ceil(maxVal / 1000) * 1000;
+
+      function x(i) { return pad.left + (i / (values.length - 1 || 1)) * cW; }
+      function y(v) { return pad.top + cH - (v / maxVal) * cH; }
+
+      // Grid lines
+      ctx.strokeStyle = 'rgba(201,168,76,0.1)';
+      ctx.lineWidth = 1;
+      var gridSteps = 4;
+      for (var g = 0; g <= gridSteps; g++) {
+        var gy = pad.top + (g / gridSteps) * cH;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, gy);
+        ctx.lineTo(W - pad.right, gy);
+        ctx.stroke();
+
+        var gridVal = maxVal - (g / gridSteps) * maxVal;
+        ctx.fillStyle = '#6B6560';
+        ctx.font = '10px DM Sans, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(gridVal >= 1000 ? (gridVal / 1000).toFixed(0) + 'k' : gridVal.toFixed(0), pad.left - 10, gy);
+      }
+
+      // Gradient fill
+      var grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + cH);
+      grad.addColorStop(0, 'rgba(201,168,76,0.18)');
+      grad.addColorStop(1, 'rgba(201,168,76,0.01)');
+
+      ctx.beginPath();
+      ctx.moveTo(x(0), y(0));
+      for (var i = 0; i < values.length; i++) {
+        ctx.lineTo(x(i), y(values[i]));
+      }
+      ctx.lineTo(x(values.length - 1), pad.top + cH);
+      ctx.lineTo(x(0), pad.top + cH);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Line
+      ctx.beginPath();
+      ctx.moveTo(x(0), y(values[0]));
+      for (var i = 1; i < values.length; i++) {
+        var xc = (x(i - 1) + x(i)) / 2;
+        ctx.bezierCurveTo(xc, y(values[i - 1]), xc, y(values[i]), x(i), y(values[i]));
+      }
+      ctx.strokeStyle = '#C9A84C';
+      ctx.lineWidth = 2.5;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      // Dots
+      for (var i = 0; i < values.length; i++) {
+        if (values[i] > 0) {
+          ctx.beginPath();
+          ctx.arc(x(i), y(values[i]), 4, 0, Math.PI * 2);
+          ctx.fillStyle = '#C9A84C';
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(x(i), y(values[i]), 2, 0, Math.PI * 2);
+          ctx.fillStyle = '#FAFAF8';
+          ctx.fill();
+        }
+      }
+
+      // X-axis labels
+      ctx.fillStyle = '#6B6560';
+      ctx.font = '10px DM Sans, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      for (var i = 0; i < labels.length; i++) {
+        // Show every label if <= 6 months, otherwise every 2nd
+        if (labels.length <= 6 || i % 2 === 0 || i === labels.length - 1) {
+          ctx.fillText(labels[i], x(i), pad.top + cH + 12);
+        }
+      }
+
+      // Hover tooltip
+      var tooltip = null;
+      canvas.style.cursor = 'crosshair';
+      canvas.addEventListener('mousemove', function(e) {
+        var r = canvas.getBoundingClientRect();
+        var mx = e.clientX - r.left;
+        var closest = -1;
+        var minDist = 30;
+        for (var i = 0; i < values.length; i++) {
+          var dist = Math.abs(mx - x(i));
+          if (dist < minDist) { minDist = dist; closest = i; }
+        }
+
+        // Redraw
+        ctx.clearRect(0, 0, W, H);
+        // Re-render (call inline — small chart, acceptable)
+        renderChart();
+
+        if (closest >= 0) {
+          var tx = x(closest);
+          var ty = y(values[closest]);
+
+          // Vertical line
+          ctx.beginPath();
+          ctx.moveTo(tx, pad.top);
+          ctx.lineTo(tx, pad.top + cH);
+          ctx.strokeStyle = 'rgba(201,168,76,0.25)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          // Highlight dot
+          ctx.beginPath();
+          ctx.arc(tx, ty, 6, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(201,168,76,0.2)';
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(tx, ty, 4, 0, Math.PI * 2);
+          ctx.fillStyle = '#C9A84C';
+          ctx.fill();
+
+          // Tooltip box
+          var text = labels[closest] + ': ' + values[closest].toLocaleString('de-DE') + ' EUR';
+          ctx.font = '600 11px DM Sans, sans-serif';
+          var tw = ctx.measureText(text).width + 16;
+          var bx = Math.min(Math.max(tx - tw / 2, 0), W - tw);
+          var by = ty - 32;
+          if (by < 4) by = ty + 12;
+
+          ctx.fillStyle = '#1A1A1A';
+          ctx.beginPath();
+          ctx.roundRect(bx, by, tw, 22, 2);
+          ctx.fill();
+          ctx.fillStyle = '#FAFAF8';
+          ctx.font = '600 10px DM Sans, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(text, bx + tw / 2, by + 11);
+        }
+      });
+
+      canvas.addEventListener('mouseleave', function() {
+        ctx.clearRect(0, 0, W, H);
+        renderChart();
+      });
+
+      function renderChart() {
+        // Grid
+        ctx.strokeStyle = 'rgba(201,168,76,0.1)';
+        ctx.lineWidth = 1;
+        for (var g = 0; g <= gridSteps; g++) {
+          var gy = pad.top + (g / gridSteps) * cH;
+          ctx.beginPath();
+          ctx.moveTo(pad.left, gy);
+          ctx.lineTo(W - pad.right, gy);
+          ctx.stroke();
+          var gridVal = maxVal - (g / gridSteps) * maxVal;
+          ctx.fillStyle = '#6B6560';
+          ctx.font = '10px DM Sans, sans-serif';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(gridVal >= 1000 ? (gridVal / 1000).toFixed(0) + 'k' : gridVal.toFixed(0), pad.left - 10, gy);
+        }
+        // Fill
+        ctx.beginPath();
+        ctx.moveTo(x(0), y(0));
+        for (var i = 0; i < values.length; i++) ctx.lineTo(x(i), y(values[i]));
+        ctx.lineTo(x(values.length - 1), pad.top + cH);
+        ctx.lineTo(x(0), pad.top + cH);
+        ctx.closePath();
+        ctx.fillStyle = grad;
+        ctx.fill();
+        // Line
+        ctx.beginPath();
+        ctx.moveTo(x(0), y(values[0]));
+        for (var i = 1; i < values.length; i++) {
+          var xc = (x(i - 1) + x(i)) / 2;
+          ctx.bezierCurveTo(xc, y(values[i - 1]), xc, y(values[i]), x(i), y(values[i]));
+        }
+        ctx.strokeStyle = '#C9A84C';
+        ctx.lineWidth = 2.5;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        // Dots
+        for (var i = 0; i < values.length; i++) {
+          if (values[i] > 0) {
+            ctx.beginPath();
+            ctx.arc(x(i), y(values[i]), 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#C9A84C';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x(i), y(values[i]), 2, 0, Math.PI * 2);
+            ctx.fillStyle = '#FAFAF8';
+            ctx.fill();
+          }
+        }
+        // X labels
+        ctx.fillStyle = '#6B6560';
+        ctx.font = '10px DM Sans, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        for (var i = 0; i < labels.length; i++) {
+          if (labels.length <= 6 || i % 2 === 0 || i === labels.length - 1) {
+            ctx.fillText(labels[i], x(i), pad.top + cH + 12);
+          }
+        }
+      }
+    })();
+    /*]]>*/
+  </script>
+</body>
+</html>

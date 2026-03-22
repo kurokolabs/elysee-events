@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="'Rechnung ' + ${invoice.invoiceNumber} + ' - Elysee Events'">Rechnung - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: customer-topnav}"></div>
+  <main class="portal-main">
+    <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+    <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+    <div class="portal-header">
+      <h1 class="portal-header__title" th:text="'Rechnung ' + ${invoice.invoiceNumber}">Rechnung RE-001</h1>
+      <div class="portal-header__actions">
+        <a th:href="@{/portal/rechnungen}" class="btn btn--outline btn--sm">Zurück zur Übersicht</a>
+        <a th:href="@{/portal/rechnung/{id}/pdf(id=${invoice.id})}" class="btn btn--gold btn--sm">PDF herunterladen</a>
+      </div>
+    </div>
+
+    <div style="margin-bottom:24px;">
+      <span class="status-badge"
+            th:classappend="'status-badge--' + ${invoice.status}"
+            th:text="${invoice.status}"
+            style="font-size:12px; padding:8px 20px;">OFFEN</span>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-card__title">Rechnungsdetails</div>
+        <div class="detail-field">
+          <div class="detail-field__label">Rechnungsnr.</div>
+          <div class="detail-field__value" th:text="${invoice.invoiceNumber}">RE-001</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field__label">Buchungstyp</div>
+          <div class="detail-field__value" th:text="${invoice.bookingTypeLabel}">Hochzeit</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field__label">Nettobetrag</div>
+          <div class="detail-field__value" th:text="${#numbers.formatDecimal(invoice.amount, 0, 'COMMA', 2, 'POINT')} + ' EUR'">1.000,00 EUR</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field__label">MwSt.</div>
+          <div class="detail-field__value" th:text="${#numbers.formatDecimal(invoice.taxRate, 0, 'COMMA', 2, 'POINT')} + ' % (' + ${#numbers.formatDecimal(invoice.taxAmount, 0, 'COMMA', 2, 'POINT')} + ' EUR)'">19,00 % (190,00 EUR)</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field__label">Gesamtbetrag</div>
+          <div class="detail-field__value" th:text="${#numbers.formatDecimal(invoice.total, 0, 'COMMA', 2, 'POINT')} + ' EUR'">1.190,00 EUR</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field__label">Fällig am</div>
+          <div class="detail-field__value" th:text="${invoice.dueDate != null ? @dateUtil.format(invoice.dueDate) : '-'}">2024-07-01</div>
+        </div>
+        <div class="detail-field" th:if="${invoice.paidDate != null}">
+          <div class="detail-field__label">Bezahlt am</div>
+          <div class="detail-field__value" th:text="${@dateUtil.format(invoice.paidDate)}">2024-06-28</div>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-card__title">Hinweise</div>
+        <div class="detail-field" th:if="${invoice.notes != null and !invoice.notes.isEmpty()}">
+          <div class="detail-field__label">Notizen</div>
+          <div class="detail-field__value" th:text="${invoice.notes}">-</div>
+        </div>
+        <div class="detail-field" th:if="${invoice.notes == null or invoice.notes.isEmpty()}">
+          <div class="detail-field__value" style="color:var(--muted);">Keine Hinweise vorhanden.</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field__label">Erstellt am</div>
+          <div class="detail-field__value" th:text="${@dateUtil.format(invoice.createdAt)}">2024-06-15</div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

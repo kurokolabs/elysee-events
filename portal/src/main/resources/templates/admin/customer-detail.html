@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kunde Details - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+      <div class="portal-header">
+        <h1 class="portal-header__title" th:text="${customer.fullName}">Max Mustermann</h1>
+        <p class="portal-header__subtitle" th:text="${customer.company ?: 'Privatkunde'}">Firma</p>
+        <div class="portal-header__actions">
+          <a th:href="@{/portal/admin/kunden}" class="btn btn--outline btn--sm">Zurück zur Liste</a>
+        </div>
+      </div>
+
+      <div th:if="${tempPassword}" class="temp-password">
+        <div class="temp-password__label">Temporäres Passwort (einmalig sichtbar)</div>
+        <div class="temp-password__value" th:text="${tempPassword}">abc123</div>
+        <p style="font-size:12px; color:var(--muted); margin-top:8px;">
+          Bitte teilen Sie dem Kunden dieses Passwort mit. Es muss beim ersten Login geändert werden.
+        </p>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-card">
+          <div class="detail-card__title">Kontaktdaten bearbeiten</div>
+          <form th:action="@{/portal/admin/kunde/{id}(id=${customer.id})}" method="post">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Vorname</label>
+                <input type="text" name="firstName" class="form-input" th:value="${customer.firstName}" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nachname</label>
+                <input type="text" name="lastName" class="form-input" th:value="${customer.lastName}" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Firma</label>
+                <input type="text" name="company" class="form-input" th:value="${customer.company}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Telefon</label>
+                <input type="tel" name="phone" class="form-input" th:value="${customer.phone}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Adresse</label>
+              <input type="text" name="address" class="form-input" th:value="${customer.address}">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">PLZ</label>
+                <input type="text" name="postalCode" class="form-input" th:value="${customer.postalCode}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Stadt</label>
+                <input type="text" name="city" class="form-input" th:value="${customer.city}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Interne Notizen</label>
+              <textarea name="notes" class="form-textarea" th:text="${customer.notes}"></textarea>
+            </div>
+            <button type="submit" class="btn btn--gold" style="margin-top:12px;">Speichern</button>
+          </form>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-card__title">Account-Informationen</div>
+          <div class="detail-field">
+            <div class="detail-field__label">E-Mail / Login</div>
+            <div class="detail-field__value" th:text="${customer.email ?: '-'}">kunde@email.de</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field__label">Konto Status</div>
+            <div class="detail-field__value" th:text="${user?.active ? 'Aktiv' : 'Deaktiviert'}">Aktiv</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field__label">Letzter Login</div>
+            <div class="detail-field__value" th:text="${user?.lastLogin != null ? @dateUtil.format(user.lastLogin) : 'Noch nie'}">-</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field__label">Erstellt am</div>
+            <div class="detail-field__value" th:text="${@dateUtil.format(customer.createdAt)}">2024-01-15</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

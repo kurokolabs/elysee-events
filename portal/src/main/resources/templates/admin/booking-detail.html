@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buchung Details - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+      <div class="portal-header">
+        <h1 class="portal-header__title" th:text="'Buchung #' + ${booking.id}">Buchung #1</h1>
+        <p class="portal-header__subtitle" th:text="${booking.customerName}">Kunde</p>
+        <div class="portal-header__actions">
+          <a th:href="@{/portal/admin/buchungen}" class="btn btn--outline btn--sm">Zurück zur Liste</a>
+        </div>
+      </div>
+
+      <!-- Status Change -->
+      <div style="margin-bottom:24px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <span style="font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted);">Status:</span>
+        <span class="status-badge" th:classappend="'status-badge--' + ${booking.status}" th:text="${booking.statusEnum.label}">Anfrage</span>
+        <form th:action="@{/portal/admin/buchung/{id}/status(id=${booking.id})}" method="post" style="display:flex; gap:8px; margin-left:16px;">
+          <select name="status" class="form-select" style="min-width:140px; padding:8px 12px; font-size:12px;">
+            <option th:each="s : ${bookingStatuses}" th:value="${s.name()}" th:text="${s.label}"
+                    th:selected="${booking.status == s.name()}">Status</option>
+          </select>
+          <button type="submit" class="btn btn--outline btn--sm">Ändern</button>
+        </form>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-card">
+          <div class="detail-card__title">Buchung bearbeiten</div>
+          <form th:action="@{/portal/admin/buchung/{id}(id=${booking.id})}" method="post">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Kunde</label>
+                <select name="customerId" class="form-select" required>
+                  <option th:each="c : ${customers}" th:value="${c.id}" th:selected="${c.id == booking.customerId}"
+                          th:text="${c.fullName} + (${c.company != null ? ' (' + c.company + ')' : ''})">Kunde</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Typ</label>
+                <select name="bookingType" class="form-select" required>
+                  <option th:each="t : ${bookingTypes}" th:value="${t.name()}" th:text="${t.label}"
+                          th:selected="${booking.bookingType == t.name()}">Typ</option>
+                </select>
+              </div>
+            </div>
+
+            <input type="hidden" name="status" th:value="${booking.status}">
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Eventdatum</label>
+                <input type="date" name="eventDate" class="form-input" th:value="${booking.eventDate}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Zeitfenster</label>
+                <select name="eventTimeSlot" class="form-select">
+                  <option value="">Bitte wählen...</option>
+                  <option value="Vormittag (9-12 Uhr)" th:selected="${booking.eventTimeSlot == 'Vormittag (9-12 Uhr)'}">Vormittag (9-12 Uhr)</option>
+                  <option value="Mittag (12-15 Uhr)" th:selected="${booking.eventTimeSlot == 'Mittag (12-15 Uhr)'}">Mittag (12-15 Uhr)</option>
+                  <option value="Nachmittag (15-18 Uhr)" th:selected="${booking.eventTimeSlot == 'Nachmittag (15-18 Uhr)'}">Nachmittag (15-18 Uhr)</option>
+                  <option value="Abend (18-23 Uhr)" th:selected="${booking.eventTimeSlot == 'Abend (18-23 Uhr)'}">Abend (18-23 Uhr)</option>
+                  <option value="Ganztags" th:selected="${booking.eventTimeSlot == 'Ganztags'}">Ganztags</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Gäste</label>
+                <input type="number" name="guestCount" class="form-input" th:value="${booking.guestCount}" min="1">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Budget (EUR)</label>
+                <input type="number" name="budget" class="form-input" th:value="${booking.budget}" min="0" step="100">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Menüwahl</label>
+              <textarea name="menuSelection" class="form-textarea" th:text="${booking.menuSelection}"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Besondere Wünsche</label>
+              <textarea name="specialRequests" class="form-textarea" th:text="${booking.specialRequests}"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Interne Notizen</label>
+              <textarea name="adminNotes" class="form-textarea" th:text="${booking.adminNotes}"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn--gold" style="margin-top:12px;">Speichern</button>
+          </form>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-card__title">Details</div>
+          <div class="detail-field">
+            <div class="detail-field__label">Buchungs-Nr.</div>
+            <div class="detail-field__value" th:text="'#' + ${booking.id}">#1</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field__label">Kunde</div>
+            <div class="detail-field__value">
+              <a th:href="@{/portal/admin/kunde/{id}(id=${booking.customerId})}" th:text="${booking.customerName}">Name</a>
+            </div>
+          </div>
+          <div class="detail-field" th:if="${booking.customerCompany}">
+            <div class="detail-field__label">Firma</div>
+            <div class="detail-field__value" th:text="${booking.customerCompany}">Firma</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field__label">Erstellt am</div>
+            <div class="detail-field__value" th:text="${@dateUtil.format(booking.createdAt)}">2024-01-15</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field__label">Zuletzt geändert</div>
+            <div class="detail-field__value" th:text="${@dateUtil.format(booking.updatedAt)}">2024-01-15</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

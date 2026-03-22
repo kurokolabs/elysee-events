@@ -1,0 +1,130 @@
+package de.elyseeevents.portal.config;
+
+import de.elyseeevents.portal.model.User;
+import de.elyseeevents.portal.repository.UserRepository;
+import de.elyseeevents.portal.security.RateLimiter;
+import de.elyseeevents.portal.service.TwoFactorService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import de.elyseeevents.portal.security.RateLimitFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.io.IOException;
+import java.util.Optional;
+
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+public class SecurityConfig {
+
+    private final UserRepository userRepository;
+    private final TwoFactorService twoFactorService;
+    private final RateLimiter rateLimiter;
+    private final RateLimitFilter rateLimitFilter;
+    private final de.elyseeevents.portal.repository.AuditLogRepository auditLogRepository;
+
+    public SecurityConfig(UserRepository userRepository, TwoFactorService twoFactorService,
+                          RateLimiter rateLimiter, RateLimitFilter rateLimitFilter,
+                          de.elyseeevents.portal.repository.AuditLogRepository auditLogRepository) {
+        this.userRepository = userRepository;
+        this.twoFactorService = twoFactorService;
+        this.rateLimitFilter = rateLimitFilter;
+        this.auditLogRepository = auditLogRepository;
+        this.rateLimiter = rateLimiter;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/portal/login", "/portal/2fa", "/portal/2fa/resend").permitAll()
+                .requestMatchers("/portal/css/**", "/portal/js/**", "/portal/fonts/**", "/portal/img/**").permitAll()
+                .requestMatchers("/portal/admin/**").hasRole("ADMIN")
+                .requestMatchers("/portal/**").authenticated()
+                .anyRequest().permitAll()
+            )
+            .formLogin(form -> form
+                .loginPage("/portal/login")
+                .loginProcessingUrl("/portal/login")
+                .successHandler(loginSuccessHandler())
+                .failureUrl("/portal/login?error=true")
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/portal/logout")
+                .logoutSuccessUrl("/portal/login?logout=true")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+            )
+            .sessionManagement(session -> session
+                .maximumSessions(2)
+            )
+            .headers(headers -> headers
+                .frameOptions(frame -> frame.deny())
+                .contentTypeOptions(ct -> {})
+                .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000))
+                .referrerPolicy(ref -> ref.policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+            );
+
+        return http.build();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler loginSuccessHandler() {
+        return (HttpServletRequest request, HttpServletResponse response,
+                Authentication authentication) -> {
+            String email = authentication.getName();
+            Optional<User> userOpt = userRepository.findByEmail(email);
+
+            // Reset rate limiter on successful login
+            rateLimiter.reset("LOGIN", request.getRemoteAddr());
+
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                userRepository.updateLastLogin(user.getId());
+                auditLogRepository.log(user.getId(), "LOGIN_SUCCESS", "user", user.getId(), null);
+
+                if (user.isForcePwChange()) {
+                    response.sendRedirect("/portal/passwort-aendern");
+                    return;
+                }
+
+                if (user.isTwoFaEnabled()) {
+                    String code = twoFactorService.generateAndStoreCode(user.getId());
+                    request.getSession().setAttribute("2fa_pending", true);
+                    request.getSession().setAttribute("2fa_user_id", user.getId());
+                    request.getSession().setAttribute("2fa_email", user.getEmail());
+                    request.getSession().setAttribute("2fa_code", code);
+                    request.getSession().setAttribute("2fa_role", user.getRole());
+                    response.sendRedirect("/portal/2fa");
+                    return;
+                }
+            }
+
+            if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+                response.sendRedirect("/portal/admin");
+            } else {
+                response.sendRedirect("/portal/dashboard");
+            }
+        };
+    }
+}
