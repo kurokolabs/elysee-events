@@ -118,6 +118,32 @@ CREATE TABLE IF NOT EXISTS documents (
     created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    email       TEXT NOT NULL UNIQUE,
+    name        TEXT,
+    active      INTEGER NOT NULL DEFAULT 1,
+    token       TEXT NOT NULL,
+    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS weekly_menus (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    week_start  TEXT NOT NULL,
+    week_end    TEXT NOT NULL,
+    monday      TEXT,
+    tuesday     TEXT,
+    wednesday   TEXT,
+    thursday    TEXT,
+    friday      TEXT,
+    notes       TEXT,
+    sent        INTEGER NOT NULL DEFAULT 0,
+    sent_at     TEXT,
+    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_newsletter_email ON newsletter_subscribers(email);
+CREATE INDEX IF NOT EXISTS idx_newsletter_token ON newsletter_subscribers(token);
 CREATE INDEX IF NOT EXISTS idx_quotes_customer ON quotes(customer_id);
 CREATE INDEX IF NOT EXISTS idx_quote_items_quote ON quote_items(quote_id);
 CREATE INDEX IF NOT EXISTS idx_documents_customer ON documents(customer_id);

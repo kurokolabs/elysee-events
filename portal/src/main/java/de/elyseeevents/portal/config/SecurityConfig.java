@@ -54,8 +54,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/newsletter/**")
+            )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/portal/login", "/portal/2fa", "/portal/2fa/resend").permitAll()
+                .requestMatchers("/newsletter/**").permitAll()
                 .requestMatchers("/portal/css/**", "/portal/js/**", "/portal/fonts/**", "/portal/img/**").permitAll()
                 .requestMatchers("/portal/admin/**").hasRole("ADMIN")
                 .requestMatchers("/portal/**").authenticated()

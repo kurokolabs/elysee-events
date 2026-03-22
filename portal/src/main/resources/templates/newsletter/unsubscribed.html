@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abgemeldet - Elysee Events Augsburg</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #FAFAF8;
+      color: #1A1A1A;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid rgba(201,168,76,.15);
+      border-radius: 2px;
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+    }
+    .card__monogram {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 400;
+      color: #C9A84C;
+      letter-spacing: .04em;
+      margin-bottom: 32px;
+    }
+    .card__title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 400;
+      margin-bottom: 16px;
+    }
+    .card__text {
+      font-size: 15px;
+      line-height: 1.7;
+      color: #6B6560;
+      margin-bottom: 28px;
+    }
+    .card__link {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #C9A84C;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(201,168,76,.3);
+      padding-bottom: 2px;
+    }
+    .card__link:hover { border-bottom-color: #C9A84C; }
+    .alert--error {
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+      padding: 12px 16px;
+      border-radius: 2px;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card__monogram">Elysee Events</div>
+
+    <div th:if="${error}" class="alert--error" th:text="${error}"></div>
+
+    <div th:if="${success}">
+      <h1 class="card__title">Erfolgreich abgemeldet</h1>
+      <p class="card__text">
+        Sie wurden erfolgreich abgemeldet und erhalten keine weiteren E-Mails von uns.
+      </p>
+    </div>
+
+    <div th:unless="${success}">
+      <h1 class="card__title">Abmeldung</h1>
+      <p class="card__text">
+        Der Abmelde-Link ist ungültig oder wurde bereits verwendet.
+      </p>
+    </div>
+
+    <a href="/elysee-events/kantine.html" class="card__link">Zurück zur Kantine</a>
+  </div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email-Vorlagen - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+
+      <div class="portal-header">
+        <h1 class="portal-header__title">Email-Vorlagen</h1>
+        <p class="portal-header__subtitle">Vorschau aller Email-Templates</p>
+      </div>
+
+      <div class="stat-cards" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+
+        <div class="stat-card">
+          <div class="stat-card__label" style="font-size:13px; font-weight:600; color:#1A1A1A; margin-bottom:8px;">Wöchentliche Speisekarte</div>
+          <p style="font-size:13px; color:#6B6560; line-height:1.5; margin:0 0 16px 0;">Wochenplan mit Tagesgericht für Newsletter-Abonnenten.</p>
+          <a th:href="@{/portal/admin/email-preview/weekly-menu}" class="btn btn--outline btn--sm">Vorschau</a>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card__label" style="font-size:13px; font-weight:600; color:#1A1A1A; margin-bottom:8px;">Willkommens-Email</div>
+          <p style="font-size:13px; color:#6B6560; line-height:1.5; margin:0 0 16px 0;">Begrüßungsmail für neue Newsletter-Abonnenten.</p>
+          <a th:href="@{/portal/admin/email-preview/welcome-subscriber}" class="btn btn--outline btn--sm">Vorschau</a>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card__label" style="font-size:13px; font-weight:600; color:#1A1A1A; margin-bottom:8px;">2FA-Code</div>
+          <p style="font-size:13px; color:#6B6560; line-height:1.5; margin:0 0 16px 0;">Zwei-Faktor-Authentifizierung Verifizierungscode.</p>
+          <a th:href="@{/portal/admin/email-preview/two-factor-code}" class="btn btn--outline btn--sm">Vorschau</a>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card__label" style="font-size:13px; font-weight:600; color:#1A1A1A; margin-bottom:8px;">Rechnungsbenachrichtigung</div>
+          <p style="font-size:13px; color:#6B6560; line-height:1.5; margin:0 0 16px 0;">Benachrichtigung über neue Rechnung mit Zusammenfassung.</p>
+          <a th:href="@{/portal/admin/email-preview/invoice-notification}" class="btn btn--outline btn--sm">Vorschau</a>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card__label" style="font-size:13px; font-weight:600; color:#1A1A1A; margin-bottom:8px;">Buchungsstatus-Update</div>
+          <p style="font-size:13px; color:#6B6560; line-height:1.5; margin:0 0 16px 0;">Status-Aktualisierung für bestehende Buchungen.</p>
+          <a th:href="@{/portal/admin/email-preview/booking-status-update}" class="btn btn--outline btn--sm">Vorschau</a>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newsletter - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+      <div class="portal-header">
+        <h1 class="portal-header__title">Newsletter</h1>
+        <p class="portal-header__subtitle">Abonnenten und woechentliche Speisekarten verwalten</p>
+      </div>
+
+      <!-- Subscriber Stats -->
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-card__label">Abonnenten Gesamt</div>
+          <div class="stat-card__value" th:text="${subscriberCount}">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Aktive Abonnenten</div>
+          <div class="stat-card__value" th:text="${activeCount}">0</div>
+        </div>
+      </div>
+
+      <!-- Weekly Menus -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin:32px 0 16px;">
+        <h2 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:400;">Wöchentliche Speisekarten</h2>
+        <a th:href="@{/portal/admin/newsletter/speisekarte/neu}" class="btn btn--gold">Neue Speisekarte</a>
+      </div>
+
+      <div th:if="${#lists.isEmpty(menus)}" class="empty-state">
+        <div class="empty-state__title">Keine Speisekarten</div>
+        <div class="empty-state__text">Erstellen Sie eine erste woechentliche Speisekarte.</div>
+      </div>
+
+      <div class="table-wrap" th:if="${!#lists.isEmpty(menus)}">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Woche</th>
+              <th>Montag</th>
+              <th>Dienstag</th>
+              <th>Mittwoch</th>
+              <th>Donnerstag</th>
+              <th>Freitag</th>
+              <th>Versendet</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="m : ${menus}">
+              <td th:text="${m.weekStart} + ' - ' + ${m.weekEnd}">-</td>
+              <td th:text="${m.monday != null ? (#strings.abbreviate(m.monday, 30)) : '-'}">-</td>
+              <td th:text="${m.tuesday != null ? (#strings.abbreviate(m.tuesday, 30)) : '-'}">-</td>
+              <td th:text="${m.wednesday != null ? (#strings.abbreviate(m.wednesday, 30)) : '-'}">-</td>
+              <td th:text="${m.thursday != null ? (#strings.abbreviate(m.thursday, 30)) : '-'}">-</td>
+              <td th:text="${m.friday != null ? (#strings.abbreviate(m.friday, 30)) : '-'}">-</td>
+              <td>
+                <span th:if="${m.sent}" class="status-badge status-badge--BESTAETIGT">Ja</span>
+                <span th:unless="${m.sent}" class="status-badge status-badge--ANFRAGE">Nein</span>
+              </td>
+              <td>
+                <a th:href="@{/portal/admin/newsletter/speisekarte/{id}(id=${m.id})}" class="btn btn--small btn--outline">Details</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Subscribers List -->
+      <div style="margin-top:40px;">
+        <h2 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:400; margin-bottom:16px;">Abonnenten</h2>
+
+        <div th:if="${#lists.isEmpty(subscribers)}" class="empty-state">
+          <div class="empty-state__title">Keine Abonnenten</div>
+          <div class="empty-state__text">Noch hat sich niemand für den Newsletter angemeldet.</div>
+        </div>
+
+        <div class="table-wrap" th:if="${!#lists.isEmpty(subscribers)}">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>E-Mail</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Angemeldet am</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="s : ${subscribers}">
+                <td th:text="${s.email}">-</td>
+                <td th:text="${s.name != null ? s.name : '-'}">-</td>
+                <td>
+                  <span th:if="${s.active}" class="status-badge status-badge--BESTAETIGT">Aktiv</span>
+                  <span th:unless="${s.active}" class="status-badge status-badge--STORNIERT">Abgemeldet</span>
+                </td>
+                <td th:text="${s.createdAt}">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

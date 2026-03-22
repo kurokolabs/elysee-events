@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speisekarte - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+  <style>
+    .menu-week {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .menu-day {
+      background: var(--white);
+      border: 1px solid rgba(201,168,76,.15);
+      border-radius: 2px;
+      padding: 20px;
+    }
+    .menu-day__label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .menu-day__text {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--dark);
+      white-space: pre-line;
+    }
+    .menu-notes {
+      background: var(--surface, #F2EFE9);
+      border-radius: 2px;
+      padding: 16px 20px;
+      margin: 16px 0 24px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--muted);
+      white-space: pre-line;
+    }
+    .menu-meta {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+      <div class="portal-header">
+        <h1 class="portal-header__title">Speisekarte</h1>
+        <p class="portal-header__subtitle" th:text="${menu.weekStart} + ' bis ' + ${menu.weekEnd}">Woche</p>
+        <div class="portal-header__actions">
+          <a th:href="@{/portal/admin/newsletter}" class="btn btn--outline">Zurück</a>
+        </div>
+      </div>
+
+      <div class="menu-meta">
+        <span>Erstellt: <span th:text="${menu.createdAt}">-</span></span>
+        <span th:if="${menu.sent}" style="margin-left:16px;">
+          Versendet: <span th:text="${menu.sentAt}">-</span>
+        </span>
+        <span style="margin-left:16px;">
+          Status:
+          <span th:if="${menu.sent}" class="status-badge status-badge--BESTAETIGT">Versendet</span>
+          <span th:unless="${menu.sent}" class="status-badge status-badge--ANFRAGE">Nicht versendet</span>
+        </span>
+      </div>
+
+      <div class="menu-week">
+        <div class="menu-day">
+          <div class="menu-day__label">Montag</div>
+          <div class="menu-day__text" th:text="${menu.monday != null ? menu.monday : '-'}">-</div>
+        </div>
+        <div class="menu-day">
+          <div class="menu-day__label">Dienstag</div>
+          <div class="menu-day__text" th:text="${menu.tuesday != null ? menu.tuesday : '-'}">-</div>
+        </div>
+        <div class="menu-day">
+          <div class="menu-day__label">Mittwoch</div>
+          <div class="menu-day__text" th:text="${menu.wednesday != null ? menu.wednesday : '-'}">-</div>
+        </div>
+        <div class="menu-day">
+          <div class="menu-day__label">Donnerstag</div>
+          <div class="menu-day__text" th:text="${menu.thursday != null ? menu.thursday : '-'}">-</div>
+        </div>
+        <div class="menu-day">
+          <div class="menu-day__label">Freitag</div>
+          <div class="menu-day__text" th:text="${menu.friday != null ? menu.friday : '-'}">-</div>
+        </div>
+      </div>
+
+      <div th:if="${menu.notes != null and !menu.notes.isEmpty()}" class="menu-notes">
+        <strong>Hinweise:</strong><br>
+        <span th:text="${menu.notes}"></span>
+      </div>
+
+      <div style="display:flex; gap:12px;">
+        <form th:unless="${menu.sent}" th:action="@{/portal/admin/newsletter/speisekarte/{id}/senden(id=${menu.id})}" method="post" style="display:inline;">
+          <button type="submit" class="btn btn--gold" onclick="return confirm('Newsletter jetzt an alle aktiven Abonnenten versenden?')">Newsletter versenden</button>
+        </form>
+        <a th:href="@{/portal/admin/newsletter/speisekarte/{id}(id=${menu.id})}" th:unless="${menu.sent}" class="btn btn--outline"
+           onclick="this.href=this.href.replace(/speisekarte\/(\d+)$/, 'speisekarte/$1'); var f=document.createElement('form'); f.method='get'; f.action=this.getAttribute('th:href'); return true;">Bearbeiten</a>
+      </div>
+    </div>
+  </div>
+
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

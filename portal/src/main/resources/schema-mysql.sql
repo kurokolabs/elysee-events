@@ -126,3 +126,27 @@ CREATE TABLE IF NOT EXISTS documents (
     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE,
     FOREIGN KEY (booking_id) REFERENCES bookings(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    email       VARCHAR(255) NOT NULL UNIQUE,
+    name        VARCHAR(200),
+    active      TINYINT(1) NOT NULL DEFAULT 1,
+    token       VARCHAR(64) NOT NULL,
+    created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS weekly_menus (
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    week_start  DATE NOT NULL,
+    week_end    DATE NOT NULL,
+    monday      TEXT,
+    tuesday     TEXT,
+    wednesday   TEXT,
+    thursday    TEXT,
+    friday      TEXT,
+    notes       TEXT,
+    sent        TINYINT(1) NOT NULL DEFAULT 0,
+    sent_at     DATETIME,
+    created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
