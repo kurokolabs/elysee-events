@@ -9,9 +9,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableScheduling
 public class WebConfig implements WebMvcConfigurer {
 
+    @org.springframework.beans.factory.annotation.Value("${app.website.path:../elysee-events/}")
+    private String websitePath;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Portal assets (höchste Priorität)
+        // Portal assets
         registry.addResourceHandler("/portal/css/**")
                 .addResourceLocations("classpath:/static/portal/css/");
         registry.addResourceHandler("/portal/js/**")
@@ -21,12 +24,12 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/portal/img/**")
                 .addResourceLocations("classpath:/static/portal/img/");
 
-        // Statische Website — nur konkrete Dateitypen, nicht /portal/
+        String base = websitePath.endsWith("/") ? "file:" + websitePath : "file:" + websitePath + "/";
         registry.addResourceHandler("/*.html", "/*.svg", "/*.json", "/*.txt", "/*.xml")
-                .addResourceLocations("file:../elysee-events/");
+                .addResourceLocations(base);
         registry.addResourceHandler("/css/**")
-                .addResourceLocations("file:../elysee-events/css/");
+                .addResourceLocations(base + "css/");
         registry.addResourceHandler("/img/**")
-                .addResourceLocations("file:../elysee-events/img/");
+                .addResourceLocations(base + "img/");
     }
 }

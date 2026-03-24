@@ -39,6 +39,7 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       UPLOAD_PATH: /app/uploads
+      WEBSITE_PATH: /app/elysee-events/
       LOG_PATH: /app/logs/portal.log
       COMPANY_NAME: ${COMPANY_NAME:-Elysee Event GmbH}
       COMPANY_STREET: ${COMPANY_STREET:-Werner-von-Siemensstrasse 6}
