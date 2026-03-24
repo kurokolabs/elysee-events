@@ -111,7 +111,7 @@
 
     /* ─── Cursor ───────────────────────────────────────────────────────────── */
     .cursor-dot {
-      position: fixed; width: 8px; height: 8px;
+      position: fixed; left: 0; top: 0; width: 8px; height: 8px;
       background: #fff; border-radius: 50%;
       pointer-events: none; z-index: 10001;
       mix-blend-mode: difference;
@@ -120,7 +120,7 @@
       will-change: transform;
     }
     .cursor-ring {
-      position: fixed; width: 36px; height: 36px;
+      position: fixed; left: 0; top: 0; width: 36px; height: 36px;
       border: 1.5px solid #fff; border-radius: 50%;
       pointer-events: none; z-index: 10000;
       mix-blend-mode: difference;
@@ -2283,10 +2283,10 @@ section:not(.hero):not(:first-of-type) {
     document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
 
     (function raf() {
-      rx += (mx - rx) * 0.10;
-      ry += (my - ry) * 0.10;
-      dot.style.left  = mx + 'px'; dot.style.top  = my + 'px';
-      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      rx += (mx - rx) * 0.15;
+      ry += (my - ry) * 0.15;
+      dot.style.transform  = 'translate(' + mx + 'px,' + my + 'px) translate(-50%,-50%)';
+      ring.style.transform = 'translate(' + rx + 'px,' + ry + 'px) translate(-50%,-50%)';
       requestAnimationFrame(raf);
     })();
 
