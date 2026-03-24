@@ -952,7 +952,7 @@ a:hover { color: var(--gold-dark); }
   .wizard-cards { grid-template-columns:1fr 1fr; }
   .wizard-cards--4col { grid-template-columns:1fr 1fr; }
   .wizard-step { padding:0 16px; }
-  .admin-sidebar.is-open { display: block; position: fixed; top: 72px; bottom: 0; z-index: 999; }
+  .admin-sidebar.is-open { display: block; position: fixed; top: 72px; bottom: 0; z-index: 999; overflow-y: auto; max-height: calc(100vh - 72px); }
 
   /* Kalender: scrollbar auf Mobile */
   .cal-grid { grid-template-columns: repeat(7, minmax(42px, 1fr)); overflow-x: auto; }
@@ -976,8 +976,14 @@ a:hover { color: var(--gold-dark); }
   .twofa-code-inputs input { width: 40px; height: 48px; font-size: 22px; }
 
   /* Data Tables: kleinere Schrift + Textumbruch */
-  .data-table th { font-size: 8px; padding: 10px 8px; letter-spacing: .08em; word-break: break-word; overflow-wrap: break-word; }
-  .data-table td { padding: 10px 8px; font-size: 12px; word-break: break-word; overflow-wrap: break-word; }
+  .data-table th { font-size: 10px; padding: 12px 10px; letter-spacing: .08em; word-break: break-word; overflow-wrap: break-word; }
+  .data-table td { padding: 12px 10px; font-size: 13px; word-break: break-word; overflow-wrap: break-word; }
+
+  /* Detail card padding */
+  .detail-card { padding: 20px; }
+
+  /* Portal nav logo */
+  .portal-nav__logo-img { height: 32px; }
 
   /* Preview Actions */
   .preview-actions { flex-direction: column; }
@@ -1045,7 +1051,7 @@ a:hover { color: var(--gold-dark); }
 
 @media (max-width: 480px) {
   .stat-cards { grid-template-columns: 1fr; }
-  .login-card { padding: 32px 24px; }
+  .login-card { padding: 24px 20px; }
   .twofa-code-inputs input { width: 36px; height: 44px; font-size: 20px; }
   .twofa-code-inputs { gap: 4px; }
   .inv { padding: 16px !important; }
