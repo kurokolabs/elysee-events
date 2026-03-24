@@ -47,7 +47,7 @@
       --gold:        #C9A84C;
       --gold-dark:   #9A7A2E;
       --gold-subtle: rgba(201,168,76,.15);
-      --bg:          #FAFAF8;
+      --bg:          #0a0804;
       --surface:     #F2EFE9;
       --dark:        #1A1A1A;
       --muted:       #6B6560;
@@ -594,7 +594,7 @@
     .kap-card {
       border: 1px solid rgba(26,26,26,.12);
       padding: 40px 32px 36px;
-      background: var(--bg);
+      background: #FAFAF8;
       transition: border-color .3s ease, transform .3s var(--ease-out), opacity .75s cubic-bezier(.22,1,.36,1);
     }
     .kap-card:hover { border-color: var(--gold); transform: translateY(-4px); }
@@ -803,7 +803,7 @@
     }
 
     /* ─── Standort ─────────────────────────────────────────────────────────── */
-    .standort { background: var(--bg); padding: 108px 48px; }
+    .standort { background: #FAFAF8; padding: 108px 48px; }
 
     .standort__inner {
       max-width: 1200px; margin: 0 auto;
@@ -2229,10 +2229,10 @@ section:not(.hero):not(:first-of-type) {
     window.addEventListener('scroll', () => {
       if (window.scrollY > 40) {
         nav.style.boxShadow = '0 2px 32px rgba(0,0,0,.08)';
-        nav.style.background = 'rgba(250,250,248,.95)';
+        nav.style.background = 'rgba(10,8,4,.97)';
       } else {
         nav.style.boxShadow = 'none';
-        nav.style.background = 'rgba(250,250,248,.82)';
+        nav.style.background = 'rgba(10,8,4,.94)';
       }
     }, { passive: true });
 
