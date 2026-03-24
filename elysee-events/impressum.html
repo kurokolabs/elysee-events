@@ -52,7 +52,7 @@
       --ease-in-out: cubic-bezier(0.65,0,0.35,1);
     }
 
-    html { scroll-behavior: smooth; scrollbar-width: none; }
+    html { scroll-behavior: smooth; scrollbar-width: none; overflow-x: hidden; }
     html::-webkit-scrollbar { display: none; }
 
     body {
@@ -60,6 +60,7 @@
       background: var(--bg);
       color: var(--dark);
       overflow-x: hidden;
+      max-width: 100vw;
     }
     @media (pointer: fine) {
       body { cursor: none; }
@@ -520,7 +521,7 @@ section:not(.hero):not(:first-of-type) {
       <h2>Kontakt</h2>
       <p>
         Telefon: +49 176 30472811<br />
-        E-Mail: info@elysee-events.de<br />
+        E-Mail: <a href="mailto:verwaltung@elysee-events.de">verwaltung@elysee-events.de</a><br />
         Web: www.elysee-events.de
       </p>
 
@@ -572,6 +573,13 @@ section:not(.hero):not(:first-of-type) {
               <li><a href="/impressum" class="active">Impressum</a></li>
               <li><a href="/datenschutz">Datenschutz</a></li>
               <li><a href="/agb">AGB</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Kontakt</h4>
+            <ul>
+              <li><a href="mailto:verwaltung@elysee-events.de">verwaltung@elysee-events.de</a></li>
+              <li><a href="tel:+4917630472811">+49 176 30472811</a></li>
             </ul>
           </div>
         </nav>
