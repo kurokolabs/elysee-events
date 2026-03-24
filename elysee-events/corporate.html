@@ -530,7 +530,7 @@
       }
       .hero__left::after { display: none; }
       .hero__subtitle { max-width: 100%; }
-      .hero__scroll { right: 20px; bottom: 100px; }
+      .hero__scroll, .hero-scroll { display: none; }
     }
 
     /* ─── Buttons ───────────────────────────────────────────────────────────── */
@@ -1175,6 +1175,9 @@
       }
       @keyframes heroBgParallax { to { transform: translateY(25%) scale(1.06); } }
     }
+    @media (max-width: 768px) {
+      .hero__bg, .hero-bg { animation: none !important; }
+    }
 
   /* ── BOOKING OVERLAY ─────────────────────────────────────────────── */
   #bookingOverlay {
@@ -1657,8 +1660,9 @@ section:not(.hero):not(:first-of-type) {
 
 /* Booking overlay mobile fixes */
 @media (max-width: 768px) {
-  .bk__body { padding: 0 16px 48px; }
-  .bk__close { top: 16px; right: 16px; }
+  .bk__body { padding: 0 16px 48px; min-height: auto; }
+  .bk__close { top: 16px; right: 16px; top: max(16px, env(safe-area-inset-top, 16px)); right: max(16px, env(safe-area-inset-right, 16px)); }
+  .bk__step-title { font-size: clamp(1.2rem, 3.5vw, 2.4rem); }
   .bk__input, .bk__select, .bk__body input, .bk__body select, .bk__body textarea { width: 100%; box-sizing: border-box; }
 }
 
@@ -2357,6 +2361,7 @@ section:not(.hero):not(:first-of-type) {
 
     // Hero Parallax
     (function(){
+      if (!window.matchMedia('(hover: hover)').matches) return;
       var heroBg = document.querySelector('.hero__bg, .hero-bg, .hero__background');
       if(!heroBg) return;
       window.addEventListener('scroll', function(){

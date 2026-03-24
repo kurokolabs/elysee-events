@@ -1103,6 +1103,8 @@
     @media (max-width: 768px) {
       /* nav handled by 900px breakpoint above */
 
+      .hero-scroll, .hero__scroll { display: none; }
+
       .section { padding: 72px 24px; }
       .cta-section { padding: 72px 24px; }
 
@@ -1336,6 +1338,9 @@
         animation-range-end: cover 60%;
       }
       @keyframes heroBgParallax { to { transform: translateY(25%) scale(1.06); } }
+    }
+    @media (max-width: 768px) {
+      .hero__bg, .hero-bg { animation: none !important; }
     }
 
   /* ── BOOKING OVERLAY ─────────────────────────────────────────────── */
@@ -1819,8 +1824,9 @@ section:not(.hero):not(:first-of-type) {
 
 /* Booking overlay mobile fixes */
 @media (max-width: 768px) {
-  .bk__body { padding: 0 16px 48px; }
-  .bk__close { top: 16px; right: 16px; }
+  .bk__body { padding: 0 16px 48px; min-height: auto; }
+  .bk__close { top: 16px; right: 16px; top: max(16px, env(safe-area-inset-top, 16px)); right: max(16px, env(safe-area-inset-right, 16px)); }
+  .bk__step-title { font-size: clamp(1.2rem, 3.5vw, 2.4rem); }
   .bk__input, .bk__select, .bk__body input, .bk__body select, .bk__body textarea { width: 100%; box-sizing: border-box; }
 }
 
@@ -2597,6 +2603,7 @@ section:not(.hero):not(:first-of-type) {
 
     // Canvas Particle System — soft gold floating particles
     (function(){
+      if (window.matchMedia('(hover: none)').matches) return;
       var canvas = document.getElementById('heroParticles');
       if(!canvas) return;
       var ctx = canvas.getContext('2d');
@@ -2664,9 +2671,11 @@ section:not(.hero):not(:first-of-type) {
         });
       }
 
-      window.addEventListener('scroll', function(){
-        scrollOff = window.scrollY * 0.28;
-      }, { passive: true });
+      if(window.matchMedia('(hover: hover)').matches){
+        window.addEventListener('scroll', function(){
+          scrollOff = window.scrollY * 0.28;
+        }, { passive: true });
+      }
 
       (function tick(){
         var elapsed = Date.now() - startTime;

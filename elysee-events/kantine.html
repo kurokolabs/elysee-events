@@ -467,7 +467,8 @@
     .nav__hamburger, .nav__burger {
       display:none;
       background:none; border:none; cursor:pointer;
-      padding:8px;
+      padding:12px;
+      min-width:44px; min-height:44px;
       border-radius:50%;
       transition: background .25s ease;
       position:relative; z-index:1;
@@ -1412,10 +1413,20 @@
       transform: rotate(45deg);
     }
 
+    /* Intermediate breakpoint for pakete grid */
+    @media (max-width: 900px) {
+      .pakete__grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     /* =========================================================
        RESPONSIVE — 768px
     ========================================================= */
     @media (max-width: 768px) {
+      .hero__scroll { display: none; }
+      .hero__content { padding: 32px 24px; }
+
       .section {
         padding: 72px 24px;
       }
@@ -1433,6 +1444,10 @@
       .pakete__grid {
         grid-template-columns: 1fr;
         gap: 20px;
+      }
+
+      .paket-card {
+        padding: 28px 20px;
       }
 
       .partner__grid {
@@ -1780,7 +1795,7 @@
   .bk__step.is-active { display: flex; }
   @keyframes bkStepIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
   .bk__step-title {
-    font-family: 'Cormorant Garamond', serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    font-family: 'Cormorant Garamond', serif; font-size: clamp(1.2rem, 4vw, 2.4rem);
     font-weight: 300; letter-spacing: .04em; color: #fff;
     text-align: center; margin-bottom: .3em;
   }
@@ -1982,8 +1997,7 @@
   }
   @keyframes bkDivIn { from { width:0; } to { width:40px; } }
 
-  @media (max-width: 600px) {
-    .bk__field-row { grid-template-columns: 1fr; }
+  @media (max-width: 768px) {
     .bk__cards { grid-template-columns: 1fr; }
     .bk__cards--4col { grid-template-columns: 1fr 1fr; }
   }
@@ -2143,8 +2157,10 @@ section:not(.hero):not(:first-of-type) {
 /* Booking overlay mobile fixes */
 @media (max-width: 768px) {
   .bk__body { padding: 0 16px 48px; }
-  .bk__close { top: 16px; right: 16px; }
+  .bk__close { top: max(16px, env(safe-area-inset-top, 16px)); right: max(16px, env(safe-area-inset-right, 16px)); }
   .bk__input, .bk__select, .bk__body input, .bk__body select, .bk__body textarea { width: 100%; box-sizing: border-box; }
+  .bk__cal-day { min-height: 44px; padding: 4px; font-size: 10px; }
+  .bk__field-row { grid-template-columns: 1fr; }
 }
 
   </style>
@@ -2729,9 +2745,9 @@ section:not(.hero):not(:first-of-type) {
         <input type="hidden" name="_subject" value="Newsletter-Anmeldung">
         <input type="hidden" name="_template" value="table">
         <label for="nl-name" class="sr-only">Ihr Name</label>
-        <input type="text" id="nl-name" name="name" placeholder="Ihr Name" autocomplete="name" aria-label="Ihr Name" style="flex:1; padding:14px 16px; font-family:'DM Sans',sans-serif; font-size:14px; background:rgba(255,255,255,.06); border:1px solid rgba(201,168,76,.3); border-radius:2px; color:#fff; outline:none;">
+        <input type="text" id="nl-name" name="name" placeholder="Ihr Name" autocomplete="name" aria-label="Ihr Name" style="flex:1; padding:14px 16px; font-family:'DM Sans',sans-serif; font-size:16px; background:rgba(255,255,255,.06); border:1px solid rgba(201,168,76,.3); border-radius:2px; color:#fff; outline:none;">
         <label for="nl-email" class="sr-only">E-Mail-Adresse</label>
-        <input type="email" id="nl-email" name="email" placeholder="ihre@email.de" required autocomplete="email" aria-label="E-Mail-Adresse" style="flex:1.5; padding:14px 16px; font-family:'DM Sans',sans-serif; font-size:14px; background:rgba(255,255,255,.06); border:1px solid rgba(201,168,76,.3); border-radius:2px; color:#fff; outline:none;">
+        <input type="email" id="nl-email" name="email" placeholder="ihre@email.de" required autocomplete="email" aria-label="E-Mail-Adresse" style="flex:1.5; padding:14px 16px; font-family:'DM Sans',sans-serif; font-size:16px; background:rgba(255,255,255,.06); border:1px solid rgba(201,168,76,.3); border-radius:2px; color:#fff; outline:none;">
         <button type="submit" style="padding:14px 28px; background:var(--gold); color:#0a0a0a; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; border:none; border-radius:2px; cursor:pointer; white-space:nowrap; transition:background .25s ease;">Anmelden</button>
       </form>
       <p style="font-size:11px; color:rgba(255,255,255,.45); margin-top:14px;">
@@ -3082,7 +3098,9 @@ section:not(.hero):not(:first-of-type) {
         });
       }
 
-      window.addEventListener('scroll', function(){ scrollOff = window.scrollY * 0.28; }, { passive: true });
+      if (window.matchMedia('(hover: hover)').matches) {
+        window.addEventListener('scroll', function(){ scrollOff = window.scrollY * 0.28; }, { passive: true });
+      }
 
       (function tick(){
         var elapsed = Date.now() - startTime;
