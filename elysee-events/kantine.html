@@ -16,14 +16,14 @@
   <!-- SEO -->
   <meta name="description" content="Tägliches Mittagessen für Firmen im Sigma-Techno Park Augsburg. Saisonale Küche, Büro-Catering & Event-Catering. Mo–Fr 08–14 Uhr. Jetzt Wochenkarte entdecken." />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://www.elysee-events.de/kantine.html" />
+  <link rel="canonical" href="https://www.elysee-events.de/kantine" />
   <link rel="sitemap" href="https://www.elysee-events.de/sitemap.xml" type="application/xml" />
-  <link rel="alternate" hreflang="de" href="https://www.elysee-events.de/kantine.html" />
-  <link rel="alternate" hreflang="x-default" href="https://www.elysee-events.de/kantine.html" />
+  <link rel="alternate" hreflang="de" href="https://www.elysee-events.de/kantine" />
+  <link rel="alternate" hreflang="x-default" href="https://www.elysee-events.de/kantine" />
   <!-- Open Graph -->
   <meta property="og:site_name" content="Élysée Events Augsburg">
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.elysee-events.de/kantine.html">
+  <meta property="og:url" content="https://www.elysee-events.de/kantine">
   <meta property="og:title" content="Mittagessen Augsburg — Betriebskantine & Catering · Élysée Events">
   <meta property="og:description" content="Tägliches Mittagessen für Firmen im Sigma-Techno Park Augsburg. Saisonale Küche, Büro-Catering & Event-Catering. Mo–Fr 08–14 Uhr. Jetzt Wochenkarte entdecken.">
   <meta property="og:image" content="https://www.elysee-events.de/img/elysee-og-card.jpg">
@@ -40,8 +40,11 @@
   <meta http-equiv="content-language" content="de">
 
   <!-- Fonts -->
+  <link rel="preconnect" href="https://formsubmit.co">
   <link rel="dns-prefetch" href="https://formsubmit.co">
   <link rel="stylesheet" href="css/fonts.css">
+  <link rel="preload" as="font" href="css/fonts/dm-sans-latin.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="css/fonts/cormorant-garamond-latin.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="image" href="img/kantine-hero-bg.jpg" fetchpriority="high">
 
   <style>
@@ -2235,16 +2238,16 @@ section:not(.hero):not(:first-of-type) {
 
   <div class="nav__mobile-overlay" id="navOverlay" aria-hidden="true"></div>
   <nav class="nav__mobile" id="mobileNav" aria-label="Mobile Navigation">
-    <a href="kantine.html" aria-current="page">Die Kantine</a>
-    <a href="hochzeit.html">Hochzeiten</a>
-    <a href="corporate.html">Corporate</a>
+    <a href="/kantine" aria-current="page">Die Kantine</a>
+    <a href="/hochzeit">Hochzeiten</a>
+    <a href="/corporate">Corporate</a>
     <a href="/portal/login">Kundenportal</a>
     <a href="javascript:void(0)" data-anfrage-open class="nav__drawer-cta">Kostenlos anfragen</a>
   </nav>
 
   <header class="nav" id="mainNav" role="banner">
     <div class="nav__inner">
-      <a href="elysee-events.html" class="nav__logo" aria-label="Elysee Events -- Zur Startseite">
+      <a href="/" class="nav__logo" aria-label="Elysee Events -- Zur Startseite">
         <svg class="nav__logo-mark" viewBox="0 0 42 42" fill="none"><rect x=".5" y=".5" width="41" height="41" rx="8" stroke="rgba(201,168,76,.4)" stroke-width="1"/><text x="50%" y="54%" text-anchor="middle" dominant-baseline="central" font-family="'Cormorant Garamond',serif" font-size="15" font-weight="600" font-style="italic" fill="#C9A84C">EE</text></svg>
         <div class="nav__brand">
           <span class="nav__brandname">Elysee Events</span>
@@ -2252,9 +2255,9 @@ section:not(.hero):not(:first-of-type) {
         </div>
       </a>
       <nav class="nav__links" aria-label="Hauptnavigation">
-        <a href="kantine.html" aria-current="page">Die Kantine</a>
-        <a href="hochzeit.html">Hochzeiten</a>
-        <a href="corporate.html">Corporate</a>
+        <a href="/kantine" aria-current="page">Die Kantine</a>
+        <a href="/hochzeit">Hochzeiten</a>
+        <a href="/corporate">Corporate</a>
       </nav>
       <div class="nav__actions">
         <a href="/portal/login" class="nav__portal-btn">Kundenportal</a>
@@ -2691,11 +2694,11 @@ section:not(.hero):not(:first-of-type) {
     <div class="cross-links__inner">
       <h2 class="cross-links__heading" data-reveal>Entdecken Sie mehr</h2>
       <div class="cross-links__grid">
-        <a href="hochzeit.html" class="cross-links__card" data-reveal data-delay="1">
+        <a href="/hochzeit" class="cross-links__card" data-reveal data-delay="1">
           <span class="cross-links__card-label">Hochzeiten</span>
           <span class="cross-links__card-arrow">&rarr;</span>
         </a>
-        <a href="corporate.html" class="cross-links__card" data-reveal data-delay="2">
+        <a href="/corporate" class="cross-links__card" data-reveal data-delay="2">
           <span class="cross-links__card-label">Corporate Events</span>
           <span class="cross-links__card-arrow">&rarr;</span>
         </a>
@@ -2723,7 +2726,7 @@ section:not(.hero):not(:first-of-type) {
         <button type="submit" style="padding:14px 28px; background:var(--gold); color:#0a0a0a; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; border:none; border-radius:2px; cursor:pointer; white-space:nowrap; transition:background .25s ease;">Anmelden</button>
       </form>
       <p style="font-size:11px; color:rgba(255,255,255,.45); margin-top:14px;">
-        Kein Spam -- nur die Speisekarte. <a href="datenschutz.html" style="color:rgba(201,168,76,.7);">Datenschutzerklärung</a>
+        Kein Spam -- nur die Speisekarte. <a href="/datenschutz" style="color:rgba(201,168,76,.7);">Datenschutzerklärung</a>
       </p>
     </div>
   </section>
@@ -2746,9 +2749,9 @@ section:not(.hero):not(:first-of-type) {
         <div class="footer__col">
           <div class="footer__col-title">Navigation</div>
           <ul>
-            <li><a href="kantine.html">Die Kantine</a></li>
-            <li><a href="hochzeit.html">Hochzeiten</a></li>
-            <li><a href="corporate.html">Corporate</a></li>
+            <li><a href="/kantine">Die Kantine</a></li>
+            <li><a href="/hochzeit">Hochzeiten</a></li>
+            <li><a href="/corporate">Corporate</a></li>
             <li><a href="javascript:void(0)" data-anfrage-open>Buchung anfragen</a></li>
           </ul>
         </div>
@@ -2757,10 +2760,10 @@ section:not(.hero):not(:first-of-type) {
         <div class="footer__col">
           <div class="footer__col-title">Services</div>
           <ul>
-            <li><a href="kantine.html">Mittagskantine</a></li>
-            <li><a href="kantine.html#catering">Büro-Catering</a></li>
-            <li><a href="kantine.html#catering">Event-Catering</a></li>
-            <li><a href="hochzeit.html">Hochzeits-Events</a></li>
+            <li><a href="/kantine">Mittagskantine</a></li>
+            <li><a href="/kantine#catering">Büro-Catering</a></li>
+            <li><a href="/kantine#catering">Event-Catering</a></li>
+            <li><a href="/hochzeit">Hochzeits-Events</a></li>
           </ul>
         </div>
 
@@ -2785,9 +2788,9 @@ section:not(.hero):not(:first-of-type) {
       <div class="footer__bottom">
         <p class="footer__copy">&copy; 2026 Élysée Events. Alle Rechte vorbehalten.</p>
         <nav class="footer__legal" aria-label="Rechtliche Links">
-          <a href="impressum.html">Impressum</a>
-          <a href="datenschutz.html">Datenschutz</a>
-          <a href="agb.html">AGB</a>
+          <a href="/impressum">Impressum</a>
+          <a href="/datenschutz">Datenschutz</a>
+          <a href="/agb">AGB</a>
         </nav>
       </div>
       <div class="footer__social">
@@ -4135,14 +4138,14 @@ section:not(.hero):not(:first-of-type) {
   "@graph": [
     {
       "@type": ["FoodEstablishment", "Restaurant"],
-      "@id": "https://www.elysee-events.de/kantine.html#kantine",
+      "@id": "https://www.elysee-events.de/kantine#kantine",
       "name": "Élysée Events — Mittagskantine",
       "description": "Tägliches Mittagessen für Firmen und Mitarbeiter im Sigma-Techno Park Augsburg. Saisonale frische Küche, wechselnde Menüs, Büro- und Event-Catering.",
-      "url": "https://www.elysee-events.de/kantine.html",
+      "url": "https://www.elysee-events.de/kantine",
       "email": "info@elysee-events.de",
       "priceRange": "€€",
       "servesCuisine": ["German", "International"],
-      "menu": "https://www.elysee-events.de/kantine.html#wochenkarte",
+      "menu": "https://www.elysee-events.de/kantine#wochenkarte",
       "openingHoursSpecification": [
         {
           "@type": "OpeningHoursSpecification",
@@ -4163,8 +4166,8 @@ section:not(.hero):not(:first-of-type) {
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://www.elysee-events.de/elysee-events.html"},
-        {"@type": "ListItem", "position": 2, "name": "Mittagskantine", "item": "https://www.elysee-events.de/kantine.html"}
+        {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://www.elysee-events.de/"},
+        {"@type": "ListItem", "position": 2, "name": "Mittagskantine", "item": "https://www.elysee-events.de/kantine"}
       ]
     }
   ]

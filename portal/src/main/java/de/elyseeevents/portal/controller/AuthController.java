@@ -34,11 +34,6 @@ public class AuthController {
         this.emailService = emailService;
     }
 
-    @GetMapping("/")
-    public String home() {
-        return "redirect:/elysee-events.html";
-    }
-
     @GetMapping("/portal/login")
     public String loginPage(jakarta.servlet.http.HttpServletResponse response,
                            org.springframework.security.core.Authentication authentication) {

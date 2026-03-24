@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /agb.html
-Disallow: /datenschutz.html
-Disallow: /impressum.html
+Disallow: /portal/
+Disallow: /actuator/
+
 Sitemap: https://www.elysee-events.de/sitemap.xml

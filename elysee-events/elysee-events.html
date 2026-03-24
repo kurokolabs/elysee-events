@@ -11,11 +11,11 @@
   <title>Eventsaal Augsburg — Élysée Events im Sigma-Techno Park</title>
   <meta name="description" content="Exklusiver Eventsaal in Augsburg für Hochzeiten, Corporate Events & Firmenessen. Bis zu 300 Gäste. Im Sigma-Techno Park. Jetzt anfragen." />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://www.elysee-events.de/elysee-events.html" />
+  <link rel="canonical" href="https://www.elysee-events.de/" />
   <!-- Open Graph -->
   <meta property="og:site_name" content="Élysée Events Augsburg">
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.elysee-events.de/elysee-events.html">
+  <meta property="og:url" content="https://www.elysee-events.de/">
   <meta property="og:title" content="Eventsaal Augsburg — Élysée Events im Sigma-Techno Park">
   <meta property="og:description" content="Exklusiver Eventsaal in Augsburg für Hochzeiten, Corporate Events & Firmenessen. Bis zu 300 Gäste. Im Sigma-Techno Park. Jetzt anfragen.">
   <meta property="og:image" content="https://www.elysee-events.de/img/elysee-og-card.jpg">
@@ -30,8 +30,12 @@
   <meta name="twitter:image" content="https://www.elysee-events.de/img/elysee-og-card.jpg">
   <!-- hreflang -->
   <meta http-equiv="content-language" content="de">
+  <link rel="preconnect" href="https://formsubmit.co">
   <link rel="dns-prefetch" href="https://formsubmit.co">
   <link rel="stylesheet" href="css/fonts.css">
+  <link rel="preload" as="font" href="css/fonts/dm-sans-latin.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="css/fonts/cormorant-garamond-latin.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="image" href="img/main-hero-bg.jpg" fetchpriority="high">
 
   <style>
     /* ─── Reset & Base ─────────────────────────────────────────────────────── */
@@ -1700,9 +1704,9 @@ section:not(.hero):not(:first-of-type) {
   <div class="nav__drawer-overlay" id="drawerOverlay"></div>
   <div class="nav__drawer" id="navDrawer">
     <ul class="nav__drawer-links">
-      <li><a href="kantine.html">Die Kantine</a></li>
-      <li><a href="hochzeit.html">Hochzeiten</a></li>
-      <li><a href="corporate.html">Corporate</a></li>
+      <li><a href="/kantine">Die Kantine</a></li>
+      <li><a href="/hochzeit">Hochzeiten</a></li>
+      <li><a href="/corporate">Corporate</a></li>
       <li><a href="#standort">Standort</a></li>
     </ul>
     <a href="#buchung" class="nav__drawer-cta">Kostenlos anfragen</a>
@@ -1710,17 +1714,17 @@ section:not(.hero):not(:first-of-type) {
 
   <nav class="nav">
     <div class="nav__inner">
-      <a href="/elysee-events.html" class="nav__logo">
-        <img src="img/elysee-logo.jpg" alt="Élysée Events">
+      <a href="/" class="nav__logo">
+        <img src="img/elysee-logo.jpg" alt="Élysée Events" fetchpriority="high">
         <div class="nav__brand">
           <span class="nav__brandname">Élysée Events</span>
           <span class="nav__brandtag">Catering &amp; Events</span>
         </div>
       </a>
       <ul class="nav__links">
-        <li><a href="kantine.html">Die Kantine</a></li>
-        <li><a href="hochzeit.html">Hochzeiten</a></li>
-        <li><a href="corporate.html">Corporate</a></li>
+        <li><a href="/kantine">Die Kantine</a></li>
+        <li><a href="/hochzeit">Hochzeiten</a></li>
+        <li><a href="/corporate">Corporate</a></li>
       </ul>
       <div class="nav__actions">
         <a href="/portal/login" class="nav__portal-btn">Kundenportal</a>
@@ -1784,7 +1788,7 @@ section:not(.hero):not(:first-of-type) {
         <div class="card__content">
           <span class="card__label">Mo – Fr · Frühstück ab 08:00 · Kantine 11:00 – 14:00</span>
           <h3 class="card__title">Die Kantine</h3>
-          <a href="kantine.html" class="card__cta">Mehr erfahren</a>
+          <a href="/kantine" class="card__cta">Mehr erfahren</a>
         </div>
       </article>
 
@@ -1794,7 +1798,7 @@ section:not(.hero):not(:first-of-type) {
         <div class="card__content">
           <span class="card__label">Hochzeits-Location · bis 150 Gäste</span>
           <h3 class="card__title">Hochzeiten</h3>
-          <a href="hochzeit.html" class="card__cta">Mehr erfahren</a>
+          <a href="/hochzeit" class="card__cta">Mehr erfahren</a>
         </div>
       </article>
 
@@ -1804,7 +1808,7 @@ section:not(.hero):not(:first-of-type) {
         <div class="card__content">
           <span class="card__label">Firmenevents & Konferenzen · bis 300 Gäste</span>
           <h3 class="card__title">Corporate Events</h3>
-          <a href="corporate.html" class="card__cta">Mehr erfahren</a>
+          <a href="/corporate" class="card__cta">Mehr erfahren</a>
         </div>
       </article>
     </div>
@@ -1937,18 +1941,18 @@ section:not(.hero):not(:first-of-type) {
       <div>
         <p class="footer__col-title">Navigation</p>
         <nav class="footer__links">
-          <a href="kantine.html">Die Kantine</a>
-          <a href="hochzeit.html">Hochzeiten</a>
-          <a href="corporate.html">Corporate Events</a>
+          <a href="/kantine">Die Kantine</a>
+          <a href="/hochzeit">Hochzeiten</a>
+          <a href="/corporate">Corporate Events</a>
           <a href="#buchung">Buchung</a>
         </nav>
       </div>
       <div>
         <p class="footer__col-title">Rechtliches</p>
         <nav class="footer__links">
-          <a href="impressum.html">Impressum</a>
-          <a href="datenschutz.html">Datenschutz</a>
-          <a href="agb.html">AGB</a>
+          <a href="/impressum">Impressum</a>
+          <a href="/datenschutz">Datenschutz</a>
+          <a href="/agb">AGB</a>
         </nav>
         <br>
         <p class="footer__col-title">Kontakt</p>
@@ -1961,9 +1965,9 @@ section:not(.hero):not(:first-of-type) {
     <div class="footer__bottom">
       <span>© 2026 Élysée Events. Alle Rechte vorbehalten.</span>
       <span>
-        <a href="impressum.html">Impressum</a> &nbsp;·&nbsp;
-        <a href="datenschutz.html">Datenschutz</a> &nbsp;·&nbsp;
-        <a href="agb.html">AGB</a>
+        <a href="/impressum">Impressum</a> &nbsp;·&nbsp;
+        <a href="/datenschutz">Datenschutz</a> &nbsp;·&nbsp;
+        <a href="/agb">AGB</a>
       </span>
     </div>
     <div class="footer__social">
@@ -3142,7 +3146,7 @@ section:not(.hero):not(:first-of-type) {
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://www.elysee-events.de/elysee-events.html"}
+        {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://www.elysee-events.de/"}
       ]
     }
   ]

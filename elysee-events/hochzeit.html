@@ -13,11 +13,11 @@
   <title>Hochzeitslocation Augsburg — Élysée Events ❤ Bis 150 Gäste</title>
   <meta name="description" content="Ihre Traumhochzeit in Augsburg. Exklusive Hochzeitslocation mit Full-Service-Catering für bis zu 150 Gäste. Jetzt Termin anfragen." />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://www.elysee-events.de/hochzeit.html" />
+  <link rel="canonical" href="https://www.elysee-events.de/hochzeit" />
   <!-- Open Graph -->
   <meta property="og:site_name" content="Élysée Events Augsburg">
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.elysee-events.de/hochzeit.html">
+  <meta property="og:url" content="https://www.elysee-events.de/hochzeit">
   <meta property="og:title" content="Hochzeitslocation Augsburg — Élysée Events ❤ Bis 150 Gäste">
   <meta property="og:description" content="Ihre Traumhochzeit in Augsburg. Exklusive Hochzeitslocation mit Full-Service-Catering für bis zu 150 Gäste. Jetzt Termin anfragen.">
   <meta property="og:image" content="https://www.elysee-events.de/img/elysee-og-card.jpg">
@@ -34,8 +34,12 @@
   <meta http-equiv="content-language" content="de">
 
   <!-- Fonts -->
+  <link rel="preconnect" href="https://formsubmit.co">
   <link rel="dns-prefetch" href="https://formsubmit.co">
   <link rel="stylesheet" href="css/fonts.css">
+  <link rel="preload" as="font" href="css/fonts/dm-sans-latin.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="css/fonts/cormorant-garamond-latin.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="image" href="img/hochzeit-hero-bg.jpg" fetchpriority="high">
 
   <style>
     /* ===================== DESIGN TOKENS ===================== */
@@ -1924,16 +1928,16 @@ section:not(.hero):not(:first-of-type) {
 
   <div class="nav-overlay" id="navOverlay" aria-hidden="true"></div>
   <nav class="nav-drawer" id="navDrawer" aria-label="Mobile Navigation" aria-hidden="true">
-    <a href="kantine.html">Die Kantine</a>
-    <a href="hochzeit.html" aria-current="page">Hochzeiten</a>
-    <a href="corporate.html">Corporate</a>
+    <a href="/kantine">Die Kantine</a>
+    <a href="/hochzeit" aria-current="page">Hochzeiten</a>
+    <a href="/corporate">Corporate</a>
     <a href="/portal/login">Kundenportal</a>
     <a href="javascript:void(0)" data-anfrage-open class="drawer-cta">Kostenlos anfragen</a>
   </nav>
 
   <nav class="nav" id="mainNav" role="navigation" aria-label="Hauptnavigation">
     <div class="nav__inner">
-      <a href="elysee-events.html" class="nav-logo">
+      <a href="/" class="nav-logo">
         <svg class="nav__logo-mark" viewBox="0 0 42 42" fill="none"><rect x=".5" y=".5" width="41" height="41" rx="8" stroke="rgba(201,168,76,.4)" stroke-width="1"/><text x="50%" y="54%" text-anchor="middle" dominant-baseline="central" font-family="'Cormorant Garamond',serif" font-size="15" font-weight="600" font-style="italic" fill="#C9A84C">EE</text></svg>
         <div class="nav__brand">
           <span class="nav__brandname">Élysée Events</span>
@@ -1941,9 +1945,9 @@ section:not(.hero):not(:first-of-type) {
         </div>
       </a>
       <ul class="nav-links" role="list">
-        <li><a href="kantine.html">Die Kantine</a></li>
-        <li><a href="hochzeit.html" aria-current="page">Hochzeiten</a></li>
-        <li><a href="corporate.html">Corporate</a></li>
+        <li><a href="/kantine">Die Kantine</a></li>
+        <li><a href="/hochzeit" aria-current="page">Hochzeiten</a></li>
+        <li><a href="/corporate">Corporate</a></li>
       </ul>
       <div class="nav__actions">
         <a href="/portal/login" class="nav__portal-btn">Kundenportal</a>
@@ -2301,7 +2305,7 @@ section:not(.hero):not(:first-of-type) {
             </button>
             <div class="faq-answer">
               <div class="faq-answer-inner">
-                Unsere Stornierungsbedingungen finden Sie detailliert in den <a href="agb.html" class="u-link-gold">AGB</a>. Bei unvorhergesehenen Ereignissen suchen wir gemeinsam nach einer fairen Lösung.
+                Unsere Stornierungsbedingungen finden Sie detailliert in den <a href="/agb" class="u-link-gold">AGB</a>. Bei unvorhergesehenen Ereignissen suchen wir gemeinsam nach einer fairen Lösung.
               </div>
             </div>
           </div>
@@ -2337,11 +2341,11 @@ section:not(.hero):not(:first-of-type) {
     <div class="cross-links__inner">
       <h2 class="cross-links__heading" data-reveal>Entdecken Sie mehr</h2>
       <div class="cross-links__grid">
-        <a href="corporate.html" class="cross-links__card" data-reveal data-delay="1">
+        <a href="/corporate" class="cross-links__card" data-reveal data-delay="1">
           <span class="cross-links__card-label">Corporate Events</span>
           <span class="cross-links__card-arrow">&rarr;</span>
         </a>
-        <a href="kantine.html" class="cross-links__card" data-reveal data-delay="2">
+        <a href="/kantine" class="cross-links__card" data-reveal data-delay="2">
           <span class="cross-links__card-label">Mittagskantine</span>
           <span class="cross-links__card-arrow">&rarr;</span>
         </a>
@@ -2360,18 +2364,18 @@ section:not(.hero):not(:first-of-type) {
         <div class="footer-col">
           <h4>Navigation</h4>
           <ul>
-            <li><a href="kantine.html">Die Kantine</a></li>
-            <li><a href="hochzeit.html" aria-current="page">Hochzeiten</a></li>
-            <li><a href="corporate.html">Corporate</a></li>
+            <li><a href="/kantine">Die Kantine</a></li>
+            <li><a href="/hochzeit" aria-current="page">Hochzeiten</a></li>
+            <li><a href="/corporate">Corporate</a></li>
             <li><a href="javascript:void(0)" data-anfrage-open>Anfrage stellen</a></li>
           </ul>
         </div>
         <div class="footer-col">
           <h4>Rechtliches</h4>
           <ul>
-            <li><a href="impressum.html">Impressum</a></li>
-            <li><a href="datenschutz.html">Datenschutz</a></li>
-            <li><a href="agb.html">AGB</a></li>
+            <li><a href="/impressum">Impressum</a></li>
+            <li><a href="/datenschutz">Datenschutz</a></li>
+            <li><a href="/agb">AGB</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -2385,9 +2389,9 @@ section:not(.hero):not(:first-of-type) {
       <div class="footer-bottom">
         <p class="footer-copyright">&copy; 2026 Élysée Events. Alle Rechte vorbehalten.</p>
         <nav class="footer-legal" aria-label="Rechtliche Links">
-          <a href="impressum.html">Impressum</a>
-          <a href="datenschutz.html">Datenschutz</a>
-          <a href="agb.html">AGB</a>
+          <a href="/impressum">Impressum</a>
+          <a href="/datenschutz">Datenschutz</a>
+          <a href="/agb">AGB</a>
         </nav>
       </div>
       <div class="footer__social">
@@ -3565,8 +3569,8 @@ section:not(.hero):not(:first-of-type) {
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://www.elysee-events.de/elysee-events.html"},
-        {"@type": "ListItem", "position": 2, "name": "Hochzeiten", "item": "https://www.elysee-events.de/hochzeit.html"}
+        {"@type": "ListItem", "position": 1, "name": "Startseite", "item": "https://www.elysee-events.de/"},
+        {"@type": "ListItem", "position": 2, "name": "Hochzeiten", "item": "https://www.elysee-events.de/hochzeit"}
       ]
     }
   ]
