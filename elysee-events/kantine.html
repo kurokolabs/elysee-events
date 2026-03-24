@@ -2163,6 +2163,27 @@ section:not(.hero):not(:first-of-type) {
   .bk__field-row { grid-template-columns: 1fr; }
 }
 
+@media (max-width: 480px) {
+  .bk__nav { flex-direction: column; gap: 8px; width: 100%; }
+  .bk__btn { width: 100%; padding: 13px 16px; text-align: center; }
+  .bk__cal-grid { gap: 2px; }
+  .bk__cal-day { min-height: 40px; padding: 3px; font-size: 10px; }
+  .bk__cal-day__num { font-size: 11px; }
+  .bk__cal-header { padding: 4px; font-size: 8px; letter-spacing: .08em; }
+  .bk__progress { min-height: 120px; padding-top: 20px; }
+  .bk__progress.is-morphed { min-height: 56px; }
+  .bk__close { top: max(12px, env(safe-area-inset-top, 12px)); right: max(12px, env(safe-area-inset-right, 12px)); width: 38px; height: 38px; }
+  .bk__close svg { width: 14px; height: 14px; }
+  .bk__textarea { height: 88px; }
+  .bk__card { padding: 16px 12px; }
+  .bk__card__icon svg { width: 32px; height: 32px; }
+  .bk__slots { gap: 8px; }
+  .bk__slot { padding: 12px 8px; font-size: .75rem; }
+  .bk__step-title { margin-bottom: .2em; }
+  .bk__step-subtitle { margin-bottom: .8rem; font-size: .65rem; }
+  .bk__body { padding: 0 12px 32px; }
+}
+
   </style>
 </head>
 <body>
