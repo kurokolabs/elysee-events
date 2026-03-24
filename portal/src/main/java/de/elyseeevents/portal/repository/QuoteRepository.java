@@ -47,21 +47,21 @@ public class QuoteRepository {
 
     public List<Quote> findAll() {
         return jdbc.query(
-                "SELECT q.*, (c.first_name || ' ' || c.last_name) AS customer_name " +
+                "SELECT q.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name " +
                 "FROM quotes q JOIN customers c ON q.customer_id = c.id " +
                 "ORDER BY q.created_at DESC", rowMapperFull);
     }
 
     public List<Quote> findByCustomerId(Long customerId) {
         return jdbc.query(
-                "SELECT q.*, (c.first_name || ' ' || c.last_name) AS customer_name " +
+                "SELECT q.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name " +
                 "FROM quotes q JOIN customers c ON q.customer_id = c.id " +
                 "WHERE q.customer_id = ? ORDER BY q.created_at DESC", rowMapperFull, customerId);
     }
 
     public Optional<Quote> findById(Long id) {
         List<Quote> list = jdbc.query(
-                "SELECT q.*, (c.first_name || ' ' || c.last_name) AS customer_name " +
+                "SELECT q.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name " +
                 "FROM quotes q JOIN customers c ON q.customer_id = c.id " +
                 "WHERE q.id = ?", rowMapperFull, id);
         return list.stream().findFirst();
@@ -94,7 +94,7 @@ public class QuoteRepository {
         return q;
     }
 
-    public String nextQuoteNumber() {
+    public synchronized String nextQuoteNumber() {
         String year = java.time.Year.now().toString();
         String prefix = "AN-" + year + "-";
         Long maxNum = jdbc.queryForObject(

@@ -3,6 +3,7 @@ package de.elyseeevents.portal.controller;
 import de.elyseeevents.portal.model.User;
 import de.elyseeevents.portal.repository.UserRepository;
 import de.elyseeevents.portal.service.AuditService;
+import de.elyseeevents.portal.service.EmailService;
 import de.elyseeevents.portal.service.TwoFactorService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
@@ -21,22 +22,16 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final TwoFactorService twoFactorService;
     private final AuditService auditService;
-
-    @org.springframework.beans.factory.annotation.Value("${app.emailjs.public-key}")
-    private String emailjsPublicKey;
-
-    @org.springframework.beans.factory.annotation.Value("${app.emailjs.service-id}")
-    private String emailjsServiceId;
-
-    @org.springframework.beans.factory.annotation.Value("${app.emailjs.template-id}")
-    private String emailjsTemplateId;
+    private final EmailService emailService;
 
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                         TwoFactorService twoFactorService, AuditService auditService) {
+                         TwoFactorService twoFactorService, AuditService auditService,
+                         EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.twoFactorService = twoFactorService;
         this.auditService = auditService;
+        this.emailService = emailService;
     }
 
     @GetMapping("/")
@@ -50,7 +45,6 @@ public class AuthController {
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
 
-        // Bereits eingeloggt? Direkt weiterleiten
         if (authentication != null && authentication.isAuthenticated()
                 && !"anonymousUser".equals(authentication.getName())) {
             if (authentication.getAuthorities().stream()
@@ -69,16 +63,7 @@ public class AuthController {
             return "redirect:/portal/login";
         }
         String email = (String) session.getAttribute("2fa_email");
-        String code = (String) session.getAttribute("2fa_code");
-        boolean demoMode = "YOUR_PUBLIC_KEY".equals(emailjsPublicKey);
         model.addAttribute("email", email);
-        if (demoMode) {
-            model.addAttribute("code", code);
-        }
-        model.addAttribute("demoMode", demoMode);
-        model.addAttribute("emailjsPublicKey", emailjsPublicKey);
-        model.addAttribute("emailjsServiceId", emailjsServiceId);
-        model.addAttribute("emailjsTemplateId", emailjsTemplateId);
         return "auth/two-factor";
     }
 
@@ -102,7 +87,7 @@ public class AuthController {
 
         if (!twoFactorService.verifyCode(user, code)) {
             auditService.log("2FA_FAILED", "user", userId, "Falscher Code");
-            redirectAttributes.addFlashAttribute("error", "Der Code ist ungültig oder abgelaufen.");
+            redirectAttributes.addFlashAttribute("error", "Der Code ist ungueltig oder abgelaufen.");
             return "redirect:/portal/2fa";
         }
         auditService.log("2FA_VERIFIED", "user", userId, null);
@@ -111,7 +96,6 @@ public class AuthController {
         session.removeAttribute("2fa_pending");
         session.removeAttribute("2fa_user_id");
         session.removeAttribute("2fa_email");
-        session.removeAttribute("2fa_code");
         session.removeAttribute("2fa_role");
 
         if ("ADMIN".equals(role)) {
@@ -124,12 +108,13 @@ public class AuthController {
     public String resendCode(HttpSession session, RedirectAttributes redirectAttributes) {
         Boolean pending = (Boolean) session.getAttribute("2fa_pending");
         Long userId = (Long) session.getAttribute("2fa_user_id");
+        String email = (String) session.getAttribute("2fa_email");
         if (pending == null || !pending || userId == null) {
             return "redirect:/portal/login";
         }
 
-        String newCode = twoFactorService.generateAndStoreCode(userId);
-        session.setAttribute("2fa_code", newCode);
+        String code = twoFactorService.generateAndStoreCode(userId);
+        emailService.sendTwoFactorCode(email, code);
         redirectAttributes.addFlashAttribute("message", "Neuer Code wurde gesendet.");
         return "redirect:/portal/2fa";
     }
@@ -144,6 +129,7 @@ public class AuthController {
                                 @RequestParam String newPassword,
                                 @RequestParam String confirmPassword,
                                 Authentication authentication,
+                                HttpSession session,
                                 RedirectAttributes redirectAttributes) {
         if (authentication == null) {
             return "redirect:/portal/login";
@@ -160,19 +146,28 @@ public class AuthController {
             return "redirect:/portal/passwort-aendern";
         }
 
-        if (newPassword.length() < 8) {
-            redirectAttributes.addFlashAttribute("error", "Das neue Passwort muss mindestens 8 Zeichen lang sein.");
+        if (newPassword.length() < 8
+                || !newPassword.matches(".*[A-Z].*")
+                || !newPassword.matches(".*[a-z].*")
+                || !newPassword.matches(".*[0-9].*")
+                || !newPassword.matches(".*[^A-Za-z0-9].*")) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Das Passwort muss mind. 8 Zeichen, Gross-/Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.");
             return "redirect:/portal/passwort-aendern";
         }
 
         if (!newPassword.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("error", "Die Passwörter stimmen nicht überein.");
+            redirectAttributes.addFlashAttribute("error", "Die Passwoerter stimmen nicht ueberein.");
             return "redirect:/portal/passwort-aendern";
         }
 
         userRepository.updatePassword(user.getId(), passwordEncoder.encode(newPassword));
         auditService.log("PASSWORD_CHANGED", "user", user.getId(), null);
-        redirectAttributes.addFlashAttribute("message", "Passwort erfolgreich geändert.");
+
+        // Clear force_pw_change session flag
+        session.removeAttribute("force_pw_change");
+
+        redirectAttributes.addFlashAttribute("message", "Passwort erfolgreich geaendert.");
 
         if ("ADMIN".equals(user.getRole())) {
             return "redirect:/portal/admin";

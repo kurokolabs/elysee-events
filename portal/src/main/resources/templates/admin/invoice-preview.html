@@ -82,7 +82,7 @@
             </div>
           </div>
           <div style="text-align:right; font-size:9px; color:#6B6560; line-height:1.6;">
-            Tel: <span th:text="${companyPhone}">0821 555 0000</span><br>
+            Tel: <span th:text="${companyPhone}">+49 176 30472811</span><br>
             <span th:text="${companyEmail}">info@elysee-events.de</span><br>
             <span th:text="${companyWeb}">www.elysee-events.de</span><br><br>
             USt-IdNr.: <span th:text="${companyTaxId}">DE123456789</span><br>
@@ -95,7 +95,7 @@
         <!-- Absender-Kurzzeile + Empfänger + Rechnungsinfo -->
         <div class="inv__columns">
           <div>
-            <div class="inv__sender-line" th:text="${companyName + ' | ' + companyStreet + ' | ' + companyCity}">Elysee Event GmbH | Werner-von-Siemensstraße 6, Haus 12 | 86159 Augsburg</div>
+            <div class="inv__sender-line" th:text="${companyName + ' | ' + companyStreet + ' | ' + companyCity}">Elysee Event GmbH | Werner-von-Siemensstrasse 6 | 86159 Augsburg</div>
             <div class="inv__addr-label">Rechnung an</div>
             <div class="inv__addr">
               <strong th:text="${customer.fullName}">Name</strong><br>
@@ -164,15 +164,15 @@
         <div class="inv__bank-title">Zahlungsinformationen</div>
         <dl class="inv__bank">
           <dt>Empfänger</dt><dd th:text="${companyName}">Elysee Event GmbH</dd>
-          <dt>Bank</dt><dd th:text="${companyBank}">Stadtsparkasse Augsburg</dd>
-          <dt>IBAN</dt><dd th:text="${companyIban}">DE89 7205 0000 0000 1234 56</dd>
-          <dt>BIC</dt><dd th:text="${companyBic}">AUGSDE77XXX</dd>
+          <dt>Bank</dt><dd th:text="${companyBank}">Sparkasse Freising Moosburg</dd>
+          <dt>IBAN</dt><dd th:text="${companyIban}">DE71 7005 1003 0026 2013 84</dd>
+          <dt>BIC</dt><dd th:text="${companyBic}">BYLADEM1FSI</dd>
           <dt>Verwendungszweck</dt><dd th:text="${invoiceNumber}">RE-2026-0001</dd>
         </dl>
 
         <!-- Footer -->
         <div class="inv__footer" th:text="${companyName + ' | ' + companyStreet + ' | ' + companyCity + ' | Geschäftsführerin: ' + companyCeo + ' | ' + companyCourt + ' ' + companyHrb + ' | USt-IdNr.: ' + companyTaxId}">
-          Elysee Event GmbH | Werner-von-Siemensstraße 6, Haus 12 | 86159 Augsburg |
+          Elysee Event GmbH | Werner-von-Siemensstrasse 6 | 86159 Augsburg |
           Geschäftsführerin: Aziza Furmoly | Amtsgericht Augsburg HRB 12345 | USt-IdNr.: DE123456789
         </div>
       </div>

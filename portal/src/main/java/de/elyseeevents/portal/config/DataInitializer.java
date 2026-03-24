@@ -13,10 +13,13 @@ import de.elyseeevents.portal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
+
+    private final Environment environment;
 
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
@@ -33,13 +36,15 @@ public class DataInitializer implements CommandLineRunner {
 
     public DataInitializer(UserRepository userRepository, CustomerRepository customerRepository,
                           BookingRepository bookingRepository, InvoiceRepository invoiceRepository,
-                          InvoiceItemRepository invoiceItemRepository, PasswordEncoder passwordEncoder) {
+                          InvoiceItemRepository invoiceItemRepository, PasswordEncoder passwordEncoder,
+                          Environment environment) {
         this.userRepository = userRepository;
         this.customerRepository = customerRepository;
         this.bookingRepository = bookingRepository;
         this.invoiceRepository = invoiceRepository;
         this.invoiceItemRepository = invoiceItemRepository;
         this.passwordEncoder = passwordEncoder;
+        this.environment = environment;
     }
 
     @Override
@@ -51,16 +56,21 @@ public class DataInitializer implements CommandLineRunner {
             admin.setPasswordHash(passwordEncoder.encode(adminPassword));
             admin.setRole("ADMIN");
             admin.setActive(true);
-            admin.setForcePwChange(false);
+            admin.setForcePwChange(true);
             admin.setTwoFaEnabled(true);
             userRepository.save(admin);
         }
+
+        // Demo data: nur in nicht-prod Umgebungen
+        String[] activeProfiles = environment.getActiveProfiles();
+        boolean isProd = java.util.Arrays.stream(activeProfiles).anyMatch("prod"::equalsIgnoreCase);
+        if (isProd) return;
 
         // Demo customer account
         if (userRepository.findByEmail("demo@elysee-events.de").isEmpty()) {
             User demoUser = new User();
             demoUser.setEmail("demo@elysee-events.de");
-            demoUser.setPasswordHash(passwordEncoder.encode("Demo2024!"));
+            demoUser.setPasswordHash(passwordEncoder.encode(adminPassword));
             demoUser.setRole("CUSTOMER");
             demoUser.setActive(true);
             demoUser.setForcePwChange(false);

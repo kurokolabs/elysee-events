@@ -19,9 +19,15 @@ public class AdminEmailPreviewController {
         return "admin/email-templates";
     }
 
+    private static final java.util.Set<String> ALLOWED_TEMPLATES = java.util.Set.of(
+            "weekly-menu", "welcome-subscriber", "two-factor-code",
+            "invoice-notification", "booking-status-update");
+
     @GetMapping("/email-preview/{template}")
     public String preview(@PathVariable String template, Model model) {
-        // Dummy data for preview
+        if (!ALLOWED_TEMPLATES.contains(template)) {
+            return "redirect:/portal/admin/email-vorlagen";
+        }
         switch (template) {
             case "weekly-menu" -> {
                 WeeklyMenu menu = new WeeklyMenu();

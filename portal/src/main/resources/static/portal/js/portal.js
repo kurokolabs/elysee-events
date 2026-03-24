@@ -54,15 +54,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
   /* ── Prevent double submit ──────────────────────────── */
   document.querySelectorAll('form').forEach(function(form) {
-    form.addEventListener('submit', function() {
+    var submitted = false;
+    form.addEventListener('submit', function(e) {
+      if (submitted) { e.preventDefault(); return; }
+      submitted = true;
       var btns = form.querySelectorAll('button[type="submit"], .btn--gold');
       btns.forEach(function(btn) {
-        if (btn.disabled) return;
         btn.disabled = true;
         btn.style.opacity = '0.6';
         btn.style.pointerEvents = 'none';
-        setTimeout(function() { btn.disabled = false; btn.style.opacity = ''; btn.style.pointerEvents = ''; }, 5000);
       });
+      setTimeout(function() {
+        submitted = false;
+        btns.forEach(function(btn) { btn.disabled = false; btn.style.opacity = ''; btn.style.pointerEvents = ''; });
+      }, 15000);
     });
   });
 

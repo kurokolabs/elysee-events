@@ -6,6 +6,7 @@ import de.elyseeevents.portal.repository.CustomerRepository;
 import de.elyseeevents.portal.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -43,6 +44,7 @@ public class CustomerService {
 
     public record CreateResult(Customer customer, String temporaryPassword) {}
 
+    @Transactional
     public CreateResult createWithAccount(Customer customer, String email) {
         String tempPassword = generateTempPassword();
 

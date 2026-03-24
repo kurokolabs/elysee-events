@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,11 +18,15 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private final RateLimiter rateLimiter;
 
+    @Value("${app.trusted-proxy:127.0.0.1}")
+    private String trustedProxy;
+
     private static final Map<String, String> URL_TO_ACTION = Map.of(
         "/portal/login", "LOGIN",
         "/portal/2fa", "2FA",
-        "/portal/2fa/resend", "2FA",
-        "/portal/passwort-aendern", "PASSWORD"
+        "/portal/2fa/resend", "2FA_RESEND",
+        "/portal/passwort-aendern", "PASSWORD",
+        "/newsletter/subscribe", "NEWSLETTER"
     );
 
     public RateLimitFilter(RateLimiter rateLimiter) {
@@ -64,10 +69,13 @@ public class RateLimitFilter extends OncePerRequestFilter {
     }
 
     private String resolveIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
+        String remoteAddr = request.getRemoteAddr();
+        if (trustedProxy.equals(remoteAddr)) {
+            String forwarded = request.getHeader("X-Forwarded-For");
+            if (forwarded != null && !forwarded.isBlank()) {
+                return forwarded.split(",")[0].trim();
+            }
         }
-        return request.getRemoteAddr();
+        return remoteAddr;
     }
 }

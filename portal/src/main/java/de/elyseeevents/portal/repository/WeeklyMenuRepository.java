@@ -49,7 +49,7 @@ public class WeeklyMenuRepository {
 
     public Optional<WeeklyMenu> findCurrent() {
         List<WeeklyMenu> list = jdbc.query(
-                "SELECT * FROM weekly_menus WHERE week_start <= date('now') AND week_end >= date('now')",
+                "SELECT * FROM weekly_menus WHERE week_start <= CURDATE() AND week_end >= CURDATE()",
                 rowMapper);
         return list.stream().findFirst();
     }
@@ -83,6 +83,6 @@ public class WeeklyMenuRepository {
     }
 
     public void markSent(Long id) {
-        jdbc.update("UPDATE weekly_menus SET sent = 1, sent_at = datetime('now') WHERE id = ?", id);
+        jdbc.update("UPDATE weekly_menus SET sent = 1, sent_at = NOW() WHERE id = ?", id);
     }
 }

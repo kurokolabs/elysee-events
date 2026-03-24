@@ -30,7 +30,8 @@ public class QuotePdfService {
     private static final DeviceRgb DARK = new DeviceRgb(26, 26, 26);
     private static final DeviceRgb MUTED = new DeviceRgb(107, 101, 96);
     private static final DeviceRgb SURFACE = new DeviceRgb(242, 239, 233);
-    private static final NumberFormat EUR = NumberFormat.getCurrencyInstance(Locale.GERMANY);
+    private static final ThreadLocal<NumberFormat> EUR = ThreadLocal.withInitial(
+            () -> NumberFormat.getCurrencyInstance(Locale.GERMANY));
 
     @Value("${app.company.name}") private String COMPANY;
     @Value("${app.company.street}") private String STREET;
@@ -41,11 +42,12 @@ public class QuotePdfService {
     @Value("${app.company.tax-id}") private String TAX_ID;
     @Value("${app.company.hrb}") private String HRB;
     @Value("${app.company.court}") private String COURT;
+    @Value("${app.company.ceo}") private String CEO;
 
     public byte[] generate(Quote quote, Customer customer, List<QuoteItem> items) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfDocument pdf = new PdfDocument(new PdfWriter(baos));
-        Document doc = new Document(pdf, PageSize.A4);
+        try (pdf; Document doc = new Document(pdf, PageSize.A4)) {
         doc.setMargins(50, 50, 60, 50);
 
         // -- Absender-Block oben rechts + Marke links --
@@ -64,7 +66,7 @@ public class QuotePdfService {
         Cell contactCell = new Cell().setBorder(Border.NO_BORDER).setTextAlignment(TextAlignment.RIGHT);
         contactCell.add(new Paragraph(
                 "Tel: " + PHONE + "\n" + EMAIL + "\n" + WEB + "\n\n" +
-                "USt-IdNr.: " + TAX_ID + "\nGesch\u00e4ftsf\u00fchrerin: Aziza Furmoly\n" + HRB + " | " + COURT)
+                "USt-IdNr.: " + TAX_ID + "\nGesch\u00e4ftsf\u00fchrerin: " + CEO + "\n" + HRB + " | " + COURT)
                 .setFontSize(9).setFontColor(MUTED).setFixedLeading(13));
         top.addCell(contactCell);
         doc.add(top);
@@ -90,8 +92,8 @@ public class QuotePdfService {
         if (customer.getAddress() != null && !customer.getAddress().isEmpty())
             addr.append("\n").append(customer.getAddress());
         String plzCity = "";
-        if (customer.getPostalCode() != null) plzCity += customer.getPostalCode() + " ";
-        if (customer.getCity() != null) plzCity += customer.getCity();
+        if (customer.getPostalCode() != null && !customer.getPostalCode().isEmpty()) plzCity += customer.getPostalCode() + " ";
+        if (customer.getCity() != null && !customer.getCity().isEmpty()) plzCity += customer.getCity();
         if (!plzCity.isBlank()) addr.append("\n").append(plzCity.trim());
 
         Cell addrCell = new Cell().setBorder(Border.NO_BORDER);
@@ -128,15 +130,15 @@ public class QuotePdfService {
                 table.addCell(tdCell(String.valueOf(pos++), TextAlignment.CENTER));
                 table.addCell(tdCell(item.getDescription(), TextAlignment.LEFT));
                 table.addCell(tdCell(formatQty(item.getQuantity()), TextAlignment.CENTER));
-                table.addCell(tdCell(EUR.format(item.getUnitPrice()), TextAlignment.RIGHT));
-                table.addCell(tdCell(EUR.format(item.getTotal()), TextAlignment.RIGHT));
+                table.addCell(tdCell(EUR.get().format(item.getUnitPrice()), TextAlignment.RIGHT));
+                table.addCell(tdCell(EUR.get().format(item.getTotal()), TextAlignment.RIGHT));
             }
         } else {
             table.addCell(tdCell("1", TextAlignment.CENTER));
             table.addCell(tdCell("Catering & Service", TextAlignment.LEFT));
             table.addCell(tdCell("1", TextAlignment.CENTER));
-            table.addCell(tdCell(EUR.format(quote.getAmount()), TextAlignment.RIGHT));
-            table.addCell(tdCell(EUR.format(quote.getAmount()), TextAlignment.RIGHT));
+            table.addCell(tdCell(EUR.get().format(quote.getAmount()), TextAlignment.RIGHT));
+            table.addCell(tdCell(EUR.get().format(quote.getAmount()), TextAlignment.RIGHT));
         }
         doc.add(table);
 
@@ -146,11 +148,11 @@ public class QuotePdfService {
 
         totals.addCell(emptyCell());
         totals.addCell(sumLabel("Zwischensumme (Netto)"));
-        totals.addCell(sumValue(EUR.format(quote.getAmount())));
+        totals.addCell(sumValue(EUR.get().format(quote.getAmount())));
 
         totals.addCell(emptyCell());
         totals.addCell(sumLabel("MwSt. " + String.format("%.1f", quote.getTaxRate()) + " %"));
-        totals.addCell(sumValue(EUR.format(quote.getTaxAmount())));
+        totals.addCell(sumValue(EUR.get().format(quote.getTaxAmount())));
 
         totals.addCell(emptyCell());
         Cell tLabel = new Cell().setBorder(Border.NO_BORDER)
@@ -160,7 +162,7 @@ public class QuotePdfService {
         Cell tValue = new Cell().setBorder(Border.NO_BORDER)
                 .setBorderTop(new SolidBorder(GOLD, 2)).setPaddingTop(10)
                 .setTextAlignment(TextAlignment.RIGHT);
-        tValue.add(new Paragraph(EUR.format(quote.getTotal()))
+        tValue.add(new Paragraph(EUR.get().format(quote.getTotal()))
                 .setFontSize(16).setBold().setFontColor(GOLD));
         totals.addCell(tValue);
         doc.add(totals);
@@ -189,11 +191,11 @@ public class QuotePdfService {
         doc.add(new Paragraph(
                 COMPANY + "  |  " + STREET + "  |  " + CITY + "\n" +
                 "Tel: " + PHONE + "  |  " + EMAIL + "  |  " + WEB + "\n" +
-                "Gesch\u00e4ftsf\u00fchrerin: Aziza Furmoly  |  USt-IdNr.: " + TAX_ID + "  |  " + COURT + " " + HRB)
+                "Gesch\u00e4ftsf\u00fchrerin: " + CEO + "  |  USt-IdNr.: " + TAX_ID + "  |  " + COURT + " " + HRB)
                 .setFontSize(7).setFontColor(MUTED)
                 .setTextAlignment(TextAlignment.CENTER).setFixedLeading(11));
 
-        doc.close();
+        } // auto-close doc and pdf
         return baos.toByteArray();
     }
 

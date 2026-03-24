@@ -41,15 +41,9 @@ public class NewsletterController {
         if (existing.isPresent()) {
             NewsletterSubscriber s = existing.get();
             if (!s.isActive()) {
-                // Re-activate existing subscriber
-                newsletterRepository.unsubscribe(s.getToken()); // reset first
-                // Actually re-activate by direct update
-                NewsletterSubscriber reactivated = new NewsletterSubscriber();
-                reactivated.setEmail(trimmedEmail);
-                reactivated.setName(name != null ? name.trim() : s.getName());
-                reactivated.setActive(true);
-                reactivated.setToken(UUID.randomUUID().toString());
-                newsletterRepository.save(reactivated);
+                String newToken = UUID.randomUUID().toString();
+                String newName = name != null ? name.trim() : s.getName();
+                newsletterRepository.reactivate(s.getId(), newName, newToken);
             }
             // If already active, just show success without duplicate insert
             model.addAttribute("success", true);

@@ -53,18 +53,17 @@
             <div class="inv__brand">ELYSEE EVENTS</div>
             <div class="inv__brand-sub">Exklusives Catering &amp; Eventservice</div>
             <div class="inv__brand-addr">
-              Elysee Event GmbH<br>
-              Werner-von-Siemensstra&szlig;e 6<br>
-              Haus 12<br>
-              86159 Augsburg
+              <span th:text="${companyName}">Elysee Event GmbH</span><br>
+              <span th:text="${companyStreet}">Werner-von-Siemensstrasse 6</span><br>
+              <span th:text="${companyCity}">86159 Augsburg</span>
             </div>
           </div>
           <div style="text-align:right; font-size:9px; color:#6B6560; line-height:1.6;">
-            Tel: 0821 555 0000<br>
-            info@elysee-events.de<br>
-            www.elysee-events.de<br><br>
-            USt-IdNr.: DE123456789<br>
-            HRB 12345 | AG Augsburg
+            Tel: <span th:text="${companyPhone}">+49 176 30472811</span><br>
+            <span th:text="${companyEmail}">verwaltung@elysee-events.de</span><br>
+            <span th:text="${companyWeb}">www.elysee-events.de</span><br><br>
+            USt-IdNr.: <span th:text="${companyTaxId}">wird ausgestellt</span><br>
+            <span th:text="${companyHrb}">wird ausgestellt</span> | <span th:text="${companyCourt}">Amtsgericht Augsburg</span>
           </div>
         </div>
 
@@ -72,7 +71,7 @@
 
         <div class="inv__columns">
           <div>
-            <div class="inv__sender-line">Elysee Event GmbH | Werner-von-Siemensstra&szlig;e 6, Haus 12 | 86159 Augsburg</div>
+            <div class="inv__sender-line" th:text="${companyName + ' | ' + companyStreet + ' | ' + companyCity}">Elysee Event GmbH | Werner-von-Siemensstrasse 6 | 86159 Augsburg</div>
             <div class="inv__addr-label">Angebot an</div>
             <div class="inv__addr">
               <strong th:text="${customer.fullName}">Name</strong><br>
@@ -134,8 +133,8 @@
         </div>
 
         <div class="inv__footer">
-          Elysee Event GmbH | Werner-von-Siemensstra&szlig;e 6, Haus 12 | 86159 Augsburg |
-          Gesch&auml;ftsf&uuml;hrerin: Aziza Furmoly | Amtsgericht Augsburg HRB 12345 | USt-IdNr.: DE123456789
+          <span th:text="${companyName}">Elysee Event GmbH</span> | <span th:text="${companyStreet}">Werner-von-Siemensstrasse 6</span> | <span th:text="${companyCity}">86159 Augsburg</span> |
+          Geschaeftsfuehrerin: <span th:text="${companyCeo}">Aziza Furmoly</span> | <span th:text="${companyCourt}">Amtsgericht Augsburg</span> <span th:text="${companyHrb}">wird ausgestellt</span> | USt-IdNr.: <span th:text="${companyTaxId}">wird ausgestellt</span>
         </div>
       </div>
 

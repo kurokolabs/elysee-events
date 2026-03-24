@@ -68,6 +68,11 @@ public class NewsletterRepository {
         return s;
     }
 
+    public void reactivate(Long id, String name, String newToken) {
+        jdbc.update("UPDATE newsletter_subscribers SET active = 1, name = ?, token = ? WHERE id = ?",
+                name, newToken, id);
+    }
+
     public void unsubscribe(String token) {
         jdbc.update("UPDATE newsletter_subscribers SET active = 0 WHERE token = ?", token);
     }

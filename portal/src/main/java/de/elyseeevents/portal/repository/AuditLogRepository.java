@@ -13,7 +13,7 @@ public class AuditLogRepository {
     }
 
     public void log(Long userId, String action, String entityType, Long entityId, String details) {
-        jdbc.update("INSERT INTO audit_log (user_id, action, entity_type, entity_id, details, created_at) VALUES (?, ?, ?, ?, ?, datetime('now'))",
+        jdbc.update("INSERT INTO audit_log (user_id, action, entity_type, entity_id, details, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
                 userId, action, entityType, entityId, details);
     }
 }

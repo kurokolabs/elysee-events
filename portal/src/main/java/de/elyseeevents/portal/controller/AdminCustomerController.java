@@ -21,14 +21,12 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
+import de.elyseeevents.portal.util.FileUtil;
+
 @Controller
 @RequestMapping("/portal/admin")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminCustomerController {
-
-    private static final Set<String> ALLOWED_TYPES = Set.of(
-            "pdf", "jpg", "jpeg", "png", "doc", "docx", "xls", "xlsx");
-    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
     private final CustomerService customerService;
     private final UserRepository userRepository;
@@ -79,7 +77,7 @@ public class AdminCustomerController {
                         @RequestParam(required = false) String notes,
                         RedirectAttributes redirectAttributes) {
         // Validierung
-        if (email == null || !email.matches("^[\\w.+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+        if (email == null || !email.matches("^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}$")) {
             redirectAttributes.addFlashAttribute("error", "Bitte geben Sie eine gültige E-Mail-Adresse ein.");
             return "redirect:/portal/admin/kunde/neu";
         }
@@ -184,14 +182,14 @@ public class AdminCustomerController {
             return "redirect:/portal/admin/kunde/" + id + "/dokumente";
         }
 
-        if (file.getSize() > MAX_FILE_SIZE) {
+        if (file.getSize() > FileUtil.MAX_FILE_SIZE) {
             redirectAttributes.addFlashAttribute("error", "Die Datei darf maximal 10 MB gro\u00df sein.");
             return "redirect:/portal/admin/kunde/" + id + "/dokumente";
         }
 
-        String originalFilename = file.getOriginalFilename();
-        String extension = getFileExtension(originalFilename).toLowerCase();
-        if (!ALLOWED_TYPES.contains(extension)) {
+        String originalFilename = FileUtil.sanitizeFilename(file.getOriginalFilename());
+        String extension = FileUtil.getFileExtension(originalFilename).toLowerCase();
+        if (!FileUtil.ALLOWED_TYPES.contains(extension)) {
             redirectAttributes.addFlashAttribute("error",
                     "Dateityp nicht erlaubt. Erlaubt: PDF, JPG, PNG, DOC, DOCX, XLS, XLSX.");
             return "redirect:/portal/admin/kunde/" + id + "/dokumente";
@@ -202,7 +200,11 @@ public class AdminCustomerController {
             Files.createDirectories(customerDir);
 
             String storedName = System.currentTimeMillis() + "_" + originalFilename;
-            Path targetPath = customerDir.resolve(storedName);
+            Path targetPath = customerDir.resolve(storedName).normalize();
+            if (!targetPath.startsWith(uploadPath)) {
+                redirectAttributes.addFlashAttribute("error", "Ungueltiger Dateiname.");
+                return "redirect:/portal/admin/kunde/" + id + "/dokumente";
+            }
             file.transferTo(targetPath.toFile());
 
             Document doc = new Document();
@@ -217,14 +219,10 @@ public class AdminCustomerController {
 
             redirectAttributes.addFlashAttribute("message", "Dokument erfolgreich hochgeladen.");
         } catch (IOException e) {
-            redirectAttributes.addFlashAttribute("error", "Fehler beim Hochladen: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Fehler beim Hochladen. Bitte versuchen Sie es erneut.");
         }
 
         return "redirect:/portal/admin/kunde/" + id + "/dokumente";
     }
 
-    private String getFileExtension(String filename) {
-        if (filename == null || !filename.contains(".")) return "";
-        return filename.substring(filename.lastIndexOf('.') + 1);
-    }
 }

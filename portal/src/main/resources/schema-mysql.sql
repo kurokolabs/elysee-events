@@ -8,8 +8,9 @@ CREATE TABLE IF NOT EXISTS users (
     active          TINYINT(1) NOT NULL DEFAULT 1,
     force_pw_change TINYINT(1) NOT NULL DEFAULT 0,
     two_fa_enabled  TINYINT(1) NOT NULL DEFAULT 1,
-    two_fa_code     VARCHAR(10),
+    two_fa_code     VARCHAR(72),
     two_fa_expires  VARCHAR(30),
+    two_fa_attempts INT NOT NULL DEFAULT 0,
     created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_login      DATETIME
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

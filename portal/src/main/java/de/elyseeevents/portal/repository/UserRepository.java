@@ -73,7 +73,7 @@ public class UserRepository {
     }
 
     public void updateLastLogin(Long userId) {
-        jdbc.update("UPDATE users SET last_login = datetime('now') WHERE id = ?", userId);
+        jdbc.update("UPDATE users SET last_login = NOW() WHERE id = ?", userId);
     }
 
     public void updatePassword(Long userId, String passwordHash) {
@@ -85,6 +85,20 @@ public class UserRepository {
     }
 
     public void clearTwoFaCode(Long userId) {
-        jdbc.update("UPDATE users SET two_fa_code = NULL, two_fa_expires = NULL WHERE id = ?", userId);
+        jdbc.update("UPDATE users SET two_fa_code = NULL, two_fa_expires = NULL, two_fa_attempts = 0 WHERE id = ?", userId);
+    }
+
+    public void resetTwoFaAttempts(Long userId) {
+        jdbc.update("UPDATE users SET two_fa_attempts = 0 WHERE id = ?", userId);
+    }
+
+    public int getTwoFaAttempts(Long userId) {
+        Integer attempts = jdbc.queryForObject(
+                "SELECT COALESCE(two_fa_attempts, 0) FROM users WHERE id = ?", Integer.class, userId);
+        return attempts != null ? attempts : 0;
+    }
+
+    public void incrementTwoFaAttempts(Long userId) {
+        jdbc.update("UPDATE users SET two_fa_attempts = COALESCE(two_fa_attempts, 0) + 1 WHERE id = ?", userId);
     }
 }

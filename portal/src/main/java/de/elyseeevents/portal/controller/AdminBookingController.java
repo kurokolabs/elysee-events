@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -68,7 +69,14 @@ public class AdminBookingController {
         Booking booking = new Booking();
         booking.setCustomerId(customerId);
         booking.setBookingType(bookingType);
-        booking.setStatus(status != null && !status.isEmpty() ? status : "ANFRAGE");
+        String validStatus = "ANFRAGE";
+        if (status != null && !status.isEmpty()) {
+            try {
+                BookingStatus.valueOf(status);
+                validStatus = status;
+            } catch (IllegalArgumentException ignored) {}
+        }
+        booking.setStatus(validStatus);
         booking.setEventDate(eventDate);
         booking.setEventTimeSlot(eventTimeSlot);
         booking.setGuestCount(guestCount);
@@ -116,6 +124,19 @@ public class AdminBookingController {
             return "redirect:/portal/admin/buchungen";
         }
 
+        try {
+            BookingType.valueOf(bookingType);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", "Ungueltiger Buchungstyp.");
+            return "redirect:/portal/admin/buchung/" + id;
+        }
+        try {
+            BookingStatus.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", "Ungueltiger Status.");
+            return "redirect:/portal/admin/buchung/" + id;
+        }
+
         booking.setCustomerId(customerId);
         booking.setBookingType(bookingType);
         booking.setStatus(status);
@@ -132,10 +153,17 @@ public class AdminBookingController {
         return "redirect:/portal/admin/buchung/" + id;
     }
 
+    @Transactional
     @PostMapping("/buchung/{id}/status")
     public String updateStatus(@PathVariable Long id,
                               @RequestParam String status,
                               RedirectAttributes redirectAttributes) {
+        try {
+            BookingStatus.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", "Ungueltiger Status.");
+            return "redirect:/portal/admin/buchung/" + id;
+        }
         bookingService.updateStatus(id, status);
         redirectAttributes.addFlashAttribute("message", "Status erfolgreich geändert.");
         return "redirect:/portal/admin/buchung/" + id;

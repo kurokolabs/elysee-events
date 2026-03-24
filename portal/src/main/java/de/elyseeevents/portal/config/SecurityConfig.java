@@ -3,6 +3,7 @@ package de.elyseeevents.portal.config;
 import de.elyseeevents.portal.model.User;
 import de.elyseeevents.portal.repository.UserRepository;
 import de.elyseeevents.portal.security.RateLimiter;
+import de.elyseeevents.portal.service.EmailService;
 import de.elyseeevents.portal.service.TwoFactorService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import de.elyseeevents.portal.security.RateLimitFilter;
+import de.elyseeevents.portal.security.TwoFaFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
@@ -33,14 +35,19 @@ public class SecurityConfig {
     private final TwoFactorService twoFactorService;
     private final RateLimiter rateLimiter;
     private final RateLimitFilter rateLimitFilter;
+    private final TwoFaFilter twoFaFilter;
+    private final EmailService emailService;
     private final de.elyseeevents.portal.repository.AuditLogRepository auditLogRepository;
 
     public SecurityConfig(UserRepository userRepository, TwoFactorService twoFactorService,
                           RateLimiter rateLimiter, RateLimitFilter rateLimitFilter,
+                          TwoFaFilter twoFaFilter, EmailService emailService,
                           de.elyseeevents.portal.repository.AuditLogRepository auditLogRepository) {
         this.userRepository = userRepository;
         this.twoFactorService = twoFactorService;
         this.rateLimitFilter = rateLimitFilter;
+        this.twoFaFilter = twoFaFilter;
+        this.emailService = emailService;
         this.auditLogRepository = auditLogRepository;
         this.rateLimiter = rateLimiter;
     }
@@ -54,8 +61,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(twoFaFilter, org.springframework.security.web.authentication.AnonymousAuthenticationFilter.class)
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/newsletter/**")
+                .ignoringRequestMatchers("/newsletter/subscribe")
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/portal/login", "/portal/2fa", "/portal/2fa/resend").permitAll()
@@ -80,11 +88,13 @@ public class SecurityConfig {
                 .permitAll()
             )
             .sessionManagement(session -> session
+                .sessionFixation(sf -> sf.migrateSession())
                 .maximumSessions(2)
             )
             .headers(headers -> headers
                 .frameOptions(frame -> frame.deny())
                 .contentTypeOptions(ct -> {})
+                .xssProtection(xss -> xss.headerValue(org.springframework.security.web.header.writers.XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
                 .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000))
                 .referrerPolicy(ref -> ref.policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
             );
@@ -108,16 +118,17 @@ public class SecurityConfig {
                 auditLogRepository.log(user.getId(), "LOGIN_SUCCESS", "user", user.getId(), null);
 
                 if (user.isForcePwChange()) {
+                    request.getSession().setAttribute("force_pw_change", true);
                     response.sendRedirect("/portal/passwort-aendern");
                     return;
                 }
 
                 if (user.isTwoFaEnabled()) {
                     String code = twoFactorService.generateAndStoreCode(user.getId());
+                    emailService.sendTwoFactorCode(user.getEmail(), code);
                     request.getSession().setAttribute("2fa_pending", true);
                     request.getSession().setAttribute("2fa_user_id", user.getId());
                     request.getSession().setAttribute("2fa_email", user.getEmail());
-                    request.getSession().setAttribute("2fa_code", code);
                     request.getSession().setAttribute("2fa_role", user.getRole());
                     response.sendRedirect("/portal/2fa");
                     return;

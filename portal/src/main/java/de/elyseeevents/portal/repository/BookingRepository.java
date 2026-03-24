@@ -55,14 +55,14 @@ public class BookingRepository {
 
     public List<Booking> findAll() {
         return jdbc.query(
-                "SELECT b.*, (c.first_name || ' ' || c.last_name) AS customer_name, c.company AS customer_company " +
+                "SELECT b.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name, c.company AS customer_company " +
                 "FROM bookings b JOIN customers c ON b.customer_id = c.id ORDER BY b.created_at DESC",
                 rowMapperWithCustomer);
     }
 
     public List<Booking> findByFilters(String type, String status, String dateFrom, String dateTo) {
         StringBuilder sql = new StringBuilder(
-                "SELECT b.*, (c.first_name || ' ' || c.last_name) AS customer_name, c.company AS customer_company " +
+                "SELECT b.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name, c.company AS customer_company " +
                 "FROM bookings b JOIN customers c ON b.customer_id = c.id WHERE 1=1");
         java.util.List<Object> params = new java.util.ArrayList<>();
 
@@ -87,14 +87,14 @@ public class BookingRepository {
     }
 
     public List<Booking> findByCustomerId(Long customerId) {
-        return jdbc.query("SELECT b.*, (c.first_name || ' ' || c.last_name) AS customer_name, c.company AS customer_company " +
+        return jdbc.query("SELECT b.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name, c.company AS customer_company " +
                 "FROM bookings b JOIN customers c ON b.customer_id = c.id WHERE b.customer_id = ? ORDER BY b.created_at DESC",
                 rowMapperWithCustomer, customerId);
     }
 
     public Optional<Booking> findById(Long id) {
         List<Booking> list = jdbc.query(
-                "SELECT b.*, (c.first_name || ' ' || c.last_name) AS customer_name, c.company AS customer_company " +
+                "SELECT b.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name, c.company AS customer_company " +
                 "FROM bookings b JOIN customers c ON b.customer_id = c.id WHERE b.id = ?",
                 rowMapperWithCustomer, id);
         return list.stream().findFirst();
@@ -126,7 +126,7 @@ public class BookingRepository {
             }, keyHolder);
             b.setId(keyHolder.getKey().longValue());
         } else {
-            jdbc.update("UPDATE bookings SET customer_id = ?, booking_type = ?, status = ?, event_date = ?, event_time_slot = ?, guest_count = ?, budget = ?, menu_selection = ?, special_requests = ?, admin_notes = ?, delivery_address = ?, catering_package = ?, food_option = ?, food_sub_option = ?, cuisine_style = ?, updated_at = datetime('now') WHERE id = ?",
+            jdbc.update("UPDATE bookings SET customer_id = ?, booking_type = ?, status = ?, event_date = ?, event_time_slot = ?, guest_count = ?, budget = ?, menu_selection = ?, special_requests = ?, admin_notes = ?, delivery_address = ?, catering_package = ?, food_option = ?, food_sub_option = ?, cuisine_style = ?, updated_at = NOW() WHERE id = ?",
                     b.getCustomerId(), b.getBookingType(), b.getStatus(),
                     b.getEventDate(), b.getEventTimeSlot(), b.getGuestCount(), b.getBudget(),
                     b.getMenuSelection(), b.getSpecialRequests(), b.getAdminNotes(),
@@ -141,7 +141,7 @@ public class BookingRepository {
     }
 
     public void updateStatus(Long id, String status) {
-        jdbc.update("UPDATE bookings SET status = ?, updated_at = datetime('now') WHERE id = ?", status, id);
+        jdbc.update("UPDATE bookings SET status = ?, updated_at = NOW() WHERE id = ?", status, id);
     }
 
     public long count() {
@@ -155,7 +155,7 @@ public class BookingRepository {
     }
 
     public long countThisMonth() {
-        Long c = jdbc.queryForObject("SELECT COUNT(*) FROM bookings WHERE strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now')", Long.class);
+        Long c = jdbc.queryForObject("SELECT COUNT(*) FROM bookings WHERE DATE_FORMAT(created_at, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')", Long.class);
         return c != null ? c : 0;
     }
 
@@ -167,16 +167,16 @@ public class BookingRepository {
     public List<java.util.Map<String, Object>> monthlyRevenue(int months) {
         return jdbc.queryForList(
                 "WITH RECURSIVE m(d) AS (" +
-                "  SELECT date('now','start of month','-' || (? - 1) || ' months') " +
-                "  UNION ALL SELECT date(d, '+1 month') FROM m WHERE d < date('now','start of month')" +
-                ") SELECT strftime('%Y-%m', m.d) AS month, COALESCE(SUM(b.budget), 0) AS revenue " +
-                "FROM m LEFT JOIN bookings b ON strftime('%Y-%m', b.created_at) = strftime('%Y-%m', m.d) " +
-                "AND b.status != 'STORNIERT' GROUP BY strftime('%Y-%m', m.d) ORDER BY month", months);
+                "  SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL (? - 1) MONTH), '%Y-%m-01') " +
+                "  UNION ALL SELECT DATE_ADD(d, INTERVAL 1 MONTH) FROM m WHERE d < DATE_FORMAT(CURDATE(), '%Y-%m-01')" +
+                ") SELECT DATE_FORMAT(m.d, '%Y-%m') AS month, COALESCE(SUM(b.budget), 0) AS revenue " +
+                "FROM m LEFT JOIN bookings b ON DATE_FORMAT(b.created_at, '%Y-%m') = DATE_FORMAT(m.d, '%Y-%m') " +
+                "AND b.status != 'STORNIERT' GROUP BY DATE_FORMAT(m.d, '%Y-%m') ORDER BY month", months);
     }
 
     public List<Booking> findRecent(int limit) {
         return jdbc.query(
-                "SELECT b.*, (c.first_name || ' ' || c.last_name) AS customer_name, c.company AS customer_company " +
+                "SELECT b.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name, c.company AS customer_company " +
                 "FROM bookings b JOIN customers c ON b.customer_id = c.id ORDER BY b.created_at DESC LIMIT ?",
                 rowMapperWithCustomer, limit);
     }
@@ -185,7 +185,7 @@ public class BookingRepository {
         String monthStr = String.format("%04d-%02d", year, month);
         return jdbc.queryForList(
                 "SELECT event_date, event_time_slot, booking_type " +
-                "FROM bookings WHERE strftime('%Y-%m', event_date) = ? " +
+                "FROM bookings WHERE DATE_FORMAT(event_date, '%Y-%m') = ? " +
                 "AND status NOT IN ('STORNIERT') ORDER BY event_date",
                 monthStr);
     }
@@ -194,9 +194,9 @@ public class BookingRepository {
         String monthStr = String.format("%04d-%02d", year, month);
         return jdbc.queryForList(
                 "SELECT b.id, b.event_date, b.booking_type, b.status, " +
-                "(c.first_name || ' ' || c.last_name) AS customer_name " +
+                "CONCAT(c.first_name, ' ', c.last_name) AS customer_name " +
                 "FROM bookings b JOIN customers c ON b.customer_id = c.id " +
-                "WHERE strftime('%Y-%m', b.event_date) = ? ORDER BY b.event_date",
+                "WHERE DATE_FORMAT(b.event_date, '%Y-%m') = ? ORDER BY b.event_date",
                 monthStr);
     }
 }

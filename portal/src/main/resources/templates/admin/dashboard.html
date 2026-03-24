@@ -282,7 +282,7 @@
 
           ctx.fillStyle = '#1A1A1A';
           ctx.beginPath();
-          ctx.roundRect(bx, by, tw, 22, 2);
+          if (ctx.roundRect) { ctx.roundRect(bx, by, tw, 22, 2); } else { ctx.rect(bx, by, tw, 22); }
           ctx.fill();
           ctx.fillStyle = '#FAFAF8';
           ctx.font = '600 10px DM Sans, sans-serif';

@@ -29,7 +29,8 @@ public class InvoicePdfService {
     private static final DeviceRgb DARK = new DeviceRgb(26, 26, 26);
     private static final DeviceRgb MUTED = new DeviceRgb(107, 101, 96);
     private static final DeviceRgb SURFACE = new DeviceRgb(242, 239, 233);
-    private static final NumberFormat EUR = NumberFormat.getCurrencyInstance(Locale.GERMANY);
+    private static final ThreadLocal<NumberFormat> EUR = ThreadLocal.withInitial(
+            () -> NumberFormat.getCurrencyInstance(Locale.GERMANY));
 
     @org.springframework.beans.factory.annotation.Value("${app.company.name}") private String COMPANY;
     @org.springframework.beans.factory.annotation.Value("${app.company.street}") private String STREET;
@@ -48,7 +49,7 @@ public class InvoicePdfService {
     public byte[] generate(Invoice invoice, Customer customer, List<InvoiceItem> items) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfDocument pdf = new PdfDocument(new PdfWriter(baos));
-        Document doc = new Document(pdf, PageSize.A4);
+        try (pdf; Document doc = new Document(pdf, PageSize.A4)) {
         doc.setMargins(50, 50, 60, 50);
 
         // ── Absender-Block oben rechts + Marke links ────────
@@ -93,8 +94,8 @@ public class InvoicePdfService {
         if (customer.getAddress() != null && !customer.getAddress().isEmpty())
             addr.append("\n").append(customer.getAddress());
         String plzCity = "";
-        if (customer.getPostalCode() != null) plzCity += customer.getPostalCode() + " ";
-        if (customer.getCity() != null) plzCity += customer.getCity();
+        if (customer.getPostalCode() != null && !customer.getPostalCode().isEmpty()) plzCity += customer.getPostalCode() + " ";
+        if (customer.getCity() != null && !customer.getCity().isEmpty()) plzCity += customer.getCity();
         if (!plzCity.isBlank()) addr.append("\n").append(plzCity.trim());
 
         Cell addrCell = new Cell().setBorder(Border.NO_BORDER);
@@ -133,15 +134,15 @@ public class InvoicePdfService {
                 table.addCell(tdCell(String.valueOf(pos++), TextAlignment.CENTER));
                 table.addCell(tdCell(item.getDescription(), TextAlignment.LEFT));
                 table.addCell(tdCell(formatQty(item.getQuantity()), TextAlignment.CENTER));
-                table.addCell(tdCell(EUR.format(item.getUnitPrice()), TextAlignment.RIGHT));
-                table.addCell(tdCell(EUR.format(item.getTotal()), TextAlignment.RIGHT));
+                table.addCell(tdCell(EUR.get().format(item.getUnitPrice()), TextAlignment.RIGHT));
+                table.addCell(tdCell(EUR.get().format(item.getTotal()), TextAlignment.RIGHT));
             }
         } else {
             table.addCell(tdCell("1", TextAlignment.CENTER));
             table.addCell(tdCell("Catering & Service", TextAlignment.LEFT));
             table.addCell(tdCell("1", TextAlignment.CENTER));
-            table.addCell(tdCell(EUR.format(invoice.getAmount()), TextAlignment.RIGHT));
-            table.addCell(tdCell(EUR.format(invoice.getAmount()), TextAlignment.RIGHT));
+            table.addCell(tdCell(EUR.get().format(invoice.getAmount()), TextAlignment.RIGHT));
+            table.addCell(tdCell(EUR.get().format(invoice.getAmount()), TextAlignment.RIGHT));
         }
         doc.add(table);
 
@@ -151,11 +152,11 @@ public class InvoicePdfService {
 
         totals.addCell(emptyCell());
         totals.addCell(sumLabel("Zwischensumme (Netto)"));
-        totals.addCell(sumValue(EUR.format(invoice.getAmount())));
+        totals.addCell(sumValue(EUR.get().format(invoice.getAmount())));
 
         totals.addCell(emptyCell());
         totals.addCell(sumLabel("MwSt. " + String.format("%.1f", invoice.getTaxRate()) + " %"));
-        totals.addCell(sumValue(EUR.format(invoice.getTaxAmount())));
+        totals.addCell(sumValue(EUR.get().format(invoice.getTaxAmount())));
 
         totals.addCell(emptyCell());
         Cell tLabel = new Cell().setBorder(Border.NO_BORDER)
@@ -165,7 +166,7 @@ public class InvoicePdfService {
         Cell tValue = new Cell().setBorder(Border.NO_BORDER)
                 .setBorderTop(new SolidBorder(GOLD, 2)).setPaddingTop(10)
                 .setTextAlignment(TextAlignment.RIGHT);
-        tValue.add(new Paragraph(EUR.format(invoice.getTotal()))
+        tValue.add(new Paragraph(EUR.get().format(invoice.getTotal()))
                 .setFontSize(16).setBold().setFontColor(GOLD));
         totals.addCell(tValue);
         doc.add(totals);
@@ -203,7 +204,7 @@ public class InvoicePdfService {
                 .setFontSize(7).setFontColor(MUTED)
                 .setTextAlignment(TextAlignment.CENTER).setFixedLeading(11));
 
-        doc.close();
+        } // auto-close doc and pdf
         return baos.toByteArray();
     }
 

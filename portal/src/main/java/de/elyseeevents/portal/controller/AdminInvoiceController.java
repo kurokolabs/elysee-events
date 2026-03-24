@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +103,8 @@ public class AdminInvoiceController {
 
         List<InvoiceItem> items = new ArrayList<>();
         double netto = 0;
-        for (int i = 0; i < descriptions.size(); i++) {
+        int itemCount = Math.min(descriptions.size(), Math.min(quantities.size(), prices.size()));
+        for (int i = 0; i < itemCount; i++) {
             String desc = descriptions.get(i);
             if (desc == null || desc.isBlank()) continue;
             double qty = parseDouble(quantities.get(i), 1);
@@ -152,6 +154,7 @@ public class AdminInvoiceController {
     }
 
     // Schritt 4: Rechnung bestätigen und erstellen
+    @Transactional
     @PostMapping("/rechnung/approve")
     public String approve(@RequestParam Long customerId,
                          @RequestParam(required = false) Long bookingId,
@@ -166,21 +169,35 @@ public class AdminInvoiceController {
                          @RequestParam(required = false) String notes,
                          RedirectAttributes redirectAttributes) {
 
+        // Recalculate server-side - never trust client totals
+        double calcNetto = 0;
+        int calcCount = Math.min(descriptions.size(), Math.min(quantities.size(), prices.size()));
+        for (int i = 0; i < calcCount; i++) {
+            String desc = descriptions.get(i);
+            if (desc == null || desc.isBlank()) continue;
+            double qty = parseDouble(quantities.get(i), 1);
+            double price = parseDouble(prices.get(i), 0);
+            calcNetto += Math.round(qty * price * 100.0) / 100.0;
+        }
+        double calcTaxAmount = Math.round(calcNetto * (taxRate / 100.0) * 100.0) / 100.0;
+        double calcTotal = calcNetto + calcTaxAmount;
+
         Invoice inv = new Invoice();
         inv.setCustomerId(customerId);
-        inv.setBookingId(bookingId != null ? bookingId : 0L);
+        inv.setBookingId(bookingId);
         inv.setInvoiceNumber(invoiceRepository.nextInvoiceNumber());
-        inv.setAmount(netto);
+        inv.setAmount(calcNetto);
         inv.setTaxRate(taxRate);
-        inv.setTaxAmount(taxAmount);
-        inv.setTotal(total);
+        inv.setTaxAmount(calcTaxAmount);
+        inv.setTotal(calcTotal);
         inv.setStatus("OFFEN");
         inv.setDueDate(dueDate);
         inv.setNotes(notes);
         inv = invoiceRepository.save(inv);
 
         // Positionen speichern
-        for (int i = 0; i < descriptions.size(); i++) {
+        int approveItemCount = Math.min(descriptions.size(), Math.min(quantities.size(), prices.size()));
+        for (int i = 0; i < approveItemCount; i++) {
             String desc = descriptions.get(i);
             if (desc == null || desc.isBlank()) continue;
 
@@ -210,12 +227,18 @@ public class AdminInvoiceController {
         return "admin/invoice-detail";
     }
 
+    @Transactional
     @PostMapping("/rechnung/{id}/status")
     public String updateStatus(@PathVariable Long id,
                               @RequestParam String status,
                               RedirectAttributes redirectAttributes) {
         Invoice inv = invoiceRepository.findById(id).orElse(null);
         if (inv == null) return "redirect:/portal/admin/rechnungen";
+
+        if (!java.util.Set.of("OFFEN", "BEZAHLT", "STORNIERT", "UEBERFAELLIG", "MAHNUNG").contains(status)) {
+            redirectAttributes.addFlashAttribute("error", "Ungueltiger Status.");
+            return "redirect:/portal/admin/rechnung/" + id;
+        }
 
         inv.setStatus(status);
         if ("BEZAHLT".equals(status)) {
@@ -239,7 +262,7 @@ public class AdminInvoiceController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + invoice.getInvoiceNumber() + ".pdf\"")
+                        "attachment; filename=\"" + invoice.getInvoiceNumber().replaceAll("[^a-zA-Z0-9._-]", "_") + ".pdf\"")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
     }

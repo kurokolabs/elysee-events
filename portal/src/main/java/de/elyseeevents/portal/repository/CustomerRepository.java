@@ -65,7 +65,12 @@ public class CustomerRepository {
     }
 
     public List<Customer> search(String query) {
-        String like = "%" + query.toLowerCase() + "%";
+        if (query == null || query.isBlank()) return findAll();
+        String escaped = query.toLowerCase()
+                .replace("\\", "\\\\")
+                .replace("%", "\\%")
+                .replace("_", "\\_");
+        String like = "%" + escaped + "%";
         return jdbc.query(
                 "SELECT c.*, u.email FROM customers c JOIN users u ON c.user_id = u.id " +
                 "WHERE LOWER(c.first_name) LIKE ? OR LOWER(c.last_name) LIKE ? OR LOWER(c.company) LIKE ? OR LOWER(c.city) LIKE ? OR LOWER(u.email) LIKE ? " +
@@ -93,7 +98,7 @@ public class CustomerRepository {
             }, keyHolder);
             c.setId(keyHolder.getKey().longValue());
         } else {
-            jdbc.update("UPDATE customers SET first_name = ?, last_name = ?, company = ?, phone = ?, address = ?, postal_code = ?, city = ?, notes = ?, updated_at = datetime('now') WHERE id = ?",
+            jdbc.update("UPDATE customers SET first_name = ?, last_name = ?, company = ?, phone = ?, address = ?, postal_code = ?, city = ?, notes = ?, updated_at = NOW() WHERE id = ?",
                     c.getFirstName(), c.getLastName(), c.getCompany(), c.getPhone(),
                     c.getAddress(), c.getPostalCode(), c.getCity(), c.getNotes(), c.getId());
         }

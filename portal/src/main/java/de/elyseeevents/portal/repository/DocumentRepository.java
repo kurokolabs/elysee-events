@@ -45,28 +45,28 @@ public class DocumentRepository {
 
     public List<Document> findAll() {
         return jdbc.query(
-                "SELECT d.*, (c.first_name || ' ' || c.last_name) AS customer_name " +
+                "SELECT d.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name " +
                 "FROM documents d JOIN customers c ON d.customer_id = c.id " +
                 "ORDER BY d.created_at DESC", rowMapperFull);
     }
 
     public List<Document> findByCustomerId(Long customerId) {
         return jdbc.query(
-                "SELECT d.*, (c.first_name || ' ' || c.last_name) AS customer_name " +
+                "SELECT d.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name " +
                 "FROM documents d JOIN customers c ON d.customer_id = c.id " +
                 "WHERE d.customer_id = ? ORDER BY d.created_at DESC", rowMapperFull, customerId);
     }
 
     public List<Document> findByBookingId(Long bookingId) {
         return jdbc.query(
-                "SELECT d.*, (c.first_name || ' ' || c.last_name) AS customer_name " +
+                "SELECT d.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name " +
                 "FROM documents d JOIN customers c ON d.customer_id = c.id " +
                 "WHERE d.booking_id = ? ORDER BY d.created_at DESC", rowMapperFull, bookingId);
     }
 
     public Optional<Document> findById(Long id) {
         List<Document> list = jdbc.query(
-                "SELECT d.*, (c.first_name || ' ' || c.last_name) AS customer_name " +
+                "SELECT d.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name " +
                 "FROM documents d JOIN customers c ON d.customer_id = c.id " +
                 "WHERE d.id = ?", rowMapperFull, id);
         return list.stream().findFirst();

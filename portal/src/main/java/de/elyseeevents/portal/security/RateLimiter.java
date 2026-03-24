@@ -1,8 +1,11 @@
 package de.elyseeevents.portal.security;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.util.Deque;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -34,6 +37,18 @@ public class RateLimiter {
         Instant cutoff = Instant.now().minusSeconds(WINDOW_SECONDS);
         while (!deque.isEmpty() && deque.peekFirst().isBefore(cutoff)) {
             deque.pollFirst();
+        }
+    }
+
+    @Scheduled(fixedRate = 300000) // every 5 minutes
+    public void cleanup() {
+        Iterator<Map.Entry<String, Deque<Instant>>> it = attempts.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Deque<Instant>> entry = it.next();
+            pruneExpired(entry.getValue());
+            if (entry.getValue().isEmpty()) {
+                it.remove();
+            }
         }
     }
 }

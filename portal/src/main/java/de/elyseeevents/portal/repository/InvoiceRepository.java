@@ -48,21 +48,21 @@ public class InvoiceRepository {
 
     public List<Invoice> findAll() {
         return jdbc.query(
-                "SELECT i.*, (c.first_name || ' ' || c.last_name) AS customer_name, b.booking_type " +
+                "SELECT i.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name, b.booking_type " +
                 "FROM invoices i JOIN customers c ON i.customer_id = c.id JOIN bookings b ON i.booking_id = b.id " +
                 "ORDER BY i.created_at DESC", rowMapperFull);
     }
 
     public List<Invoice> findByCustomerId(Long customerId) {
         return jdbc.query(
-                "SELECT i.*, (c.first_name || ' ' || c.last_name) AS customer_name, b.booking_type " +
+                "SELECT i.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name, b.booking_type " +
                 "FROM invoices i JOIN customers c ON i.customer_id = c.id JOIN bookings b ON i.booking_id = b.id " +
                 "WHERE i.customer_id = ? ORDER BY i.created_at DESC", rowMapperFull, customerId);
     }
 
     public Optional<Invoice> findById(Long id) {
         List<Invoice> list = jdbc.query(
-                "SELECT i.*, (c.first_name || ' ' || c.last_name) AS customer_name, b.booking_type " +
+                "SELECT i.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name, b.booking_type " +
                 "FROM invoices i JOIN customers c ON i.customer_id = c.id JOIN bookings b ON i.booking_id = b.id " +
                 "WHERE i.id = ?", rowMapperFull, id);
         return list.stream().findFirst();
@@ -95,7 +95,7 @@ public class InvoiceRepository {
         return inv;
     }
 
-    public String nextInvoiceNumber() {
+    public synchronized String nextInvoiceNumber() {
         String year = java.time.Year.now().toString();
         String prefix = "RE-" + year + "-";
         Long maxNum = jdbc.queryForObject(

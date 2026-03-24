@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,17 @@ public class AdminQuoteController {
     private final BookingService bookingService;
     private final CustomerService customerService;
     private final QuotePdfService pdfService;
+
+    @org.springframework.beans.factory.annotation.Value("${app.company.name}") private String companyName;
+    @org.springframework.beans.factory.annotation.Value("${app.company.street}") private String companyStreet;
+    @org.springframework.beans.factory.annotation.Value("${app.company.city}") private String companyCity;
+    @org.springframework.beans.factory.annotation.Value("${app.company.phone}") private String companyPhone;
+    @org.springframework.beans.factory.annotation.Value("${app.company.email}") private String companyEmail;
+    @org.springframework.beans.factory.annotation.Value("${app.company.web}") private String companyWeb;
+    @org.springframework.beans.factory.annotation.Value("${app.company.tax-id}") private String companyTaxId;
+    @org.springframework.beans.factory.annotation.Value("${app.company.hrb}") private String companyHrb;
+    @org.springframework.beans.factory.annotation.Value("${app.company.court}") private String companyCourt;
+    @org.springframework.beans.factory.annotation.Value("${app.company.ceo}") private String companyCeo;
 
     public AdminQuoteController(QuoteRepository quoteRepository, QuoteItemRepository itemRepository,
                                 BookingService bookingService, CustomerService customerService,
@@ -87,7 +99,8 @@ public class AdminQuoteController {
 
         List<QuoteItem> items = new ArrayList<>();
         double netto = 0;
-        for (int i = 0; i < descriptions.size(); i++) {
+        int itemCount = Math.min(descriptions.size(), Math.min(quantities.size(), prices.size()));
+        for (int i = 0; i < itemCount; i++) {
             String desc = descriptions.get(i);
             if (desc == null || desc.isBlank()) continue;
             double qty = parseDouble(quantities.get(i), 1);
@@ -119,10 +132,22 @@ public class AdminQuoteController {
         model.addAttribute("bookingId", bookingId);
         model.addAttribute("quoteNumber", quoteRepository.nextQuoteNumber());
 
+        model.addAttribute("companyName", companyName);
+        model.addAttribute("companyStreet", companyStreet);
+        model.addAttribute("companyCity", companyCity);
+        model.addAttribute("companyPhone", companyPhone);
+        model.addAttribute("companyEmail", companyEmail);
+        model.addAttribute("companyWeb", companyWeb);
+        model.addAttribute("companyTaxId", companyTaxId);
+        model.addAttribute("companyHrb", companyHrb);
+        model.addAttribute("companyCourt", companyCourt);
+        model.addAttribute("companyCeo", companyCeo);
+
         return "admin/quote-preview";
     }
 
-    // Schritt 4: Angebot best\u00e4tigen und erstellen
+    // Schritt 4: Angebot bestaetigen und erstellen
+    @Transactional
     @PostMapping("/angebot/approve")
     public String approve(@RequestParam Long customerId,
                          @RequestParam(required = false) Long bookingId,
@@ -137,21 +162,35 @@ public class AdminQuoteController {
                          @RequestParam(required = false) String notes,
                          RedirectAttributes redirectAttributes) {
 
+        // Recalculate server-side - never trust client totals
+        double calcNetto = 0;
+        int calcCount = Math.min(descriptions.size(), Math.min(quantities.size(), prices.size()));
+        for (int i = 0; i < calcCount; i++) {
+            String desc = descriptions.get(i);
+            if (desc == null || desc.isBlank()) continue;
+            double qty = parseDouble(quantities.get(i), 1);
+            double price = parseDouble(prices.get(i), 0);
+            calcNetto += Math.round(qty * price * 100.0) / 100.0;
+        }
+        double calcTaxAmount = Math.round(calcNetto * (taxRate / 100.0) * 100.0) / 100.0;
+        double calcTotal = calcNetto + calcTaxAmount;
+
         Quote quote = new Quote();
         quote.setCustomerId(customerId);
         quote.setBookingId(bookingId);
         quote.setQuoteNumber(quoteRepository.nextQuoteNumber());
-        quote.setAmount(netto);
+        quote.setAmount(calcNetto);
         quote.setTaxRate(taxRate);
-        quote.setTaxAmount(taxAmount);
-        quote.setTotal(total);
+        quote.setTaxAmount(calcTaxAmount);
+        quote.setTotal(calcTotal);
         quote.setStatus("OFFEN");
         quote.setValidUntil(validUntil);
         quote.setNotes(notes);
         quote = quoteRepository.save(quote);
 
         // Positionen speichern
-        for (int i = 0; i < descriptions.size(); i++) {
+        int approveItemCount = Math.min(descriptions.size(), Math.min(quantities.size(), prices.size()));
+        for (int i = 0; i < approveItemCount; i++) {
             String desc = descriptions.get(i);
             if (desc == null || desc.isBlank()) continue;
 
@@ -181,12 +220,18 @@ public class AdminQuoteController {
         return "admin/quote-detail";
     }
 
+    @Transactional
     @PostMapping("/angebot/{id}/status")
     public String updateStatus(@PathVariable Long id,
                               @RequestParam String status,
                               RedirectAttributes redirectAttributes) {
         Quote quote = quoteRepository.findById(id).orElse(null);
         if (quote == null) return "redirect:/portal/admin/angebote";
+
+        if (!java.util.Set.of("OFFEN", "ANGENOMMEN", "ABGELEHNT", "ABGELAUFEN", "STORNIERT").contains(status)) {
+            redirectAttributes.addFlashAttribute("error", "Ungueltiger Status.");
+            return "redirect:/portal/admin/angebot/" + id;
+        }
 
         quote.setStatus(status);
         quoteRepository.save(quote);
@@ -207,7 +252,7 @@ public class AdminQuoteController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + quote.getQuoteNumber() + ".pdf\"")
+                        "attachment; filename=\"" + quote.getQuoteNumber().replaceAll("[^a-zA-Z0-9._-]", "_") + ".pdf\"")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
     }

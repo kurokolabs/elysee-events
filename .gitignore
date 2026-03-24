@@ -30,6 +30,7 @@ bin/
 .DS_Store
 
 ### Portal ###
+.env
 portal/.env
 portal/portal.db
 portal/target/

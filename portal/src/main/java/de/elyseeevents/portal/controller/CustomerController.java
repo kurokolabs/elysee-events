@@ -31,13 +31,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import de.elyseeevents.portal.util.FileUtil;
+
 @Controller
 @RequestMapping("/portal")
 public class CustomerController {
-
-    private static final Set<String> ALLOWED_TYPES = Set.of(
-            "pdf", "jpg", "jpeg", "png", "doc", "docx", "xls", "xlsx");
-    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
     private final CustomerService customerService;
     private final BookingService bookingService;
@@ -227,7 +225,7 @@ public class CustomerController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + invoice.getInvoiceNumber() + ".pdf\"")
+                        "attachment; filename=\"" + invoice.getInvoiceNumber().replaceAll("[^a-zA-Z0-9._-]", "_") + ".pdf\"")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
     }
@@ -304,14 +302,14 @@ public class CustomerController {
             return "redirect:/portal/dokumente";
         }
 
-        if (file.getSize() > MAX_FILE_SIZE) {
+        if (file.getSize() > FileUtil.MAX_FILE_SIZE) {
             redirectAttributes.addFlashAttribute("error", "Die Datei darf maximal 10 MB gro\u00df sein.");
             return "redirect:/portal/dokumente";
         }
 
-        String originalFilename = file.getOriginalFilename();
-        String extension = getFileExtension(originalFilename).toLowerCase();
-        if (!ALLOWED_TYPES.contains(extension)) {
+        String originalFilename = FileUtil.sanitizeFilename(file.getOriginalFilename());
+        String extension = FileUtil.getFileExtension(originalFilename).toLowerCase();
+        if (!FileUtil.ALLOWED_TYPES.contains(extension)) {
             redirectAttributes.addFlashAttribute("error",
                     "Dateityp nicht erlaubt. Erlaubt: PDF, JPG, PNG, DOC, DOCX, XLS, XLSX.");
             return "redirect:/portal/dokumente";
@@ -322,7 +320,11 @@ public class CustomerController {
             Files.createDirectories(customerDir);
 
             String storedName = System.currentTimeMillis() + "_" + originalFilename;
-            Path targetPath = customerDir.resolve(storedName);
+            Path targetPath = customerDir.resolve(storedName).normalize();
+            if (!targetPath.startsWith(uploadPath)) {
+                redirectAttributes.addFlashAttribute("error", "Ungueltiger Dateiname.");
+                return "redirect:/portal/dokumente";
+            }
             file.transferTo(targetPath.toFile());
 
             Document doc = new Document();
@@ -337,7 +339,7 @@ public class CustomerController {
 
             redirectAttributes.addFlashAttribute("message", "Dokument erfolgreich hochgeladen.");
         } catch (IOException e) {
-            redirectAttributes.addFlashAttribute("error", "Fehler beim Hochladen: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Fehler beim Hochladen. Bitte versuchen Sie es erneut.");
         }
 
         return "redirect:/portal/dokumente";
@@ -355,13 +357,16 @@ public class CustomerController {
 
         Document doc = docOpt.get();
         try {
-            Path filePath = Paths.get(doc.getFilePath());
+            Path filePath = Paths.get(doc.getFilePath()).toAbsolutePath().normalize();
+            if (!filePath.startsWith(uploadPath)) {
+                return ResponseEntity.status(403).build();
+            }
             Resource resource = new UrlResource(filePath.toUri());
             if (!resource.exists()) return ResponseEntity.notFound().build();
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"" + doc.getFileName() + "\"")
+                            "attachment; filename=\"" + doc.getFileName().replaceAll("[^a-zA-Z0-9._-]", "_") + "\"")
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(resource);
         } catch (Exception e) {
@@ -409,6 +414,10 @@ public class CustomerController {
         }
 
         Quote quote = quoteOpt.get();
+        if (!"OFFEN".equals(quote.getStatus())) {
+            redirectAttributes.addFlashAttribute("error", "Dieses Angebot kann nicht mehr angenommen werden.");
+            return "redirect:/portal/angebot/" + id;
+        }
         quote.setStatus("ANGENOMMEN");
         quoteRepository.save(quote);
 
@@ -432,14 +441,9 @@ public class CustomerController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + quote.getQuoteNumber() + ".pdf\"")
+                        "attachment; filename=\"" + quote.getQuoteNumber().replaceAll("[^a-zA-Z0-9._-]", "_") + ".pdf\"")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
-    }
-
-    private String getFileExtension(String filename) {
-        if (filename == null || !filename.contains(".")) return "";
-        return filename.substring(filename.lastIndexOf('.') + 1);
     }
 
     private Customer getCustomer(Authentication authentication) {

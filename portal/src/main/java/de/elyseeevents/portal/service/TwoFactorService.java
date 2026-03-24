@@ -2,6 +2,7 @@ package de.elyseeevents.portal.service;
 
 import de.elyseeevents.portal.model.User;
 import de.elyseeevents.portal.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -13,23 +14,28 @@ public class TwoFactorService {
 
     private static final int CODE_LENGTH = 6;
     private static final int CODE_VALIDITY_MINUTES = 10;
+    private static final int MAX_ATTEMPTS = 5;
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public TwoFactorService(UserRepository userRepository) {
+    public TwoFactorService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public String generateAndStoreCode(Long userId) {
-        SecureRandom random = new SecureRandom();
         StringBuilder code = new StringBuilder(CODE_LENGTH);
         for (int i = 0; i < CODE_LENGTH; i++) {
-            code.append(random.nextInt(10));
+            code.append(SECURE_RANDOM.nextInt(10));
         }
         String codeStr = code.toString();
+        String hashedCode = passwordEncoder.encode(codeStr);
         String expiresAt = LocalDateTime.now().plusMinutes(CODE_VALIDITY_MINUTES).format(FMT);
-        userRepository.storeTwoFaCode(userId, codeStr, expiresAt);
+        userRepository.storeTwoFaCode(userId, hashedCode, expiresAt);
+        userRepository.resetTwoFaAttempts(userId);
         return codeStr;
     }
 
@@ -48,9 +54,18 @@ public class TwoFactorService {
             return false;
         }
 
-        boolean valid = user.getTwoFaCode().equals(inputCode.trim());
+        // Check attempt limit
+        int attempts = userRepository.getTwoFaAttempts(user.getId());
+        if (attempts >= MAX_ATTEMPTS) {
+            userRepository.clearTwoFaCode(user.getId());
+            return false;
+        }
+
+        boolean valid = passwordEncoder.matches(inputCode.trim(), user.getTwoFaCode());
         if (valid) {
             userRepository.clearTwoFaCode(user.getId());
+        } else {
+            userRepository.incrementTwoFaAttempts(user.getId());
         }
         return valid;
     }

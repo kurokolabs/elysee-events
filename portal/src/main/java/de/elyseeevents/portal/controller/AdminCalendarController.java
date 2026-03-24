@@ -26,6 +26,8 @@ public class AdminCalendarController {
         LocalDate now = LocalDate.now();
         int y = year != null ? year : now.getYear();
         int m = month != null ? month : now.getMonthValue();
+        if (m < 1 || m > 12) m = now.getMonthValue();
+        if (y < 2020 || y > 2100) y = now.getYear();
 
         model.addAttribute("activeNav", "kalender");
         model.addAttribute("year", y);

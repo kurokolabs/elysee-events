@@ -322,10 +322,12 @@
     }
 
     function fetchAvailability(y, m, cb) {
+      var grid = document.getElementById('wizCalGrid');
+      grid.style.opacity = '0.5';
       fetch('/portal/api/availability?year=' + y + '&month=' + m)
-        .then(function(r) { return r.json(); })
-        .then(function(data) { availData = data; cb(); })
-        .catch(function() { availData = []; cb(); });
+        .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(data) { availData = data; grid.style.opacity = '1'; cb(); })
+        .catch(function() { availData = []; grid.style.opacity = '1'; cb(); });
     }
 
     function buildCalGrid() {
@@ -602,7 +604,18 @@
     });
 
     document.getElementById('back4').addEventListener('click', function() { showStep(3); });
-    document.getElementById('next4').addEventListener('click', function() { showStep(5); });
+    document.getElementById('next4').addEventListener('click', function() {
+      if (state.bookingType === 'KANTINE') {
+        var addr = document.getElementById('deliveryAddr').value.trim();
+        if (!addr) {
+          document.getElementById('deliveryAddr').style.borderColor = '#C62828';
+          document.getElementById('deliveryAddr').focus();
+          return;
+        }
+        document.getElementById('deliveryAddr').style.borderColor = '';
+      }
+      showStep(5);
+    });
 
     /* ── STEP 5: Besondere Wünsche + Submit ── */
     document.getElementById('back5').addEventListener('click', function() { showStep(4); });

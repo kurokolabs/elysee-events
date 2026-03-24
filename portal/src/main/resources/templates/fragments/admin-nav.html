@@ -76,12 +76,12 @@
   </div>
 </nav>
 <div class="portal-mobile-menu" id="mobileMenu">
-  <a th:href="@{/portal/dashboard}">Dashboard</a>
-  <a th:href="@{/portal/anfrage}">Neue Anfrage</a>
-  <a th:href="@{/portal/rechnungen}">Rechnungen</a>
-  <a th:href="@{/portal/angebote}">Angebote</a>
-  <a th:href="@{/portal/dokumente}">Dokumente</a>
-  <a th:href="@{/portal/profil}">Profil</a>
+  <a th:href="@{/portal/dashboard}" th:classappend="${activeNav == 'dashboard'} ? 'active'">Dashboard</a>
+  <a th:href="@{/portal/anfrage}" th:classappend="${activeNav == 'anfrage'} ? 'active'">Neue Anfrage</a>
+  <a th:href="@{/portal/rechnungen}" th:classappend="${activeNav == 'rechnungen'} ? 'active'">Rechnungen</a>
+  <a th:href="@{/portal/angebote}" th:classappend="${activeNav == 'angebote'} ? 'active'">Angebote</a>
+  <a th:href="@{/portal/dokumente}" th:classappend="${activeNav == 'dokumente'} ? 'active'">Dokumente</a>
+  <a th:href="@{/portal/profil}" th:classappend="${activeNav == 'profil'} ? 'active'">Profil</a>
 </div>
 </body>
 </html>
