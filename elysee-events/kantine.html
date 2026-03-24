@@ -467,10 +467,9 @@
 
     /* Hamburger */
     .nav__hamburger, .nav__burger {
-      display:none;
+      display:none; align-items:center; justify-content:center;
       background:none; border:none; cursor:pointer;
-      padding:12px;
-      min-width:44px; min-height:44px;
+      width:44px; height:44px; padding:0;
       border-radius:50%;
       transition: background .25s ease;
       position:relative; z-index:1;
@@ -1464,7 +1463,7 @@
 
       .footer__top {
         grid-template-columns: 1fr 1fr;
-        gap: 36px;
+        gap: 28px;
       }
 
       /* Show card-based menu on mobile, hide table */
@@ -1538,7 +1537,10 @@
 
       .footer__top {
         grid-template-columns: 1fr;
-        gap: 32px;
+        gap: 24px;
+      }
+      .footer {
+        padding: 48px 20px 24px;
       }
 
       .footer__bottom {
@@ -2257,12 +2259,13 @@ section:not(.hero):not(:first-of-type) {
     var counter = pre.querySelector('.pre__counter');
     var line    = pre.querySelector('.pre__line');
     setTimeout(function(){ line.classList.add('running'); }, 100);
-    var duration = 2400, startTime = null;
+    var duration = 2400, startTime = null, lastVal = -1;
     function easeInOut(t){ return t<.5?2*t*t:-1+(4-2*t)*t; }
     (function tick(now){
       if(!startTime) startTime = now;
       var t = Math.min((now-startTime)/duration, 1);
-      counter.textContent = Math.round(easeInOut(t)*100);
+      var newVal = Math.round(easeInOut(t)*100);
+      if (newVal !== lastVal) { counter.textContent = newVal; lastVal = newVal; }
       if(t<1) requestAnimationFrame(tick);
     })(performance.now());
     setTimeout(function(){
@@ -3180,6 +3183,11 @@ section:not(.hero):not(:first-of-type) {
           <div class="bk__card__title">Catering</div>
           <div class="bk__card__desc">Lieferung und Buffet-Service</div>
         </div>
+        <div class="bk__card" tabindex="0" role="button" data-field="eventType" data-value="Kantine">
+          <div class="bk__card__icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="8" y="18" width="32" height="20" rx="2"/><path d="M14 18v-4a10 10 0 0120 0v4"/><line x1="18" y1="26" x2="18" y2="32"/><line x1="24" y1="24" x2="24" y2="32"/><line x1="30" y1="26" x2="30" y2="32"/></svg></div>
+          <div class="bk__card__title">Kantine</div>
+          <div class="bk__card__desc">Mittagstisch Mo-Fr</div>
+        </div>
       </div>
       <div class="bk__nav"><button class="bk__btn bk__btn--gold" id="bkNext1">Weiter</button></div>
     </div>
@@ -3693,7 +3701,14 @@ section:not(.hero):not(:first-of-type) {
             grid.querySelectorAll('.bk__cal-day').forEach(function(c) { c.classList.remove('is-selected'); });
             el.classList.add('is-selected');
             formData.datum = dateStr;
-            showBkTimeSlots(day, dow);
+            if (formData.eventType === 'Kantine') {
+              document.getElementById('bkSlotsWrap').style.display = 'none';
+              formData.timeSlot = 'Mittagstisch';
+              bkSelectedSlots = ['Mittagstisch'];
+              document.getElementById('bkNext2').disabled = false;
+            } else {
+              showBkTimeSlots(day, dow);
+            }
           });
         })(d, bkCalYear + '-' + String(bkCalMonth).padStart(2,'0') + '-' + String(d).padStart(2,'0'), cellDate.getDay(), cell);
       }
@@ -4049,7 +4064,7 @@ section:not(.hero):not(:first-of-type) {
   });
   document.getElementById('bkBack2').addEventListener('click', function(){ safePrev(2); });
   document.getElementById('bkNext2').addEventListener('click', function(){
-    if (!formData.datum || bkSelectedSlots.length === 0) { shakeStep(2); return; }
+    if (!formData.datum || (formData.eventType !== 'Kantine' && bkSelectedSlots.length === 0)) { shakeStep(2); return; }
     showStep(3);
   });
   document.getElementById('bkBack3').addEventListener('click', function(){ safePrev(3); });

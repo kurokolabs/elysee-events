@@ -273,9 +273,9 @@
 
     /* Hamburger */
     .nav__hamburger, .nav__burger {
-      display:none;
+      display:none; align-items:center; justify-content:center;
       background:none; border:none; cursor:pointer;
-      padding:8px;
+      width:44px; height:44px; padding:0;
       border-radius:50%;
       transition: background .25s ease;
       position:relative; z-index:1;
@@ -1064,7 +1064,7 @@
       .process__steps::before { display: none; }
       .process__step { padding: 0; }
 
-      .footer__top { grid-template-columns: 1fr 1fr; gap: 40px; }
+      .footer__top { grid-template-columns: 1fr 1fr; gap: 28px; }
       .footer { padding: 60px 24px 32px; }
 
       .referenzen__logos { gap: 32px; }
@@ -1074,7 +1074,8 @@
       .hero__title { font-size: 44px; }
       .section-heading { font-size: 30px; }
       .kapazitaeten__grid { grid-template-columns: 1fr; }
-      .footer__top { grid-template-columns: 1fr; }
+      .footer__top { grid-template-columns: 1fr; gap: 24px; }
+      .footer { padding: 48px 20px 24px; }
       .footer__bottom { flex-direction: column; align-items: flex-start; }
       .cap-card__num { font-size: 52px; }
       .process__step { padding: 0; }
@@ -1753,12 +1754,13 @@ section:not(.hero):not(:first-of-type) {
     var counter = pre.querySelector('.pre__counter');
     var line    = pre.querySelector('.pre__line');
     setTimeout(function(){ line.classList.add('running'); }, 100);
-    var duration = 2400, startTime = null;
+    var duration = 2400, startTime = null, lastVal = -1;
     function easeInOut(t){ return t<.5?2*t*t:-1+(4-2*t)*t; }
     (function tick(now){
       if(!startTime) startTime = now;
       var t = Math.min((now-startTime)/duration, 1);
-      counter.textContent = Math.round(easeInOut(t)*100);
+      var newVal = Math.round(easeInOut(t)*100);
+      if (newVal !== lastVal) { counter.textContent = newVal; lastVal = newVal; }
       if(t<1) requestAnimationFrame(tick);
     })(performance.now());
     setTimeout(function(){
@@ -2468,6 +2470,11 @@ section:not(.hero):not(:first-of-type) {
           <div class="bk__card__title">Catering</div>
           <div class="bk__card__desc">Lieferung und Buffet-Service</div>
         </div>
+        <div class="bk__card" tabindex="0" role="button" data-field="eventType" data-value="Kantine">
+          <div class="bk__card__icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="8" y="18" width="32" height="20" rx="2"/><path d="M14 18v-4a10 10 0 0120 0v4"/><line x1="18" y1="26" x2="18" y2="32"/><line x1="24" y1="24" x2="24" y2="32"/><line x1="30" y1="26" x2="30" y2="32"/></svg></div>
+          <div class="bk__card__title">Kantine</div>
+          <div class="bk__card__desc">Mittagstisch Mo-Fr</div>
+        </div>
       </div>
       <div class="bk__nav"><button class="bk__btn bk__btn--gold" id="bkNext1">Weiter</button></div>
     </div>
@@ -2884,7 +2891,7 @@ section:not(.hero):not(:first-of-type) {
     for(var d=1;d<=dim;d++){var cell=document.createElement('div');var cd=new Date(bkCalYear,bkCalMonth-1,d);cell.className='bk__cal-day';
       if(cd<today)cell.classList.add('is-past');else cell.classList.add('is-selectable');
       var num=document.createElement('div');num.className='bk__cal-day__num';num.textContent=d;cell.appendChild(num);
-      if(cd>=today){(function(day,ds,dow,el){el.addEventListener('click',function(){grid.querySelectorAll('.bk__cal-day').forEach(function(c){c.classList.remove('is-selected');});el.classList.add('is-selected');formData.datum=ds;showBkTimeSlots(day,dow);});})(d,bkCalYear+'-'+String(bkCalMonth).padStart(2,'0')+'-'+String(d).padStart(2,'0'),cd.getDay(),cell);}
+      if(cd>=today){(function(day,ds,dow,el){el.addEventListener('click',function(){grid.querySelectorAll('.bk__cal-day').forEach(function(c){c.classList.remove('is-selected');});el.classList.add('is-selected');formData.datum=ds;if(formData.eventType==='Kantine'){document.getElementById('bkSlotsWrap').style.display='none';formData.timeSlot='Mittagstisch';bkSelectedSlots=['Mittagstisch'];document.getElementById('bkNext2').disabled=false;}else{showBkTimeSlots(day,dow);}});})(d,bkCalYear+'-'+String(bkCalMonth).padStart(2,'0')+'-'+String(d).padStart(2,'0'),cd.getDay(),cell);}
       grid.appendChild(cell);}
     var tc=so+dim;var rem=tc%7===0?0:7-(tc%7);for(var r=0;r<rem;r++){var e=document.createElement('div');e.className='bk__cal-day bk__cal-day--empty';grid.appendChild(e);}
   }
@@ -3172,7 +3179,7 @@ section:not(.hero):not(:first-of-type) {
   // Step 2: Calendar + time slots
   document.getElementById('bkBack2').addEventListener('click', function(){ safePrev(2); });
   document.getElementById('bkNext2').addEventListener('click', function(){
-    if(!formData.datum || !formData.timeSlot) return;
+    if(!formData.datum || (formData.eventType!=='Kantine' && !formData.timeSlot)) return;
     showStep(3);
   });
   // Step 3: Guests

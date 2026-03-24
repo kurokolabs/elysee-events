@@ -272,13 +272,13 @@
     }
 
     .nav__hamburger, .nav__burger, .nav-hamburger {
-      display:none;
-      align-items:center; justify-content:center;
-      background:none; border:none; cursor:pointer;
-      padding:12px; border-radius:50%;
-      min-width:44px; min-height:44px;
+      display: none;
+      align-items: center; justify-content: center;
+      background: none; border: none; cursor: pointer;
+      width: 44px; height: 44px; padding: 0;
+      border-radius: 50%;
       transition: background .25s ease;
-      position:relative; z-index:1;
+      position: relative; z-index: 1;
     }
     .nav__hamburger:hover, .nav__burger:hover, .nav-hamburger:hover { background:rgba(255,255,255,.06); }
 
@@ -969,9 +969,13 @@
       .booking__slots { grid-template-columns: 1fr; }
       .booking__step-line { width: 24px; }
 
+      /* Kapbar */
+      .kapbar { padding: 48px 24px; }
+
       /* Footer */
       .footer { padding: 64px 24px 32px; }
-      .footer__grid { grid-template-columns: 1fr; gap: 40px; }
+      .footer__grid { grid-template-columns: 1fr; gap: 28px; }
+      .footer__col { text-align: left; }
       .footer__bottom { flex-direction: column; gap: 12px; text-align: center; }
 
       /* Section */
@@ -984,6 +988,8 @@
       .card { height: 360px; }
       .booking__step { width: 32px; height: 32px; font-size: 10px; }
       .booking__step-line { width: 16px; }
+      .footer { padding: 48px 20px 24px; }
+      .footer__grid { gap: 24px; }
     }
 
     /* ─── Preloader — Bouquet ────────────────────────────────────────────── */
@@ -993,6 +999,7 @@
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       pointer-events: all;
+      will-change: transform;
     }
     #preloader .pre__bg {
       position: absolute; inset: 0;
@@ -1715,10 +1722,12 @@ section:not(.hero):not(:first-of-type) {
     setTimeout(function(){ line.classList.add('running'); }, 100);
     var duration = 2400, startTime = null;
     function easeInOut(t){ return t<.5?2*t*t:-1+(4-2*t)*t; }
+    var lastVal = -1;
     (function tick(now){
       if(!startTime) startTime = now;
       var t = Math.min((now-startTime)/duration, 1);
-      counter.textContent = Math.round(easeInOut(t)*100);
+      var newVal = Math.round(easeInOut(t)*100);
+      if (newVal !== lastVal) { counter.textContent = newVal; lastVal = newVal; }
       if(t<1) requestAnimationFrame(tick);
     })(performance.now());
     setTimeout(function(){
@@ -2065,6 +2074,11 @@ section:not(.hero):not(:first-of-type) {
             <div class="bk__card__icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><ellipse cx="24" cy="30" rx="18" ry="6"/><path d="M6 30c0 3.3 8 6 18 6s18-2.7 18-6"/><path d="M10 18c0-6 6-10 14-10s14 4 14 10"/><line x1="24" y1="8" x2="24" y2="12"/><path d="M18 12c0-2 2.7-4 6-4s6 2 6 4"/></svg></div>
             <div class="bk__card__title">Catering</div>
             <div class="bk__card__desc">Lieferung und Buffet-Service</div>
+          </div>
+          <div class="bk__card" tabindex="0" role="button" data-field="eventType" data-value="Kantine">
+            <div class="bk__card__icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="8" y="18" width="32" height="20" rx="2"/><path d="M14 18v-4a10 10 0 0120 0v4"/><line x1="18" y1="26" x2="18" y2="32"/><line x1="24" y1="24" x2="24" y2="32"/><line x1="30" y1="26" x2="30" y2="32"/></svg></div>
+            <div class="bk__card__title">Kantine</div>
+            <div class="bk__card__desc">Mittagstisch Mo-Fr</div>
           </div>
         </div>
         <div class="bk__nav"><button class="bk__btn bk__btn--gold" id="bkNext1">Weiter</button></div>
@@ -2751,7 +2765,7 @@ section:not(.hero):not(:first-of-type) {
     }
     function initBkCalendar(){var n=new Date();bkCalYear=n.getFullYear();bkCalMonth=n.getMonth()+1;bkCalInitialized=true;renderBkCalendar();}
     function renderBkCalendar(){document.getElementById('bkCalMonth').textContent=BK_MONTHS[bkCalMonth-1]+' '+bkCalYear;buildBkCalGrid();}
-    function buildBkCalGrid(){var grid=document.getElementById('bkCalGrid');var hd=grid.querySelectorAll('.bk__cal-header');grid.innerHTML='';hd.forEach(function(h){grid.appendChild(h);});var fd=new Date(bkCalYear,bkCalMonth-1,1).getDay();var so=(fd===0)?6:fd-1;var dim=new Date(bkCalYear,bkCalMonth,0).getDate();var today=new Date();today.setHours(0,0,0,0);for(var i=0;i<so;i++){var e=document.createElement('div');e.className='bk__cal-day bk__cal-day--empty';grid.appendChild(e);}for(var d=1;d<=dim;d++){var cell=document.createElement('div');var cd=new Date(bkCalYear,bkCalMonth-1,d);cell.className='bk__cal-day';if(cd<today)cell.classList.add('is-past');else cell.classList.add('is-selectable');var num=document.createElement('div');num.className='bk__cal-day__num';num.textContent=d;cell.appendChild(num);if(cd>=today){(function(day,ds,dow,el){el.addEventListener('click',function(){grid.querySelectorAll('.bk__cal-day').forEach(function(c){c.classList.remove('is-selected');});el.classList.add('is-selected');formData.datum=ds;showBkTimeSlots(day,dow);});})(d,bkCalYear+'-'+String(bkCalMonth).padStart(2,'0')+'-'+String(d).padStart(2,'0'),cd.getDay(),cell);}grid.appendChild(cell);}var tc=so+dim;var rem=tc%7===0?0:7-(tc%7);for(var r=0;r<rem;r++){var e=document.createElement('div');e.className='bk__cal-day bk__cal-day--empty';grid.appendChild(e);}}
+    function buildBkCalGrid(){var grid=document.getElementById('bkCalGrid');var hd=grid.querySelectorAll('.bk__cal-header');grid.innerHTML='';hd.forEach(function(h){grid.appendChild(h);});var fd=new Date(bkCalYear,bkCalMonth-1,1).getDay();var so=(fd===0)?6:fd-1;var dim=new Date(bkCalYear,bkCalMonth,0).getDate();var today=new Date();today.setHours(0,0,0,0);for(var i=0;i<so;i++){var e=document.createElement('div');e.className='bk__cal-day bk__cal-day--empty';grid.appendChild(e);}for(var d=1;d<=dim;d++){var cell=document.createElement('div');var cd=new Date(bkCalYear,bkCalMonth-1,d);cell.className='bk__cal-day';if(cd<today)cell.classList.add('is-past');else cell.classList.add('is-selectable');var num=document.createElement('div');num.className='bk__cal-day__num';num.textContent=d;cell.appendChild(num);if(cd>=today){(function(day,ds,dow,el){el.addEventListener('click',function(){grid.querySelectorAll('.bk__cal-day').forEach(function(c){c.classList.remove('is-selected');});el.classList.add('is-selected');formData.datum=ds;if(formData.eventType==='Kantine'){document.getElementById('bkSlotsWrap').style.display='none';formData.timeSlot='Mittagstisch';bkSelectedSlots=['Mittagstisch'];document.getElementById('bkNext2').disabled=false;}else{showBkTimeSlots(day,dow);}});})(d,bkCalYear+'-'+String(bkCalMonth).padStart(2,'0')+'-'+String(d).padStart(2,'0'),cd.getDay(),cell);}grid.appendChild(cell);}var tc=so+dim;var rem=tc%7===0?0:7-(tc%7);for(var r=0;r<rem;r++){var e=document.createElement('div');e.className='bk__cal-day bk__cal-day--empty';grid.appendChild(e);}}
     function showBkTimeSlots(day,dow){var wrap=document.getElementById('bkSlotsWrap');var grid=document.getElementById('bkSlotGrid');wrap.style.display='block';wrap.style.animation='none';wrap.offsetHeight;wrap.style.animation='';grid.innerHTML='';bkSelectedSlots=[];formData.timeSlot='';document.getElementById('bkNext2').disabled=true;var hint=document.getElementById('bkSlotHint');var slots=getSlotsForDay(dow);hint.textContent=(dow===0||dow===6)?'Am Wochenende ist nur Ganztags buchbar.':'Sie können mehrere Zeitfenster auswählen.';slots.forEach(function(sd){var btn=document.createElement('button');btn.className='bk__slot';btn.type='button';btn.innerHTML=sd.label+'<br><small>'+sd.sub+'</small>';btn.addEventListener('click',function(){if(sd.multi){btn.classList.toggle('is-selected');var idx=bkSelectedSlots.indexOf(sd.value);if(idx!==-1)bkSelectedSlots.splice(idx,1);else bkSelectedSlots.push(sd.value);grid.querySelectorAll('.bk__slot[data-exclusive]').forEach(function(s){s.classList.remove('is-selected');});bkSelectedSlots=bkSelectedSlots.filter(function(v){return v!=='Ganztags'&&v!=='16:00-24:00';});}else{grid.querySelectorAll('.bk__slot').forEach(function(s){s.classList.remove('is-selected');});btn.classList.add('is-selected');bkSelectedSlots=[sd.value];}formData.timeSlot=bkSelectedSlots.join(', ');document.getElementById('bkNext2').disabled=bkSelectedSlots.length===0;});if(!sd.multi)btn.dataset.exclusive='true';grid.appendChild(btn);});}
     document.getElementById('bkCalPrev').addEventListener('click',function(){bkCalMonth--;if(bkCalMonth<1){bkCalMonth=12;bkCalYear--;}formData.datum='';formData.timeSlot='';bkSelectedSlots=[];document.getElementById('bkSlotsWrap').style.display='none';document.getElementById('bkNext2').disabled=true;renderBkCalendar();});
     document.getElementById('bkCalNext').addEventListener('click',function(){bkCalMonth++;if(bkCalMonth>12){bkCalMonth=1;bkCalYear++;}formData.datum='';formData.timeSlot='';bkSelectedSlots=[];document.getElementById('bkSlotsWrap').style.display='none';document.getElementById('bkNext2').disabled=true;renderBkCalendar();});
@@ -3004,7 +3018,7 @@ section:not(.hero):not(:first-of-type) {
     });
     document.getElementById('bkBack2').addEventListener('click', function(){ showStep(1); });
     document.getElementById('bkNext2').addEventListener('click', function(){
-      if(!formData.datum||!formData.timeSlot) return;
+      if(!formData.datum||(formData.eventType!=='Kantine'&&!formData.timeSlot)) return;
       showStep(3);
     });
     document.getElementById('bkBack3').addEventListener('click', function(){ showStep(2); });

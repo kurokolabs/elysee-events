@@ -425,7 +425,13 @@
               cell.classList.add('is-selected');
               state.eventDate = dateStr;
               selectedDay = { num: day, dow: dow };
-              showTimeSlots(day, dow);
+              if (state.bookingType === 'KANTINE') {
+                state.eventTimeSlot = '';
+                document.getElementById('wizSlots').style.display = 'none';
+                document.getElementById('next2').disabled = false;
+              } else {
+                showTimeSlots(day, dow);
+              }
             });
           })(d, calYear + '-' + String(calMonth).padStart(2,'0') + '-' + String(d).padStart(2,'0'), dayOfWeek);
         }
