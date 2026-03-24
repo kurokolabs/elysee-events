@@ -60,7 +60,7 @@
 
     /* ===================== RESET ===================== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; scrollbar-width: none; overflow: hidden; height: 100%; }
+    html { scroll-behavior: smooth; font-size: 16px; -webkit-font-smoothing: antialiased; scrollbar-width: none; overflow: hidden; height: 100%; }
     html::-webkit-scrollbar { display: none; }
     body {
       margin: 0; padding: 0;
@@ -69,6 +69,7 @@
       background: var(--bg);
       color: var(--dark);
       overflow-y: scroll; overflow-x: hidden; height: 100%; width: 100%;
+      -moz-osx-font-smoothing: grayscale;
     }
     img { display: block; max-width: 100%; }
     a { text-decoration: none; color: inherit; }

@@ -57,7 +57,7 @@
       --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
     }
 
-    html { scroll-behavior: smooth; scrollbar-width: none; overflow: hidden; height: 100%; }
+    html { scroll-behavior: smooth; font-size: 16px; scrollbar-width: none; overflow: hidden; height: 100%; }
     html::-webkit-scrollbar { display: none; }
 
     body {
@@ -67,6 +67,7 @@
       color: var(--dark);
       overflow-y: scroll; overflow-x: hidden; height: 100%; width: 100%;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     img { display: block; width: 100%; }
