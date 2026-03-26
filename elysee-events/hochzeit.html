@@ -72,8 +72,10 @@
       background: var(--bg);
       color: var(--dark);
       overflow-y: scroll; overflow-x: hidden; height: 100%; width: 100%;
+      scrollbar-width: none;
       -moz-osx-font-smoothing: grayscale;
     }
+    body::-webkit-scrollbar { display: none; }
     img { display: block; max-width: 100%; }
     a { text-decoration: none; color: inherit; }
     button { font-family: inherit; }

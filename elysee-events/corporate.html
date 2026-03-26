@@ -69,9 +69,11 @@
       background: var(--bg);
       color: var(--dark);
       overflow-y: scroll; overflow-x: hidden; height: 100%; width: 100%;
+      scrollbar-width: none;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
+    body::-webkit-scrollbar { display: none; }
 
     img { display: block; width: 100%; }
     a { color: inherit; text-decoration: none; }
