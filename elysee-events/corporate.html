@@ -1676,12 +1676,15 @@ section:not(.hero):not(:first-of-type) {
 @media (max-width: 480px) {
   .bk__nav { flex-direction: column; gap: 8px; width: 100%; }
   .bk__btn { width: 100%; padding: 13px 16px; text-align: center; }
-  .bk__cal-grid { gap: 2px; }
-  .bk__cal-day { min-height: 40px; padding: 3px; font-size: 10px; }
-  .bk__cal-day__num { font-size: 11px; }
-  .bk__cal-header { padding: 4px; font-size: 8px; letter-spacing: .08em; }
-  .bk__progress { min-height: 120px; padding-top: 20px; }
-  .bk__progress.is-morphed { min-height: 56px; }
+  .bk__cal-grid { gap: 1px; }
+  .bk__cal-day { min-height: 32px; padding: 2px; font-size: 9px; }
+  .bk__cal-day__num { font-size: 10px; }
+  .bk__cal-header { padding: 3px; font-size: 7px; letter-spacing: .06em; }
+  .bk__calendar { margin-bottom: .8rem; }
+  .bk__progress { min-height: 80px; padding-top: 14px; }
+  .bk__progress.is-morphed { min-height: 44px; }
+  .bk__progress-svg { max-height: 60px; }
+  .bk__wm { font-size: .7rem; }
   .bk__close { top: max(12px, env(safe-area-inset-top, 12px)); right: max(12px, env(safe-area-inset-right, 12px)); width: 38px; height: 38px; }
   .bk__close svg { width: 14px; height: 14px; }
   .bk__textarea { height: 88px; }
@@ -1689,9 +1692,12 @@ section:not(.hero):not(:first-of-type) {
   .bk__card__icon svg { width: 32px; height: 32px; }
   .bk__slots { gap: 8px; }
   .bk__slot { padding: 12px 8px; font-size: .75rem; }
-  .bk__step-title { margin-bottom: .2em; }
-  .bk__step-subtitle { margin-bottom: .8rem; font-size: .65rem; }
-  .bk__body { padding: 0 12px 32px; }
+  .bk__step-title { margin-bottom: .2em; font-size: clamp(1.2rem, 3vw, 1.8rem); }
+  .bk__step-subtitle { margin-bottom: .6rem; font-size: .6rem; }
+  .bk__body { padding: 0 12px 32px; min-height: auto; }
+  #bookingOverlay { display: flex; flex-direction: column; }
+  .bk__bg { position: absolute; inset: 0; min-height: 100%; }
+  .bk__grain { position: absolute; inset: 0; min-height: 100%; }
 }
 
   </style>
