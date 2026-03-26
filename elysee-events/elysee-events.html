@@ -1572,8 +1572,8 @@ section:not(.hero):not(:first-of-type) {
   .bk__cal-day__num { font-size: 10px; }
   .bk__cal-header { padding: 3px; font-size: 7px; letter-spacing: .06em; }
   .bk__calendar { margin-bottom: .8rem; }
-  .bk__progress { min-height: 50px; padding-top: 52px; margin-bottom: 12px; }
-  .bk__progress.is-morphed { min-height: 40px; }
+  .bk__progress { padding-top: 12px; margin-bottom: 16px; min-height: auto; }
+  .bk__progress.is-morphed { min-height: auto; }
   .bk__progress-svg { max-height: 50px; }
   .bk__wm { font-size: .7rem; }
   .bk__close { top: max(12px, env(safe-area-inset-top, 12px)); right: max(12px, env(safe-area-inset-right, 12px)); width: 38px; height: 38px; z-index: 20; }
@@ -1585,7 +1585,7 @@ section:not(.hero):not(:first-of-type) {
   .bk__slot { padding: 12px 8px; font-size: .75rem; }
   .bk__step-title { margin-bottom: .5em; font-size: clamp(1.2rem, 3vw, 1.8rem); }
   .bk__step-subtitle { display: none; }
-  .bk__body { padding: 0 12px 32px; min-height: auto; }
+  .bk__body { padding: 0 12px 32px; min-height: auto; justify-content: flex-start; }
   .bk__wm { display: none; }
   .bk__nav { margin-top: 1.2rem; padding-bottom: 24px; }
   #bookingOverlay { display: flex; flex-direction: column; }
