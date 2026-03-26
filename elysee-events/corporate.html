@@ -280,23 +280,25 @@
     .nav__hamburger, .nav__burger {
       display:none; align-items:center; justify-content:center;
       background:none; border:none; cursor:pointer;
-      width:44px; height:44px; padding:0;
-      border-radius:50%;
+      width:44px; height:44px; min-width:44px; min-height:44px;
+      max-width:44px; max-height:44px;
+      padding:0; border-radius:50%;
+      overflow:visible; flex-shrink:0;
       transition: background .25s ease;
       position:relative; z-index:1;
     }
     .nav__hamburger:hover, .nav__burger:hover { background:rgba(255,255,255,.06); }
 
     .nav__hamburger span, .nav__burger span {
-      display:block; width:18px; height:1.5px;
+      display:block; width:16px; height:1.5px;
       background:rgba(201,168,76,.7);
       transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .2s ease;
-      margin:4px 0;
+      margin:2.5px 0;
     }
 
-    .nav__hamburger.is-open span:nth-child(1), .nav__burger.is-open span:first-child { transform:translateY(5.5px) rotate(45deg); }
+    .nav__hamburger.is-open span:nth-child(1), .nav__burger.is-open span:first-child { transform:translateY(6.5px) rotate(45deg); }
     .nav__hamburger.is-open span:nth-child(2), .nav__burger.is-open span:nth-child(2) { opacity:0; }
-    .nav__hamburger.is-open span:nth-child(3), .nav__burger.is-open span:last-child { transform:translateY(-5.5px) rotate(-45deg); }
+    .nav__hamburger.is-open span:nth-child(3), .nav__burger.is-open span:last-child { transform:translateY(-6.5px) rotate(-45deg); }
 
     /* Mobile Nav */
     .nav__mobile, .nav__drawer {
