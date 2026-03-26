@@ -947,6 +947,8 @@ a:hover { color: var(--gold-dark); }
   .filter-bar { flex-direction: column; }
   .portal-nav__links { display: none; }
   .portal-nav__burger { display: flex; }
+  .portal-nav__user { display: none; }
+  .portal-nav__username { display: none; }
   .portal-nav__brandname { font-size: 13px; }
   .portal-nav__brand { padding-left: 12px; }
   .wizard-cards { grid-template-columns:1fr 1fr; }

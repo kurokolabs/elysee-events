@@ -1,5 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+  /* ── Mobile Burger Menu ─────────────────────────────────── */
+  var burger = document.getElementById('portalBurger');
+  var mobileMenu = document.getElementById('portalMobileMenu');
+  if (burger && mobileMenu) {
+    burger.addEventListener('click', function() {
+      burger.classList.toggle('is-open');
+      mobileMenu.classList.toggle('is-open');
+    });
+  }
+
   /* ── Auto-hide alerts ─────────────────────────────────── */
   document.querySelectorAll('.alert').forEach(function(alert) {
     setTimeout(function() {

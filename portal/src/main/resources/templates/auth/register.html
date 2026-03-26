@@ -4,34 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: blob:;">
-  <title>Konto erstellen - Elysee Events Portal</title>
+  <title>Konto erstellen - Élysée Events Portal</title>
   <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
   <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
   <style>
-    .nav { position:fixed; top:0; left:0; right:0; height:68px; background:linear-gradient(180deg,rgba(8,8,7,.97) 0%,rgba(14,13,12,.94) 100%); backdrop-filter:blur(32px) saturate(180%); -webkit-backdrop-filter:blur(32px) saturate(180%); z-index:9000; }
-    .nav::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent 0%,#C9A84C 15%,#e8d48b 50%,#C9A84C 85%,transparent 100%); opacity:.6; }
-    .nav__inner { position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; height:100%; max-width:1400px; margin:0 auto; padding:0 44px; }
-    .nav__logo { display:flex; align-items:center; gap:16px; text-decoration:none; }
-    .nav__logo-mark { width:42px; height:42px; flex-shrink:0; }
-    .nav__brand { display:flex; flex-direction:column; gap:1px; padding-left:16px; border-left:1px solid rgba(201,168,76,.2); }
-    .nav__brandname { font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:400; font-style:italic; letter-spacing:.06em; color:rgba(255,255,255,.88); line-height:1; }
-    .nav__brandtag { font-size:8px; font-weight:600; letter-spacing:.24em; text-transform:uppercase; color:rgba(201,168,76,.55); line-height:1; margin-top:3px; }
+    .auth-nav { position:fixed; top:0; left:0; right:0; height:68px; background:linear-gradient(180deg,rgba(8,8,7,.97) 0%,rgba(14,13,12,.94) 100%); backdrop-filter:blur(32px) saturate(180%); -webkit-backdrop-filter:blur(32px) saturate(180%); z-index:9000; }
+    .auth-nav::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent 0%,#C9A84C 15%,#e8d48b 50%,#C9A84C 85%,transparent 100%); opacity:.6; }
+    .auth-nav__inner { position:relative; z-index:1; display:flex; align-items:center; justify-content:center; height:100%; padding:0 20px; }
+    .auth-nav__logo { display:flex; align-items:center; gap:12px; text-decoration:none; }
+    .auth-nav__monogram { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(201,168,76,.4); border-radius:8px; font-family:'Cormorant Garamond',serif; font-size:13px; font-weight:600; font-style:italic; color:#C9A84C; flex-shrink:0; }
+    .auth-nav__text { font-family:'Cormorant Garamond',serif; font-size:15px; font-style:italic; letter-spacing:.06em; color:rgba(255,255,255,.85); }
     .login-page { padding-top:68px; }
-    @media(max-width:900px) { .nav__inner { padding:0 20px; } }
     .pw-hint { font-size:11px; color:var(--muted); margin-top:4px; line-height:1.5; }
     .login-link { text-align:center; margin-top:20px; font-size:13px; color:var(--muted); }
     .login-link a { color:var(--gold); text-decoration:underline; text-underline-offset:3px; }
   </style>
 </head>
 <body>
-  <nav class="nav">
-    <div class="nav__inner">
-      <a href="/" class="nav__logo">
-        <svg class="nav__logo-mark" viewBox="0 0 42 42" fill="none"><rect x=".5" y=".5" width="41" height="41" rx="8" stroke="rgba(201,168,76,.4)" stroke-width="1"/><text x="50%" y="54%" text-anchor="middle" dominant-baseline="central" font-family="'Cormorant Garamond',serif" font-size="15" font-weight="600" font-style="italic" fill="#C9A84C">EE</text></svg>
-        <div class="nav__brand">
-          <span class="nav__brandname">Elysee Events</span>
-          <span class="nav__brandtag">Kundenportal</span>
-        </div>
+  <nav class="auth-nav">
+    <div class="auth-nav__inner">
+      <a href="/" class="auth-nav__logo">
+        <div class="auth-nav__monogram">EE</div>
+        <span class="auth-nav__text">Élysée Events</span>
       </a>
     </div>
   </nav>
@@ -55,18 +49,22 @@
           <label class="form-label" for="password">Passwort</label>
           <input type="password" id="password" name="password" class="form-input"
                  placeholder="Ihr Passwort" required minlength="8">
-          <p class="pw-hint">Mind. 8 Zeichen, Gross-/Kleinbuchstaben, Zahl und Sonderzeichen</p>
+          <p class="pw-hint">Mind. 8 Zeichen, Groß-/Kleinbuchstaben, Zahl und Sonderzeichen</p>
         </div>
         <div class="form-group">
           <label class="form-label" for="confirmPassword">Passwort wiederholen</label>
           <input type="password" id="confirmPassword" name="confirmPassword" class="form-input"
-                 placeholder="Passwort bestaetigen" required minlength="8">
+                 placeholder="Passwort bestätigen" required minlength="8">
         </div>
         <button type="submit" class="btn btn--gold">Konto erstellen</button>
       </form>
 
       <div class="login-link">
         Bereits ein Konto? <a th:href="@{/portal/login}">Anmelden</a>
+      </div>
+
+      <div style="text-align:center; margin-top:12px;">
+        <a href="/" style="font-size:12px; color:rgba(107,101,96,.6); text-decoration:none;">Zurück zur Website</a>
       </div>
     </div>
   </div>

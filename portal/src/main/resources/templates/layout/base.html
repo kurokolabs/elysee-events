@@ -10,23 +10,39 @@
 </head>
 <body>
   <nav class="portal-nav">
-    <a th:href="@{/portal/dashboard}" class="portal-nav__logo">
-      <div class="portal-nav__monogram">EE</div>
-      <div class="portal-nav__wordmark">Kundenportal</div>
-    </a>
+    <div class="portal-nav__inner">
+      <a th:href="@{/portal/dashboard}" class="portal-nav__logo">
+        <div class="portal-nav__monogram">EE</div>
+        <div class="portal-nav__wordmark">Kundenportal</div>
+      </a>
 
-    <ul class="portal-nav__links" sec:authorize="hasRole('CUSTOMER')">
-      <li><a th:href="@{/portal/dashboard}" th:classappend="${activeNav == 'dashboard'} ? 'active'">Dashboard</a></li>
-      <li><a th:href="@{/portal/profil}" th:classappend="${activeNav == 'profil'} ? 'active'">Profil</a></li>
-    </ul>
+      <ul class="portal-nav__links" sec:authorize="hasRole('CUSTOMER')">
+        <li><a th:href="@{/portal/dashboard}" th:classappend="${activeNav == 'dashboard'} ? 'active'">Dashboard</a></li>
+        <li><a th:href="@{/portal/profil}" th:classappend="${activeNav == 'profil'} ? 'active'">Profil</a></li>
+      </ul>
 
-    <div class="portal-nav__user">
-      <span class="portal-nav__username" sec:authentication="name">user@example.com</span>
-      <form th:action="@{/portal/logout}" method="post" style="display:inline">
-        <button type="submit" class="portal-nav__logout">Abmelden</button>
-      </form>
+      <div class="portal-nav__user">
+        <span class="portal-nav__username" sec:authentication="name">user@example.com</span>
+        <form th:action="@{/portal/logout}" method="post" style="display:inline">
+          <button type="submit" class="portal-nav__logout">Abmelden</button>
+        </form>
+      </div>
+
+      <button class="portal-nav__burger" id="portalBurger" aria-label="Menü öffnen">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </nav>
+
+  <!-- Mobile Menu -->
+  <div class="portal-mobile-menu" id="portalMobileMenu" sec:authorize="hasRole('CUSTOMER')">
+    <a th:href="@{/portal/dashboard}">Dashboard</a>
+    <a th:href="@{/portal/profil}">Profil</a>
+    <a th:href="@{/}" style="color:rgba(255,255,255,.3); font-size:11px; margin-top:8px;">Zurück zur Website</a>
+    <form th:action="@{/portal/logout}" method="post" style="margin-top:8px;">
+      <button type="submit" style="display:block; width:100%; padding:14px 16px; font-size:12px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:rgba(201,168,76,.6); background:none; border:1px solid rgba(201,168,76,.15); border-radius:8px; cursor:pointer; font-family:inherit; text-align:left;">Abmelden</button>
+    </form>
+  </div>
 
   <main class="portal-main">
     <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
