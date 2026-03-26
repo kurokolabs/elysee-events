@@ -113,7 +113,8 @@ public class AuthController {
     }
 
     @GetMapping("/portal/verify-email")
-    public String verifyEmail(@RequestParam String token, RedirectAttributes redirectAttributes) {
+    public String verifyEmail(@RequestParam String token, HttpSession session,
+                              RedirectAttributes redirectAttributes) {
         java.util.Optional<User> userOpt = userRepository.findByVerificationToken(token);
         if (userOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Ungültiger oder abgelaufener Verifizierungslink.");
@@ -121,9 +122,20 @@ public class AuthController {
         }
         User user = userOpt.get();
         userRepository.activateUser(user.getId());
+        userRepository.updateLastLogin(user.getId());
         auditService.log("EMAIL_VERIFIED", "user", user.getId(), user.getEmail());
-        redirectAttributes.addFlashAttribute("message", "E-Mail bestätigt! Sie können sich jetzt anmelden.");
-        return "redirect:/portal/login";
+
+        // Erster Login ohne 2FA - Email-Verifizierung reicht als Identitätsnachweis
+        org.springframework.security.authentication.UsernamePasswordAuthenticationToken auth =
+            new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                user.getEmail(), null,
+                java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole()))
+            );
+        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
+        session.setAttribute("SPRING_SECURITY_CONTEXT",
+            org.springframework.security.core.context.SecurityContextHolder.getContext());
+
+        return "redirect:/portal/dashboard";
     }
 
     @GetMapping("/portal/login")
