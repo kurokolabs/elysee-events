@@ -49,8 +49,8 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Admin account
-        if (userRepository.findByEmail(adminEmail).isEmpty()) {
+        // Admin account - nur erstellen wenn Passwort gesetzt ist
+        if (adminPassword != null && !adminPassword.isBlank() && userRepository.findByEmail(adminEmail).isEmpty()) {
             User admin = new User();
             admin.setEmail(adminEmail);
             admin.setPasswordHash(passwordEncoder.encode(adminPassword));

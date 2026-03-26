@@ -115,12 +115,32 @@ public class AuthController {
     @GetMapping("/portal/verify-email")
     public String verifyEmail(@RequestParam String token, HttpSession session,
                               RedirectAttributes redirectAttributes) {
+        if (token == null || token.length() < 32) {
+            redirectAttributes.addFlashAttribute("error", "Ungültiger Verifizierungslink.");
+            return "redirect:/portal/login";
+        }
         java.util.Optional<User> userOpt = userRepository.findByVerificationToken(token);
         if (userOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Ungültiger oder abgelaufener Verifizierungslink.");
             return "redirect:/portal/login";
         }
         User user = userOpt.get();
+        // Bereits verifiziert?
+        if (user.isActive()) {
+            redirectAttributes.addFlashAttribute("message", "Ihr Konto ist bereits verifiziert. Bitte melden Sie sich an.");
+            return "redirect:/portal/login";
+        }
+        // Token-Expiry: 24 Stunden nach Erstellung
+        if (user.getCreatedAt() != null) {
+            try {
+                java.time.LocalDateTime created = java.time.LocalDateTime.parse(user.getCreatedAt(),
+                    java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                if (java.time.LocalDateTime.now().isAfter(created.plusHours(24))) {
+                    redirectAttributes.addFlashAttribute("error", "Der Verifizierungslink ist abgelaufen. Bitte registrieren Sie sich erneut.");
+                    return "redirect:/portal/register";
+                }
+            } catch (Exception ignored) {}
+        }
         userRepository.activateUser(user.getId());
         userRepository.updateLastLogin(user.getId());
         auditService.log("EMAIL_VERIFIED", "user", user.getId(), user.getEmail());

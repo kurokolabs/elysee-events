@@ -20,13 +20,22 @@ public class TwoFaFilter extends OncePerRequestFilter {
             "/portal/2fa",
             "/portal/2fa/resend",
             "/portal/logout",
-            "/portal/login"
+            "/portal/login",
+            "/portal/register",
+            "/portal/register-success",
+            "/portal/verify-email"
     );
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String path = request.getRequestURI();
+        // Normalisiere den Pfad um Path-Traversal zu verhindern
+        String path = request.getServletPath();
+        if (path == null || path.isEmpty()) {
+            path = request.getRequestURI();
+        }
+        // Entferne doppelte Slashes und Path-Parameter
+        path = path.replaceAll("//+", "/").replaceAll(";.*", "");
 
         if (!path.startsWith("/portal/") || path.startsWith("/portal/css/")
                 || path.startsWith("/portal/js/") || path.startsWith("/portal/fonts/")
