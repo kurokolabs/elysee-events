@@ -5,11 +5,12 @@
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="google-site-verification" content="wIhsmlaiHiOF0SHOSv9jlS0PBSNA-Zmmnzgc_f5jO_4" />
   <meta name="theme-color" content="#C9A84C">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.json">
   <title>Eventsaal Augsburg — Élysée Events im Sigma-Techno Park</title>
-  <meta name="description" content="Exklusiver Eventsaal in Augsburg für Hochzeiten, Corporate Events & Firmenessen. Bis zu 300 Gäste. Im Sigma-Techno Park. Jetzt anfragen." />
+  <meta name="description" content="Exklusiver Eventsaal in Augsburg und Schwaben fuer Hochzeiten, Corporate Events und Firmenessen. Bis 300 Gaeste. Auch fuer Friedberg, Gersthofen und Koenigsbrunn. Jetzt anfragen." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://www.elysee-events.de/" />
   <!-- Open Graph -->
@@ -17,7 +18,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.elysee-events.de/">
   <meta property="og:title" content="Eventsaal Augsburg — Élysée Events im Sigma-Techno Park">
-  <meta property="og:description" content="Exklusiver Eventsaal in Augsburg für Hochzeiten, Corporate Events & Firmenessen. Bis zu 300 Gäste. Im Sigma-Techno Park. Jetzt anfragen.">
+  <meta property="og:description" content="Exklusiver Eventsaal in Augsburg und Schwaben fuer Hochzeiten, Corporate Events und Firmenessen. Bis 300 Gaeste. Jetzt anfragen.">
   <meta property="og:image" content="https://www.elysee-events.de/img/elysee-og-card.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -26,7 +27,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Eventsaal Augsburg — Élysée Events im Sigma-Techno Park">
-  <meta name="twitter:description" content="Exklusiver Eventsaal in Augsburg für Hochzeiten, Corporate Events & Firmenessen. Bis zu 300 Gäste. Im Sigma-Techno Park. Jetzt anfragen.">
+  <meta name="twitter:description" content="Exklusiver Eventsaal in Augsburg und Schwaben fuer Hochzeiten, Corporate Events und Firmenessen. Bis 300 Gaeste. Jetzt anfragen.">
   <meta name="twitter:image" content="https://www.elysee-events.de/img/elysee-og-card.jpg">
   <!-- hreflang -->
   <meta http-equiv="content-language" content="de">
@@ -40,6 +41,8 @@
   <link rel="preload" as="image" href="img/main-hero-bg.jpg" fetchpriority="high">
 
   <style>
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
     /* ─── Reset & Base ─────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1801,6 +1804,7 @@ section:not(.hero):not(:first-of-type) {
       <h1 class="hero__title">
         <span class="hero__title-row">Élysée</span>
         <em class="hero__title-row">Events</em>
+        <span class="sr-only"> — Eventlocation Augsburg</span>
       </h1>
       <div class="hero__divider"></div>
       <p class="hero__subtitle">
@@ -3171,11 +3175,12 @@ section:not(.hero):not(:first-of-type) {
       },
       "geo": {
         "@type": "GeoCoordinates",
-        "latitude": "48.3000",
-        "longitude": "10.8900"
+        "latitude": "48.3654",
+        "longitude": "10.9057"
       },
-      "telephone": "+49-176-30472811",
-      "email": "info@elysee-events.de",
+      "telephone": "+49 176 30472811",
+      "email": "verwaltung@elysee-events.de",
+      "image": "https://www.elysee-events.de/img/elysee-og-card.jpg",
       "openingHoursSpecification": [
         {
           "@type": "OpeningHoursSpecification",
@@ -3191,13 +3196,56 @@ section:not(.hero):not(:first-of-type) {
         {"@type": "LocationFeatureSpecification", "name": "Klimaanlage", "value": true},
         {"@type": "LocationFeatureSpecification", "name": "Barrierefreiheit", "value": true}
       ],
-      "maximumAttendeeCapacity": 300
+      "maximumAttendeeCapacity": 300,
+      "areaServed": [
+        {"@type": "City", "name": "Augsburg"},
+        {"@type": "City", "name": "Friedberg"},
+        {"@type": "City", "name": "Gersthofen"},
+        {"@type": "City", "name": "Stadtbergen"},
+        {"@type": "City", "name": "Koenigsbrunn"},
+        {"@type": "City", "name": "Neusaess"},
+        {"@type": "City", "name": "Bobingen"},
+        {"@type": "City", "name": "Mering"},
+        {"@type": "City", "name": "Dasing"},
+        {"@type": "AdministrativeArea", "name": "Landkreis Augsburg"},
+        {"@type": "AdministrativeArea", "name": "Landkreis Aichach-Friedberg"},
+        {"@type": "AdministrativeArea", "name": "Schwaben, Bayern"}
+      ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.elysee-events.de/#organization",
+      "name": "Elysee Event GmbH",
+      "legalName": "Elysee Event GmbH",
+      "url": "https://www.elysee-events.de",
+      "logo": "https://www.elysee-events.de/img/elysee-logo.jpg",
+      "image": "https://www.elysee-events.de/img/elysee-og-card.jpg",
+      "telephone": "+49 176 30472811",
+      "email": "verwaltung@elysee-events.de",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Werner-von-Siemensstrasse 6",
+        "postalCode": "86159",
+        "addressLocality": "Augsburg",
+        "addressRegion": "Bayern",
+        "addressCountry": "DE"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "48.3654",
+        "longitude": "10.9057"
+      },
+      "areaServed": [
+        {"@type": "City", "name": "Augsburg"},
+        {"@type": "AdministrativeArea", "name": "Schwaben, Bayern"}
+      ]
     },
     {
       "@type": "WebSite",
       "@id": "https://www.elysee-events.de/#website",
       "url": "https://www.elysee-events.de",
-      "name": "Élysée Events Augsburg",
+      "name": "Elysee Events Augsburg",
+      "publisher": {"@id": "https://www.elysee-events.de/#organization"},
       "inLanguage": "de"
     },
     {
