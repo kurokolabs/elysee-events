@@ -4,6 +4,8 @@ services:
   db:
     image: mysql:8.0
     restart: always
+    security_opt:
+      - no-new-privileges:true
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: elysee_portal
@@ -31,6 +33,11 @@ services:
         condition: service_healthy
     ports:
       - "127.0.0.1:${SERVER_PORT:-8080}:8080"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=100M
     environment:
       SPRING_PROFILES_ACTIVE: prod
       DB_URL: jdbc:mysql://db:3306/elysee_portal?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Berlin&characterEncoding=UTF-8
