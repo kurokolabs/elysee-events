@@ -34,6 +34,81 @@ public class AuthController {
         this.emailService = emailService;
     }
 
+    @GetMapping("/portal/register")
+    public String registerPage(org.springframework.security.core.Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()
+                && !"anonymousUser".equals(authentication.getName())) {
+            return "redirect:/portal/dashboard";
+        }
+        return "auth/register";
+    }
+
+    @PostMapping("/portal/register")
+    public String register(@RequestParam String email,
+                          @RequestParam String password,
+                          @RequestParam String confirmPassword,
+                          HttpSession session,
+                          RedirectAttributes redirectAttributes) {
+        email = email.trim().toLowerCase();
+
+        if (email.isEmpty() || password.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Bitte alle Felder ausfuellen.");
+            redirectAttributes.addFlashAttribute("email", email);
+            return "redirect:/portal/register";
+        }
+
+        if (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            redirectAttributes.addFlashAttribute("error", "Bitte eine gueltige E-Mail-Adresse eingeben.");
+            redirectAttributes.addFlashAttribute("email", email);
+            return "redirect:/portal/register";
+        }
+
+        if (password.length() < 8
+                || !password.matches(".*[A-Z].*")
+                || !password.matches(".*[a-z].*")
+                || !password.matches(".*[0-9].*")
+                || !password.matches(".*[^A-Za-z0-9].*")) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Das Passwort muss mind. 8 Zeichen, Gross-/Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.");
+            redirectAttributes.addFlashAttribute("email", email);
+            return "redirect:/portal/register";
+        }
+
+        if (!password.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("error", "Die Passwoerter stimmen nicht ueberein.");
+            redirectAttributes.addFlashAttribute("email", email);
+            return "redirect:/portal/register";
+        }
+
+        if (userRepository.findByEmail(email).isPresent()) {
+            redirectAttributes.addFlashAttribute("error", "Diese E-Mail-Adresse ist bereits registriert.");
+            redirectAttributes.addFlashAttribute("email", email);
+            return "redirect:/portal/register";
+        }
+
+        User user = new User();
+        user.setEmail(email);
+        user.setPasswordHash(passwordEncoder.encode(password));
+        user.setRole("CUSTOMER");
+        user.setActive(true);
+        user.setForcePwChange(false);
+        user.setTwoFaEnabled(true);
+        user = userRepository.save(user);
+
+        String code = twoFactorService.generateAndStoreCode(user.getId());
+        emailService.sendTwoFactorCode(email, code);
+
+        session.setAttribute("2fa_pending", true);
+        session.setAttribute("2fa_user_id", user.getId());
+        session.setAttribute("2fa_email", email);
+        session.setAttribute("2fa_role", "CUSTOMER");
+        session.setAttribute("2fa_registration", true);
+
+        auditService.log("USER_REGISTERED", "user", user.getId(), email);
+
+        return "redirect:/portal/2fa";
+    }
+
     @GetMapping("/portal/login")
     public String loginPage(jakarta.servlet.http.HttpServletResponse response,
                            org.springframework.security.core.Authentication authentication) {
@@ -65,6 +140,7 @@ public class AuthController {
     @PostMapping("/portal/2fa")
     public String verifyTwoFactor(@RequestParam String code,
                                   HttpSession session,
+                                  jakarta.servlet.http.HttpServletRequest request,
                                   RedirectAttributes redirectAttributes) {
         Boolean pending = (Boolean) session.getAttribute("2fa_pending");
         if (pending == null || !pending) {
@@ -73,6 +149,7 @@ public class AuthController {
 
         Long userId = (Long) session.getAttribute("2fa_user_id");
         String role = (String) session.getAttribute("2fa_role");
+        Boolean isRegistration = (Boolean) session.getAttribute("2fa_registration");
 
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -87,11 +164,27 @@ public class AuthController {
         }
         auditService.log("2FA_VERIFIED", "user", userId, null);
 
-        // 2FA verified - clear pending flag
+        // 2FA verified - clear pending flags
         session.removeAttribute("2fa_pending");
         session.removeAttribute("2fa_user_id");
         session.removeAttribute("2fa_email");
         session.removeAttribute("2fa_role");
+        session.removeAttribute("2fa_registration");
+
+        // If this was a registration, programmatically log in the user
+        if (Boolean.TRUE.equals(isRegistration)) {
+            org.springframework.security.authentication.UsernamePasswordAuthenticationToken auth =
+                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                    user.getEmail(), null,
+                    java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole()))
+                );
+            org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
+            session.setAttribute("SPRING_SECURITY_CONTEXT",
+                org.springframework.security.core.context.SecurityContextHolder.getContext());
+            userRepository.updateLastLogin(user.getId());
+            auditService.log("REGISTRATION_COMPLETE", "user", userId, user.getEmail());
+            return "redirect:/portal/dashboard";
+        }
 
         if ("ADMIN".equals(role)) {
             return "redirect:/portal/admin";

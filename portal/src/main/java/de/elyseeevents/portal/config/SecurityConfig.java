@@ -61,7 +61,7 @@ public class SecurityConfig {
                 .ignoringRequestMatchers("/newsletter/subscribe")
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/portal/login", "/portal/2fa", "/portal/2fa/resend").permitAll()
+                .requestMatchers("/portal/login", "/portal/register", "/portal/2fa", "/portal/2fa/resend").permitAll()
                 .requestMatchers("/newsletter/**").permitAll()
                 .requestMatchers("/portal/css/**", "/portal/js/**", "/portal/fonts/**", "/portal/img/**").permitAll()
                 .requestMatchers("/portal/admin/**").hasRole("ADMIN")
