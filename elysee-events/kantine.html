@@ -3268,8 +3268,8 @@ section:not(.hero):not(:first-of-type) {
           </div>
         </div>
         <div class="bk__fields" style="margin-top:1.2rem;">
-          <div><label class="bk__field-label" for="bkDeliveryAddr">Lieferadresse *</label>
-          <input class="bk__input" type="text" id="bkDeliveryAddr" name="deliveryAddress" placeholder="Straße, PLZ, Ort"></div>
+          <div><label class="bk__field-label" for="bkDeliveryStreet">Strasse *</label><input class="bk__input" type="text" id="bkDeliveryStreet" name="deliveryStreet" placeholder="Musterstrasse 12" autocomplete="street-address"></div>
+          <div class="bk__field-row"><div><label class="bk__field-label" for="bkDeliveryZip">PLZ *</label><input class="bk__input" type="text" id="bkDeliveryZip" name="deliveryZip" placeholder="86159" autocomplete="postal-code" inputmode="numeric" maxlength="5"></div><div><label class="bk__field-label" for="bkDeliveryCity">Ort *</label><input class="bk__input" type="text" id="bkDeliveryCity" name="deliveryCity" placeholder="Augsburg" autocomplete="address-level2"></div></div>
         </div>
       </div>
 
@@ -4083,7 +4083,7 @@ section:not(.hero):not(:first-of-type) {
   document.getElementById('bkNext4').addEventListener('click', function(){
     if(formData.eventType === 'Catering') {
       formData.cateringPackage = formData.cateringPackage || '';
-      formData.deliveryAddress = document.getElementById('bkDeliveryAddr').value.trim();
+      formData.deliveryAddress = [document.getElementById('bkDeliveryStreet').value.trim(), document.getElementById('bkDeliveryZip').value.trim(), document.getElementById('bkDeliveryCity').value.trim()].filter(Boolean).join(', ');
     } else {
       var val = parseInt(budgetRange.value);
       formData.budget = val === 0 ? 'Noch offen'
