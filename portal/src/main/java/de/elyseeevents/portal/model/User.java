@@ -10,6 +10,7 @@ public class User {
     private boolean twoFaEnabled;
     private String twoFaCode;
     private String twoFaExpires;
+    private String emailVerificationToken;
     private String createdAt;
     private String lastLogin;
 
@@ -39,6 +40,9 @@ public class User {
 
     public String getTwoFaExpires() { return twoFaExpires; }
     public void setTwoFaExpires(String twoFaExpires) { this.twoFaExpires = twoFaExpires; }
+
+    public String getEmailVerificationToken() { return emailVerificationToken; }
+    public void setEmailVerificationToken(String emailVerificationToken) { this.emailVerificationToken = emailVerificationToken; }
 
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }

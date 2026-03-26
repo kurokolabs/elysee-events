@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     two_fa_code     VARCHAR(72),
     two_fa_expires  VARCHAR(30),
     two_fa_attempts INT NOT NULL DEFAULT 0,
+    email_verification_token VARCHAR(64),
     created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_login      DATETIME
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

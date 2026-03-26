@@ -21,7 +21,7 @@ public class AdminEmailPreviewController {
 
     private static final java.util.Set<String> ALLOWED_TEMPLATES = java.util.Set.of(
             "weekly-menu", "welcome-subscriber", "two-factor-code",
-            "invoice-notification", "booking-status-update");
+            "invoice-notification", "booking-status-update", "email-verification");
 
     @GetMapping("/email-preview/{template}")
     public String preview(@PathVariable String template, Model model) {
@@ -64,12 +64,16 @@ public class AdminEmailPreviewController {
             case "booking-status-update" -> {
                 model.addAttribute("bookingId", "42");
                 model.addAttribute("bookingType", "Hochzeit");
-                model.addAttribute("statusLabel", "Bestaetigt");
+                model.addAttribute("statusLabel", "Bestätigt");
                 model.addAttribute("statusColor", "#2E7D32");
                 model.addAttribute("eventDate", "20.09.2026");
                 model.addAttribute("timeSlot", "Nachmittag (15-18 Uhr)");
                 model.addAttribute("guestCount", "85");
                 model.addAttribute("portalUrl", "#");
+            }
+            case "email-verification" -> {
+                model.addAttribute("email", "max@beispiel.de");
+                model.addAttribute("verifyUrl", "#");
             }
         }
         return "email/" + template;

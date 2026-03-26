@@ -28,6 +28,7 @@ public class UserRepository {
         u.setTwoFaEnabled(rs.getInt("two_fa_enabled") == 1);
         u.setTwoFaCode(rs.getString("two_fa_code"));
         u.setTwoFaExpires(rs.getString("two_fa_expires"));
+        u.setEmailVerificationToken(rs.getString("email_verification_token"));
         u.setCreatedAt(rs.getString("created_at"));
         u.setLastLogin(rs.getString("last_login"));
         return u;
@@ -100,5 +101,18 @@ public class UserRepository {
 
     public void incrementTwoFaAttempts(Long userId) {
         jdbc.update("UPDATE users SET two_fa_attempts = COALESCE(two_fa_attempts, 0) + 1 WHERE id = ?", userId);
+    }
+
+    public void storeVerificationToken(Long userId, String token) {
+        jdbc.update("UPDATE users SET email_verification_token = ? WHERE id = ?", token, userId);
+    }
+
+    public Optional<User> findByVerificationToken(String token) {
+        List<User> users = jdbc.query("SELECT * FROM users WHERE email_verification_token = ?", rowMapper, token);
+        return users.stream().findFirst();
+    }
+
+    public void activateUser(Long userId) {
+        jdbc.update("UPDATE users SET active = 1, email_verification_token = NULL WHERE id = ?", userId);
     }
 }

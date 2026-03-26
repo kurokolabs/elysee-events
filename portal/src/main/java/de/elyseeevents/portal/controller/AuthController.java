@@ -47,18 +47,17 @@ public class AuthController {
     public String register(@RequestParam String email,
                           @RequestParam String password,
                           @RequestParam String confirmPassword,
-                          HttpSession session,
                           RedirectAttributes redirectAttributes) {
         email = email.trim().toLowerCase();
 
         if (email.isEmpty() || password.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Bitte alle Felder ausfuellen.");
+            redirectAttributes.addFlashAttribute("error", "Bitte alle Felder ausfüllen.");
             redirectAttributes.addFlashAttribute("email", email);
             return "redirect:/portal/register";
         }
 
         if (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
-            redirectAttributes.addFlashAttribute("error", "Bitte eine gueltige E-Mail-Adresse eingeben.");
+            redirectAttributes.addFlashAttribute("error", "Bitte eine gültige E-Mail-Adresse eingeben.");
             redirectAttributes.addFlashAttribute("email", email);
             return "redirect:/portal/register";
         }
@@ -69,13 +68,13 @@ public class AuthController {
                 || !password.matches(".*[0-9].*")
                 || !password.matches(".*[^A-Za-z0-9].*")) {
             redirectAttributes.addFlashAttribute("error",
-                    "Das Passwort muss mind. 8 Zeichen, Gross-/Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.");
+                    "Das Passwort muss mind. 8 Zeichen, Groß-/Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.");
             redirectAttributes.addFlashAttribute("email", email);
             return "redirect:/portal/register";
         }
 
         if (!password.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("error", "Die Passwoerter stimmen nicht ueberein.");
+            redirectAttributes.addFlashAttribute("error", "Die Passwörter stimmen nicht überein.");
             redirectAttributes.addFlashAttribute("email", email);
             return "redirect:/portal/register";
         }
@@ -90,23 +89,41 @@ public class AuthController {
         user.setEmail(email);
         user.setPasswordHash(passwordEncoder.encode(password));
         user.setRole("CUSTOMER");
-        user.setActive(true);
+        user.setActive(false);
         user.setForcePwChange(false);
         user.setTwoFaEnabled(true);
         user = userRepository.save(user);
 
-        String code = twoFactorService.generateAndStoreCode(user.getId());
-        emailService.sendTwoFactorCode(email, code);
+        String token = java.util.UUID.randomUUID().toString().replace("-", "")
+                     + java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+        userRepository.storeVerificationToken(user.getId(), token);
 
-        session.setAttribute("2fa_pending", true);
-        session.setAttribute("2fa_user_id", user.getId());
-        session.setAttribute("2fa_email", email);
-        session.setAttribute("2fa_role", "CUSTOMER");
-        session.setAttribute("2fa_registration", true);
+        String verifyUrl = "https://www.elysee-events.de/portal/verify-email?token=" + token;
+        emailService.sendHtmlEmail(email, "Élysée Events - E-Mail bestätigen",
+                "email/email-verification", java.util.Map.of("verifyUrl", verifyUrl, "email", email));
 
         auditService.log("USER_REGISTERED", "user", user.getId(), email);
 
-        return "redirect:/portal/2fa";
+        return "redirect:/portal/register-success";
+    }
+
+    @GetMapping("/portal/register-success")
+    public String registerSuccess() {
+        return "auth/register-success";
+    }
+
+    @GetMapping("/portal/verify-email")
+    public String verifyEmail(@RequestParam String token, RedirectAttributes redirectAttributes) {
+        java.util.Optional<User> userOpt = userRepository.findByVerificationToken(token);
+        if (userOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Ungültiger oder abgelaufener Verifizierungslink.");
+            return "redirect:/portal/login";
+        }
+        User user = userOpt.get();
+        userRepository.activateUser(user.getId());
+        auditService.log("EMAIL_VERIFIED", "user", user.getId(), user.getEmail());
+        redirectAttributes.addFlashAttribute("message", "E-Mail bestätigt! Sie können sich jetzt anmelden.");
+        return "redirect:/portal/login";
     }
 
     @GetMapping("/portal/login")
