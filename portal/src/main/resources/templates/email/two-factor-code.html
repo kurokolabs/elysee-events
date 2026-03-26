@@ -1,64 +1,61 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0; padding:0; background:#FAFAF8; font-family:Arial,Helvetica,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#FAFAF8;">
-    <tr><td align="center" style="padding:20px 0;">
-      <table width="600" cellpadding="0" cellspacing="0" style="background:#FFFFFF; border-radius:2px;">
+<body style="margin:0; padding:0; background:#0a0804; font-family:Georgia,'Times New Roman',serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0804;">
+    <tr><td align="center" style="padding:40px 16px;">
+      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px; width:100%;">
 
-        <!-- HEADER -->
-        <tr><td>
-          <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFFFFF; padding:28px 0 20px;">
-            <tr><td align="center">
-              <img src="https://www.elysee-events.de/img/elysee-logo.jpg" alt="Élysée Events" width="160" style="display:block; margin:0 auto;">
-            </td></tr>
-            <tr><td align="center" style="padding-top:16px;">
-              <div style="width:60px; height:1.5px; background:#C9A84C; margin:0 auto;"></div>
-            </td></tr>
-          </table>
+        <!-- BRAND -->
+        <tr><td align="center" style="padding:0 0 40px 0;">
+          <div style="font-family:Georgia,'Times New Roman',serif; font-size:13px; font-weight:normal; font-style:italic; letter-spacing:.25em; color:rgba(201,168,76,.7);">ELYSEE EVENTS</div>
         </td></tr>
 
-        <!-- BODY -->
-        <tr><td style="padding:40px 40px 0 40px;">
-          <h1 style="font-family:Georgia,serif; font-size:26px; color:#1A1A1A; margin:0 0 8px 0; font-weight:normal;">Ihr Verifizierungscode</h1>
-          <div style="width:60px; height:2px; background:#C9A84C; margin:16px 0 24px 0;"></div>
-          <p style="font-family:Arial,Helvetica,sans-serif; font-size:15px; color:#1A1A1A; line-height:1.6; margin:0 0 24px 0;">
-            Verwenden Sie den folgenden Code, um sich im Elysee Events Portal zu verifizieren:
+        <!-- DIVIDER -->
+        <tr><td align="center" style="padding:0 0 48px 0;">
+          <div style="width:40px; height:1px; background:rgba(201,168,76,.3);"></div>
+        </td></tr>
+
+        <!-- TITLE -->
+        <tr><td align="center" style="padding:0 0 12px 0;">
+          <h1 style="font-family:Georgia,'Times New Roman',serif; font-size:28px; font-weight:normal; color:#ffffff; margin:0; letter-spacing:.02em;">Verifizierung</h1>
+        </td></tr>
+
+        <!-- SUBTITLE -->
+        <tr><td align="center" style="padding:0 0 40px 0;">
+          <p style="font-family:Georgia,'Times New Roman',serif; font-size:14px; color:rgba(255,255,255,.45); margin:0; line-height:1.7;">
+            Verwenden Sie den folgenden Code,<br>um sich im Portal zu verifizieren.
           </p>
         </td></tr>
 
-        <!-- CODE BOX -->
-        <tr><td align="center" style="padding:0 40px;">
-          <table cellpadding="0" cellspacing="0" style="border:2px solid #C9A84C; border-radius:2px;">
-            <tr><td align="center" style="padding:24px 48px;">
-              <div style="font-family:'Courier New',monospace; font-size:32px; font-weight:bold; color:#1A1A1A; letter-spacing:8px;" th:text="${code}">[CODE]</div>
-            </td></tr>
-          </table>
+        <!-- CODE -->
+        <tr><td align="center" style="padding:0 0 40px 0;">
+          <div style="display:inline-block; border:1px solid rgba(201,168,76,.25); padding:28px 48px; letter-spacing:12px; font-family:'Courier New',Courier,monospace; font-size:34px; font-weight:normal; color:#C9A84C;" th:text="${code}">[CODE]</div>
         </td></tr>
 
-        <!-- EXPIRY NOTE -->
-        <tr><td style="padding:24px 40px 0 40px;">
-          <p style="font-family:Arial,Helvetica,sans-serif; font-size:14px; color:#6B6560; line-height:1.6; margin:0 0 16px 0; text-align:center;">
-            Dieser Code ist <strong style="color:#1A1A1A;">10 Minuten</strong> g&uuml;ltig.
-          </p>
+        <!-- EXPIRY -->
+        <tr><td align="center" style="padding:0 0 16px 0;">
+          <p style="font-family:Georgia,'Times New Roman',serif; font-size:12px; color:rgba(255,255,255,.3); margin:0; letter-spacing:.08em; text-transform:uppercase;">Gueltig fuer 10 Minuten</p>
         </td></tr>
 
-        <!-- SECURITY NOTE -->
-        <tr><td style="padding:0 40px 32px 40px;">
-          <p style="font-family:Arial,Helvetica,sans-serif; font-size:13px; color:#6B6560; line-height:1.6; margin:0; font-style:italic; text-align:center;">
+        <!-- SECURITY -->
+        <tr><td align="center" style="padding:0 0 56px 0;">
+          <p style="font-family:Georgia,'Times New Roman',serif; font-size:13px; color:rgba(255,255,255,.25); margin:0; font-style:italic;">
             Falls Sie diese Anfrage nicht gestellt haben, ignorieren Sie diese E-Mail.
           </p>
         </td></tr>
 
+        <!-- DIVIDER -->
+        <tr><td align="center" style="padding:0 0 32px 0;">
+          <div style="width:40px; height:1px; background:rgba(201,168,76,.15);"></div>
+        </td></tr>
+
         <!-- FOOTER -->
-        <tr><td>
-          <table width="100%" cellpadding="0" cellspacing="0" style="background:#1A1A1A; padding:28px 32px;">
-            <tr><td align="center" style="font-family:Arial,sans-serif; font-size:10px; color:#6B6560; line-height:2.0; letter-spacing:0.3px;">
-              Elysee Event GmbH | Werner-von-Siemensstrasse 6 | 86159 Augsburg<br>
-              Tel: +49 176 30472811 | verwaltung@elysee-events.de | www.elysee-events.de<br>
-              Gesch&auml;ftsf&uuml;hrerin: Aziza Furmoly | USt-IdNr.: wird ausgestellt
-            </td></tr>
-          </table>
+        <tr><td align="center">
+          <p style="font-family:Georgia,'Times New Roman',serif; font-size:10px; color:rgba(255,255,255,.2); margin:0; line-height:2.2; letter-spacing:.04em;">
+            Elysee Event GmbH &middot; Werner-von-Siemensstrasse 6 &middot; 86159 Augsburg<br>
+            +49 176 30472811 &middot; verwaltung@elysee-events.de
+          </p>
         </td></tr>
 
       </table>

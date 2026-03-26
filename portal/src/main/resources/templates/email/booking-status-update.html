@@ -1,74 +1,76 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0; padding:0; background:#FAFAF8; font-family:Arial,Helvetica,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#FAFAF8;">
-    <tr><td align="center" style="padding:20px 0;">
-      <table width="600" cellpadding="0" cellspacing="0" style="background:#FFFFFF; border-radius:2px;">
+<body style="margin:0; padding:0; background:#0a0804; font-family:Georgia,'Times New Roman',serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0804;">
+    <tr><td align="center" style="padding:40px 16px;">
+      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px; width:100%;">
 
-        <!-- HEADER -->
-        <tr><td>
-          <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFFFFF; padding:28px 0 20px;">
-            <tr><td align="center">
-              <img src="https://www.elysee-events.de/img/elysee-logo.jpg" alt="Élysée Events" width="160" style="display:block; margin:0 auto;">
-            </td></tr>
-            <tr><td align="center" style="padding-top:16px;">
-              <div style="width:60px; height:1.5px; background:#C9A84C; margin:0 auto;"></div>
-            </td></tr>
-          </table>
+        <!-- BRAND -->
+        <tr><td align="center" style="padding:0 0 40px 0;">
+          <div style="font-family:Georgia,'Times New Roman',serif; font-size:13px; font-style:italic; letter-spacing:.25em; color:rgba(201,168,76,.7);">ELYSEE EVENTS</div>
+        </td></tr>
+
+        <!-- DIVIDER -->
+        <tr><td align="center" style="padding:0 0 48px 0;">
+          <div style="width:40px; height:1px; background:rgba(201,168,76,.3);"></div>
+        </td></tr>
+
+        <!-- TITLE -->
+        <tr><td align="center" style="padding:0 0 12px 0;">
+          <h1 style="font-family:Georgia,'Times New Roman',serif; font-size:28px; font-weight:normal; color:#ffffff; margin:0;">Buchungs-Update</h1>
         </td></tr>
 
         <!-- BODY -->
-        <tr><td style="padding:40px 40px 0 40px;">
-          <h1 style="font-family:Georgia,serif; font-size:26px; color:#1A1A1A; margin:0 0 8px 0; font-weight:normal;">Status-Update zu Ihrer Buchung</h1>
-          <div style="width:60px; height:2px; background:#C9A84C; margin:16px 0 24px 0;"></div>
-          <p style="font-family:Arial,Helvetica,sans-serif; font-size:15px; color:#1A1A1A; line-height:1.6; margin:0 0 24px 0;">
-            Ihre Buchung <strong>#<span th:text="${bookingId}">[ID]</span></strong> (<span th:text="${bookingType}">[Typ]</span>) hat einen neuen Status:
+        <tr><td align="center" style="padding:0 0 28px 0;">
+          <p style="font-family:Georgia,'Times New Roman',serif; font-size:15px; color:rgba(255,255,255,.5); margin:0; line-height:1.8;">
+            Ihre Buchung <strong style="color:rgba(255,255,255,.75);">#<span th:text="${bookingId}">[ID]</span></strong> hat einen neuen Status.
           </p>
         </td></tr>
 
-        <!-- STATUS BADGE -->
-        <tr><td align="center" style="padding:0 40px 24px 40px;">
-          <table cellpadding="0" cellspacing="0">
-            <tr><td align="center" th:style="'display:inline-block; padding:10px 28px; font-family:Arial,Helvetica,sans-serif; font-size:14px; font-weight:bold; color:#FFFFFF; letter-spacing:1px; text-transform:uppercase; border-radius:2px; background:' + ${statusColor}" style="display:inline-block; padding:10px 28px; font-family:Arial,Helvetica,sans-serif; font-size:14px; font-weight:bold; color:#FFFFFF; letter-spacing:1px; text-transform:uppercase; border-radius:2px; background:#C9A84C;" th:text="${statusLabel}">[STATUS]</td></tr>
-          </table>
+        <!-- STATUS -->
+        <tr><td align="center" style="padding:0 0 36px 0;">
+          <div th:style="'display:inline-block; padding:10px 32px; font-family:Georgia,serif; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ffffff; border:1px solid ' + ${statusColor} + '; background:' + ${statusColor}" style="display:inline-block; padding:10px 32px; font-family:Georgia,serif; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ffffff; border:1px solid #C9A84C; background:#C9A84C;" th:text="${statusLabel}">[STATUS]</div>
         </td></tr>
 
-        <!-- EVENT DETAILS -->
-        <tr><td style="padding:0 40px;">
-          <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; background:#F2EFE9; border-radius:2px;">
+        <!-- DETAILS -->
+        <tr><td style="padding:0 0 36px 0;">
+          <table width="100%" cellpadding="0" cellspacing="0">
             <tr>
-              <td style="padding:14px 20px; font-family:Arial,Helvetica,sans-serif; font-size:13px; font-weight:bold; color:#C9A84C; text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid #FFFFFF;" colspan="2">Veranstaltungsdetails</td>
+              <td style="padding:16px 0; font-family:Georgia,'Times New Roman',serif; font-size:11px; color:rgba(201,168,76,.45); letter-spacing:.12em; text-transform:uppercase; width:100px; border-top:1px solid rgba(201,168,76,.1);">Typ</td>
+              <td style="padding:16px 0; font-family:Georgia,'Times New Roman',serif; font-size:14px; color:rgba(255,255,255,.6); border-top:1px solid rgba(201,168,76,.1);" th:text="${bookingType}">[Typ]</td>
             </tr>
             <tr>
-              <td style="padding:12px 20px; font-family:Arial,Helvetica,sans-serif; font-size:14px; color:#6B6560; width:120px; border-bottom:1px solid #FFFFFF;">Datum</td>
-              <td style="padding:12px 20px; font-family:Arial,Helvetica,sans-serif; font-size:14px; color:#1A1A1A; border-bottom:1px solid #FFFFFF;" th:text="${eventDate}">[Datum]</td>
+              <td style="padding:16px 0; font-family:Georgia,'Times New Roman',serif; font-size:11px; color:rgba(201,168,76,.45); letter-spacing:.12em; text-transform:uppercase; border-top:1px solid rgba(201,168,76,.06);">Datum</td>
+              <td style="padding:16px 0; font-family:Georgia,'Times New Roman',serif; font-size:14px; color:rgba(255,255,255,.6); border-top:1px solid rgba(201,168,76,.06);" th:text="${eventDate}">[Datum]</td>
             </tr>
             <tr>
-              <td style="padding:12px 20px; font-family:Arial,Helvetica,sans-serif; font-size:14px; color:#6B6560; width:120px; border-bottom:1px solid #FFFFFF;">Zeitfenster</td>
-              <td style="padding:12px 20px; font-family:Arial,Helvetica,sans-serif; font-size:14px; color:#1A1A1A; border-bottom:1px solid #FFFFFF;" th:text="${timeSlot}">[Zeitfenster]</td>
+              <td style="padding:16px 0; font-family:Georgia,'Times New Roman',serif; font-size:11px; color:rgba(201,168,76,.45); letter-spacing:.12em; text-transform:uppercase; border-top:1px solid rgba(201,168,76,.06);">Zeit</td>
+              <td style="padding:16px 0; font-family:Georgia,'Times New Roman',serif; font-size:14px; color:rgba(255,255,255,.6); border-top:1px solid rgba(201,168,76,.06);" th:text="${timeSlot}">[Zeit]</td>
             </tr>
             <tr>
-              <td style="padding:12px 20px; font-family:Arial,Helvetica,sans-serif; font-size:14px; color:#6B6560; width:120px;">G&auml;ste</td>
-              <td style="padding:12px 20px; font-family:Arial,Helvetica,sans-serif; font-size:14px; color:#1A1A1A;" th:text="${guestCount}">[Anzahl]</td>
+              <td style="padding:16px 0; font-family:Georgia,'Times New Roman',serif; font-size:11px; color:rgba(201,168,76,.45); letter-spacing:.12em; text-transform:uppercase; border-top:1px solid rgba(201,168,76,.06); border-bottom:1px solid rgba(201,168,76,.1);">Gaeste</td>
+              <td style="padding:16px 0; font-family:Georgia,'Times New Roman',serif; font-size:14px; color:rgba(255,255,255,.6); border-top:1px solid rgba(201,168,76,.06); border-bottom:1px solid rgba(201,168,76,.1);" th:text="${guestCount}">[Anzahl]</td>
             </tr>
           </table>
         </td></tr>
 
         <!-- CTA -->
-        <tr><td align="center" style="padding:32px 40px 32px 40px;">
-          <a th:href="${portalUrl}" href="#" style="display:inline-block; background:#C9A84C; color:#FFFFFF; font-family:Arial,Helvetica,sans-serif; font-size:14px; font-weight:bold; text-decoration:none; padding:14px 32px; letter-spacing:1px; text-transform:uppercase; border-radius:2px;">Details im Portal ansehen</a>
+        <tr><td align="center" style="padding:0 0 56px 0;">
+          <a th:href="${portalUrl}" href="#" style="display:inline-block; border:1px solid rgba(201,168,76,.4); color:#C9A84C; font-family:Georgia,'Times New Roman',serif; font-size:12px; text-decoration:none; padding:14px 36px; letter-spacing:.14em; text-transform:uppercase;">Details im Portal</a>
+        </td></tr>
+
+        <!-- DIVIDER -->
+        <tr><td align="center" style="padding:0 0 32px 0;">
+          <div style="width:40px; height:1px; background:rgba(201,168,76,.15);"></div>
         </td></tr>
 
         <!-- FOOTER -->
-        <tr><td>
-          <table width="100%" cellpadding="0" cellspacing="0" style="background:#1A1A1A; padding:28px 32px;">
-            <tr><td align="center" style="font-family:Arial,sans-serif; font-size:10px; color:#6B6560; line-height:2.0; letter-spacing:0.3px;">
-              Elysee Event GmbH | Werner-von-Siemensstrasse 6 | 86159 Augsburg<br>
-              Tel: +49 176 30472811 | verwaltung@elysee-events.de | www.elysee-events.de<br>
-              Gesch&auml;ftsf&uuml;hrerin: Aziza Furmoly | USt-IdNr.: wird ausgestellt
-            </td></tr>
-          </table>
+        <tr><td align="center">
+          <p style="font-family:Georgia,'Times New Roman',serif; font-size:10px; color:rgba(255,255,255,.15); margin:0; line-height:2.2; letter-spacing:.04em;">
+            Elysee Event GmbH &middot; Werner-von-Siemensstrasse 6 &middot; 86159 Augsburg<br>
+            +49 176 30472811 &middot; verwaltung@elysee-events.de
+          </p>
         </td></tr>
 
       </table>
