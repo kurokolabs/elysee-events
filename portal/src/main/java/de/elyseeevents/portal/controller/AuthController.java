@@ -113,9 +113,9 @@ public class AuthController {
     }
 
     @GetMapping("/portal/verify-email")
-    public String verifyEmail(@RequestParam String token, HttpSession session,
+    public String verifyEmail(@RequestParam(required = false) String token, HttpSession session,
                               RedirectAttributes redirectAttributes) {
-        if (token == null || token.length() < 32) {
+        if (token == null || token.isBlank() || token.length() < 32) {
             redirectAttributes.addFlashAttribute("error", "Ungültiger Verifizierungslink.");
             return "redirect:/portal/login";
         }
