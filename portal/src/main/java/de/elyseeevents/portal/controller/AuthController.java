@@ -114,7 +114,7 @@ public class AuthController {
 
     @GetMapping("/portal/verify-email")
     public String verifyEmail(@RequestParam(required = false) String token, HttpSession session,
-                              RedirectAttributes redirectAttributes) {
+                              Model model, RedirectAttributes redirectAttributes) {
         if (token == null || token.isBlank() || token.length() < 32) {
             redirectAttributes.addFlashAttribute("error", "Ungültiger Verifizierungslink.");
             return "redirect:/portal/login";
@@ -155,7 +155,8 @@ public class AuthController {
         session.setAttribute("SPRING_SECURITY_CONTEXT",
             org.springframework.security.core.context.SecurityContextHolder.getContext());
 
-        return "redirect:/portal/dashboard";
+        model.addAttribute("targetUrl", "/portal/dashboard");
+        return "auth/redirect-landing";
     }
 
     @GetMapping("/portal/login")
@@ -190,6 +191,7 @@ public class AuthController {
     public String verifyTwoFactor(@RequestParam String code,
                                   HttpSession session,
                                   jakarta.servlet.http.HttpServletRequest request,
+                                  Model model,
                                   RedirectAttributes redirectAttributes) {
         Boolean pending = (Boolean) session.getAttribute("2fa_pending");
         if (pending == null || !pending) {
@@ -208,7 +210,7 @@ public class AuthController {
 
         if (!twoFactorService.verifyCode(user, code)) {
             auditService.log("2FA_FAILED", "user", userId, "Falscher Code");
-            redirectAttributes.addFlashAttribute("error", "Der Code ist ungueltig oder abgelaufen.");
+            redirectAttributes.addFlashAttribute("error", "Der Code ist ungültig oder abgelaufen.");
             return "redirect:/portal/2fa";
         }
         auditService.log("2FA_VERIFIED", "user", userId, null);
@@ -235,10 +237,9 @@ public class AuthController {
             return "redirect:/portal/dashboard";
         }
 
-        if ("ADMIN".equals(role)) {
-            return "redirect:/portal/admin";
-        }
-        return "redirect:/portal/dashboard";
+        String target = "ADMIN".equals(role) ? "/portal/admin" : "/portal/dashboard";
+        model.addAttribute("targetUrl", target);
+        return "auth/redirect-landing";
     }
 
     @PostMapping("/portal/2fa/resend")

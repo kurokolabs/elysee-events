@@ -83,7 +83,7 @@ public class SecurityConfig {
                 .permitAll()
             )
             .sessionManagement(session -> session
-                .sessionFixation(sf -> sf.migrateSession())
+                .sessionFixation(sf -> sf.changeSessionId())
                 .maximumSessions(2)
             )
             .headers(headers -> headers

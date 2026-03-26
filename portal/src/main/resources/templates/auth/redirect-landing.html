@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" th:content="'1;url=' + ${targetUrl}" content="1;url=/portal/dashboard">
+  <title>Weiterleitung - Élysée Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-card" style="text-align:center;">
+      <div class="login-card__monogram">EE</div>
+      <p style="font-size:14px; color:var(--muted); margin-top:16px;">Sie werden weitergeleitet...</p>
+    </div>
+  </div>
+  <script th:inline="javascript">
+    setTimeout(function() {
+      window.location.href = [[${targetUrl}]];
+    }, 800);
+  </script>
+</body>
+</html>
