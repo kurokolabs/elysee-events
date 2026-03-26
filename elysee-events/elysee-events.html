@@ -1587,7 +1587,7 @@ section:not(.hero):not(:first-of-type) {
   .bk__step-subtitle { display: none; }
   .bk__body { padding: 0 12px 40px; justify-content: flex-start; flex: 1; min-height: 0; }
   .bk__wm { display: none; }
-  .bk__nav { margin-top: 1.2rem; }
+  .bk__nav { margin-top: 1.2rem; margin-bottom: max(15px, env(safe-area-inset-bottom, 15px)); }
   #bookingOverlay { display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; background: #0a0a0a; }
   .bk__bg { position: fixed; inset: 0; z-index: 0; }
   .bk__grain { position: fixed; inset: 0; z-index: 1; }
