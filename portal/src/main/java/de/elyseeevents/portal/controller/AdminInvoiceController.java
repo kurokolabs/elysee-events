@@ -7,6 +7,7 @@ import de.elyseeevents.portal.repository.InvoiceItemRepository;
 import de.elyseeevents.portal.repository.InvoiceRepository;
 import de.elyseeevents.portal.service.BookingService;
 import de.elyseeevents.portal.service.CustomerService;
+import de.elyseeevents.portal.service.EmailService;
 import de.elyseeevents.portal.service.InvoicePdfService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +33,7 @@ public class AdminInvoiceController {
     private final BookingService bookingService;
     private final CustomerService customerService;
     private final InvoicePdfService pdfService;
+    private final EmailService emailService;
 
     @Value("${app.company.name}") private String companyName;
     @Value("${app.company.street}") private String companyStreet;
@@ -49,12 +51,13 @@ public class AdminInvoiceController {
 
     public AdminInvoiceController(InvoiceRepository invoiceRepository, InvoiceItemRepository itemRepository,
                                   BookingService bookingService, CustomerService customerService,
-                                  InvoicePdfService pdfService) {
+                                  InvoicePdfService pdfService, EmailService emailService) {
         this.invoiceRepository = invoiceRepository;
         this.itemRepository = itemRepository;
         this.bookingService = bookingService;
         this.customerService = customerService;
         this.pdfService = pdfService;
+        this.emailService = emailService;
     }
 
     @GetMapping("/rechnungen")
@@ -208,6 +211,40 @@ public class AdminInvoiceController {
             item.setUnitPrice(parseDouble(prices.get(i), 0));
             item.setTotal(Math.round(item.getQuantity() * item.getUnitPrice() * 100.0) / 100.0);
             itemRepository.save(item);
+        }
+
+        // Rechnung per Email mit PDF-Anhang senden
+        try {
+            java.util.Optional<Customer> customerOpt = customerService.findById(customerId);
+            if (customerOpt.isPresent() && customerOpt.get().getEmail() != null) {
+                Customer customer = customerOpt.get();
+                List<InvoiceItem> savedItems = itemRepository.findByInvoiceId(inv.getId());
+                byte[] pdfBytes = pdfService.generate(inv, customer, savedItems);
+                String formattedNet = String.format("%,.2f EUR", calcNetto);
+                String formattedTax = String.format("%,.2f EUR", calcTaxAmount);
+                String formattedTotal = String.format("%,.2f EUR", calcTotal);
+                String displayName = customer.getCompany() != null ? customer.getCompany() : customer.getEmail();
+                emailService.sendHtmlEmailWithAttachment(
+                    customer.getEmail(),
+                    "Élysée Events - Rechnung " + inv.getInvoiceNumber(),
+                    "email/invoice-notification",
+                    java.util.Map.of(
+                        "customerName", displayName,
+                        "invoiceNumber", inv.getInvoiceNumber(),
+                        "netAmount", formattedNet,
+                        "taxRate", String.valueOf(taxRate.intValue()),
+                        "taxAmount", formattedTax,
+                        "totalAmount", formattedTotal,
+                        "dueDate", dueDate != null ? dueDate : "",
+                        "portalUrl", "https://www.elysee-events.de/portal/dashboard"
+                    ),
+                    pdfBytes,
+                    inv.getInvoiceNumber() + ".pdf"
+                );
+            }
+        } catch (Exception e) {
+            // Email-Fehler soll Rechnungserstellung nicht blockieren
+            org.slf4j.LoggerFactory.getLogger(getClass()).error("Rechnungs-Email konnte nicht gesendet werden: {}", e.getMessage());
         }
 
         redirectAttributes.addFlashAttribute("message",

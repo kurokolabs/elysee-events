@@ -18,14 +18,18 @@
 
         <!-- TITLE -->
         <tr><td align="center" style="padding:0 0 12px 0;">
-          <h1 style="font-family:Georgia,'Times New Roman',serif; font-size:28px; font-weight:normal; color:#ffffff; margin:0;">Rechnung</h1>
+          <h1 style="font-family:Georgia,'Times New Roman',serif; font-size:28px; font-weight:normal; color:#ffffff; margin:0;">Ihre Rechnung</h1>
         </td></tr>
 
         <!-- BODY -->
-        <tr><td align="center" style="padding:0 0 36px 0;">
+        <tr><td align="center" style="padding:0 0 12px 0;">
           <p style="font-family:Georgia,'Times New Roman',serif; font-size:15px; color:rgba(255,255,255,.5); margin:0; line-height:1.8;">
-            Sehr geehrte/r <span th:text="${customerName}">[Name]</span>,<br>
-            anbei Ihre Rechnung <strong style="color:rgba(255,255,255,.75);" th:text="${invoiceNumber}">[Nr.]</strong>.
+            Sehr geehrte/r <span th:text="${customerName}">[Name]</span>,
+          </p>
+        </td></tr>
+        <tr><td align="center" style="padding:0 0 20px 0;">
+          <p style="font-family:Georgia,'Times New Roman',serif; font-size:15px; color:rgba(255,255,255,.5); margin:0; line-height:1.8; max-width:440px;">
+            vielen Dank für Ihr Vertrauen in Élysée Events. Anbei erhalten Sie Ihre Rechnung <strong style="color:rgba(255,255,255,.75);" th:text="${invoiceNumber}">[Nr.]</strong> als PDF im Anhang dieser E-Mail.
           </p>
         </td></tr>
 
@@ -45,22 +49,22 @@
               <td align="right" style="padding:16px 0; font-family:Georgia,'Times New Roman',serif; font-size:16px; color:#C9A84C; border-top:1px solid rgba(201,168,76,.15); border-bottom:1px solid rgba(201,168,76,.1);" th:text="${totalAmount}">[Gesamt]</td>
             </tr>
             <tr>
-              <td style="padding:16px 0; font-family:Georgia,'Times New Roman',serif; font-size:13px; color:rgba(255,255,255,.35);">Faellig am</td>
+              <td style="padding:16px 0; font-family:Georgia,'Times New Roman',serif; font-size:13px; color:rgba(255,255,255,.35);">Fällig am</td>
               <td align="right" style="padding:16px 0; font-family:Georgia,'Times New Roman',serif; font-size:13px; color:rgba(255,255,255,.5);" th:text="${dueDate}">[Datum]</td>
             </tr>
           </table>
         </td></tr>
 
-        <!-- CTA -->
-        <tr><td align="center" style="padding:0 0 12px 0;">
-          <a th:href="${portalUrl}" href="#" style="display:inline-block; border:1px solid rgba(201,168,76,.4); color:#C9A84C; font-family:Georgia,'Times New Roman',serif; font-size:12px; text-decoration:none; padding:14px 36px; letter-spacing:.14em; text-transform:uppercase;">Im Portal ansehen</a>
+        <!-- ATTACHMENT HINT -->
+        <tr><td align="center" style="padding:0 0 32px 0;">
+          <p style="font-family:Georgia,'Times New Roman',serif; font-size:13px; color:rgba(201,168,76,.5); margin:0; font-style:italic;">
+            Die Rechnung ist dieser E-Mail als PDF beigefügt.
+          </p>
         </td></tr>
 
-        <!-- PDF NOTE -->
+        <!-- CTA -->
         <tr><td align="center" style="padding:0 0 56px 0;">
-          <p style="font-family:Georgia,'Times New Roman',serif; font-size:12px; color:rgba(255,255,255,.25); margin:12px 0 0 0; font-style:italic;">
-            Die Rechnung steht auch als PDF im Kundenportal bereit.
-          </p>
+          <a th:href="${portalUrl}" href="#" style="display:inline-block; border:1px solid rgba(201,168,76,.4); color:#C9A84C; font-family:Georgia,'Times New Roman',serif; font-size:12px; text-decoration:none; padding:14px 36px; letter-spacing:.14em; text-transform:uppercase;">Im Portal ansehen</a>
         </td></tr>
 
         <!-- DIVIDER -->
