@@ -39,7 +39,7 @@
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="preload" as="font" href="css/fonts/dm-sans-latin.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="css/fonts/cormorant-garamond-latin.woff2" type="font/woff2" crossorigin>
-  <link rel="preload" as="image" href="img/corporate-hero-bg.jpg" fetchpriority="high">
+  <link rel="preload" as="image" href="img/corporate-hero-bg.webp" type="image/webp" fetchpriority="high">
 
   <style>
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
@@ -399,7 +399,8 @@
 
     .hero__bg {
       position: absolute; inset: 0;
-      background-image: url('img/corporate-hero-bg.jpg');
+      background-image: url('img/corporate-hero-bg.webp');
+      background-image: image-set(url('img/corporate-hero-bg.webp') type('image/webp'), url('img/corporate-hero-bg.jpg') type('image/jpeg'));
       background-size: cover; background-position: center;
       transform: scale(1.06);
       animation: heroZoom 14s var(--ease-in-out) forwards;
@@ -2053,7 +2054,7 @@ section:not(.hero):not(:first-of-type) {
       <div class="technik__img-wrap" data-reveal="right">
         <img
           class="technik__img"
-          src="img/av-equipment-card.jpg"
+          src="img/av-equipment-card.webp"
           alt="Professionelle Konferenztechnik und AV-Ausstattung im Élysée Events Augsburg"
           loading="lazy"
           width="900"

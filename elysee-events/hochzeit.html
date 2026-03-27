@@ -42,7 +42,7 @@
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="preload" as="font" href="css/fonts/dm-sans-latin.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="css/fonts/cormorant-garamond-latin.woff2" type="font/woff2" crossorigin>
-  <link rel="preload" as="image" href="img/hochzeit-hero-bg.jpg" fetchpriority="high">
+  <link rel="preload" as="image" href="img/hochzeit-hero-bg.webp" type="image/webp" fetchpriority="high">
 
   <style>
     /* ===================== DESIGN TOKENS ===================== */
@@ -448,7 +448,8 @@
     .hero-bg {
       position: absolute;
       inset: 0;
-      background-image: url('img/hochzeit-hero-bg.jpg');
+      background-image: url('img/hochzeit-hero-bg.webp');
+      background-image: image-set(url('img/hochzeit-hero-bg.webp') type('image/webp'), url('img/hochzeit-hero-bg.jpg') type('image/jpeg'));
       background-size: cover;
       background-position: center;
       transform: scale(1.08);

@@ -46,7 +46,7 @@
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="preload" as="font" href="css/fonts/dm-sans-latin.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="css/fonts/cormorant-garamond-latin.woff2" type="font/woff2" crossorigin>
-  <link rel="preload" as="image" href="img/kantine-hero-bg.jpg" fetchpriority="high">
+  <link rel="preload" as="image" href="img/kantine-hero-bg.webp" type="image/webp" fetchpriority="high">
 
   <style>
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
@@ -578,7 +578,8 @@
     .hero__bg {
       position: absolute;
       inset: 0;
-      background-image: url('img/kantine-hero-bg.jpg');
+      background-image: url('img/kantine-hero-bg.webp');
+      background-image: image-set(url('img/kantine-hero-bg.webp') type('image/webp'), url('img/kantine-hero-bg.jpg') type('image/jpeg'));
       background-size: cover;
       background-position: center 40%;
       transform: scale(1.08);
