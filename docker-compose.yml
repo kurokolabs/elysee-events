@@ -45,6 +45,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      TWO_FA_HMAC_SECRET: ${TWO_FA_HMAC_SECRET}
       UPLOAD_PATH: /app/uploads
       WEBSITE_PATH: /app/elysee-events/
       LOG_PATH: /app/logs/portal.log
