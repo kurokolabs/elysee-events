@@ -545,7 +545,7 @@ a:hover { color: var(--gold-dark); }
   border-radius: 2px;
   padding: 14px 16px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--dark);
   transition: border-color .25s ease, box-shadow .25s ease;
   outline: none;
