@@ -111,15 +111,30 @@ public class InvoicePdfService {
                 .setMarginBottom(12));
         infoCell.add(infoLine("Rechnungs-Nr.", invoice.getInvoiceNumber()));
         infoCell.add(infoLine("Rechnungsdatum", formatDate(invoice.getCreatedAt())));
-        infoCell.add(infoLine("Leistungsdatum", invoice.getDueDate() != null ?
-                invoice.getDueDate() : formatDate(invoice.getCreatedAt())));
+        // Leistungszeitraum
+        if (invoice.getServicePeriodFrom() != null && !invoice.getServicePeriodFrom().isEmpty()) {
+            String period = invoice.getServicePeriodFrom();
+            if (invoice.getServicePeriodTo() != null && !invoice.getServicePeriodTo().isEmpty()
+                    && !invoice.getServicePeriodTo().equals(invoice.getServicePeriodFrom())) {
+                period += " bis " + invoice.getServicePeriodTo();
+            }
+            infoCell.add(infoLine("Leistungszeitraum", period));
+        } else {
+            infoCell.add(infoLine("Leistungsdatum", formatDate(invoice.getCreatedAt())));
+        }
         if (invoice.getDueDate() != null)
             infoCell.add(infoLine("Fällig bis", invoice.getDueDate()));
         header.addCell(infoCell);
         doc.add(header);
 
+        // ── Einleitungstext ────────────────────────────────
+        if (invoice.getIntroText() != null && !invoice.getIntroText().isBlank()) {
+            doc.add(new Paragraph(invoice.getIntroText())
+                    .setFontSize(10).setFontColor(DARK).setFixedLeading(16).setMarginBottom(20));
+        }
+
         // ── Positionen ──────────────────────────────────────
-        Table table = new Table(UnitValue.createPercentArray(new float[]{6, 39, 15, 20, 20}))
+        Table table = new Table(UnitValue.createPercentArray(new float[]{5, 33, 12, 17, 17, 16}))
                 .useAllAvailableWidth();
 
         table.addHeaderCell(thCell("Nr.", TextAlignment.CENTER));
@@ -127,6 +142,7 @@ public class InvoicePdfService {
         table.addHeaderCell(thCell("Menge", TextAlignment.CENTER));
         table.addHeaderCell(thCell("Einzelpreis", TextAlignment.RIGHT));
         table.addHeaderCell(thCell("Betrag", TextAlignment.RIGHT));
+        table.addHeaderCell(thCell("MwSt.", TextAlignment.CENTER));
 
         if (items != null && !items.isEmpty()) {
             int pos = 1;
@@ -136,6 +152,7 @@ public class InvoicePdfService {
                 table.addCell(tdCell(formatQty(item.getQuantity()), TextAlignment.CENTER));
                 table.addCell(tdCell(EUR.get().format(item.getUnitPrice()), TextAlignment.RIGHT));
                 table.addCell(tdCell(EUR.get().format(item.getTotal()), TextAlignment.RIGHT));
+                table.addCell(tdCell(item.getTaxTypeLabel(), TextAlignment.CENTER));
             }
         } else {
             table.addCell(tdCell("1", TextAlignment.CENTER));
@@ -143,6 +160,7 @@ public class InvoicePdfService {
             table.addCell(tdCell("1", TextAlignment.CENTER));
             table.addCell(tdCell(EUR.get().format(invoice.getAmount()), TextAlignment.RIGHT));
             table.addCell(tdCell(EUR.get().format(invoice.getAmount()), TextAlignment.RIGHT));
+            table.addCell(tdCell("19%", TextAlignment.CENTER));
         }
         doc.add(table);
 
@@ -154,9 +172,22 @@ public class InvoicePdfService {
         totals.addCell(sumLabel("Zwischensumme (Netto)"));
         totals.addCell(sumValue(EUR.get().format(invoice.getAmount())));
 
-        totals.addCell(emptyCell());
-        totals.addCell(sumLabel("MwSt. " + String.format("%.1f", invoice.getTaxRate()) + " %"));
-        totals.addCell(sumValue(EUR.get().format(invoice.getTaxAmount())));
+        if (invoice.getTaxAmount7() > 0) {
+            totals.addCell(emptyCell());
+            totals.addCell(sumLabel("MwSt. 7 % (Essen)"));
+            totals.addCell(sumValue(EUR.get().format(invoice.getTaxAmount7())));
+        }
+        if (invoice.getTaxAmount19() > 0) {
+            totals.addCell(emptyCell());
+            totals.addCell(sumLabel("MwSt. 19 % (Getränke/Sonstiges)"));
+            totals.addCell(sumValue(EUR.get().format(invoice.getTaxAmount19())));
+        }
+        // Fallback für alte Rechnungen ohne getrennte Steuersätze
+        if (invoice.getTaxAmount7() == 0 && invoice.getTaxAmount19() == 0 && invoice.getTaxAmount() > 0) {
+            totals.addCell(emptyCell());
+            totals.addCell(sumLabel("MwSt. " + String.format("%.1f", invoice.getTaxRate()) + " %"));
+            totals.addCell(sumValue(EUR.get().format(invoice.getTaxAmount())));
+        }
 
         totals.addCell(emptyCell());
         Cell tLabel = new Cell().setBorder(Border.NO_BORDER)
