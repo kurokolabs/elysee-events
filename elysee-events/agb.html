@@ -462,7 +462,12 @@ input, select, textarea {
 /* Below-fold content lazy rendering */
 section:not(.hero):not(:first-of-type) {
   content-visibility: auto;
-  contain-intrinsic-size: 0 500px;
+  contain-intrinsic-size: auto 500px;
+}
+@media (max-width: 768px) {
+  section:not(.hero):not(:first-of-type) {
+    contain-intrinsic-size: auto 200px;
+  }
 }
 
 /* 480px breakpoint fixes */
