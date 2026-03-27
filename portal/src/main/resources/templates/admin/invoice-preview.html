@@ -199,7 +199,8 @@
 
       <!-- Aktionen -->
       <div class="preview-actions">
-        <a th:href="@{/portal/admin/rechnung/neu/{id}(id=${customer.id})}" class="btn btn--outline">Zurück bearbeiten</a>
+        <a th:if="${customer != null}" th:href="@{/portal/admin/rechnung/neu/{id}(id=${customer.id})}" class="btn btn--outline">Zurück bearbeiten</a>
+        <a th:if="${customer == null}" th:href="@{/portal/admin/rechnung/neu/unabhaengig}" class="btn btn--outline">Zurück bearbeiten</a>
         <form th:action="@{/portal/admin/rechnung/approve}" method="post" style="margin:0;">
           <input th:if="${customer != null}" type="hidden" name="customerId" th:value="${customer.id}">
           <input type="hidden" name="recipientName" th:value="${recipientName}">
