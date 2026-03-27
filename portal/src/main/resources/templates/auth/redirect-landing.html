@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" th:content="'2;url=' + ${targetUrl}" content="2;url=/portal/dashboard">
-  <title>Weiterleitung - Élysée Events</title>
+  <meta http-equiv="refresh" th:content="'3;url=' + ${targetUrl}" content="3;url=/portal/dashboard">
+  <title>Weiterleitung - Elysee Events</title>
   <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
   <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
 </head>
@@ -12,14 +12,16 @@
   <div class="login-page">
     <div class="login-card" style="text-align:center;">
       <div class="login-card__monogram">EE</div>
-      <p style="font-size:14px; color:var(--muted); margin-top:16px;">Anmeldung erfolgreich. Sie werden weitergeleitet...</p>
-      <p style="margin-top:16px;"><a th:href="${targetUrl}" class="btn btn--gold" style="text-decoration:none; display:inline-block;">Weiter zum Portal</a></p>
+      <p style="font-size:15px; color:var(--muted); margin-top:16px;">Anmeldung erfolgreich!</p>
+      <p style="margin-top:20px;">
+        <a th:href="${targetUrl}" class="btn btn--gold" style="text-decoration:none; display:inline-block; padding:14px 36px; font-size:15px;">
+          Weiter zum Portal
+        </a>
+      </p>
+      <p style="font-size:12px; color:var(--muted); margin-top:14px;">
+        Sie werden in wenigen Sekunden automatisch weitergeleitet.
+      </p>
     </div>
   </div>
-  <script th:inline="javascript">
-    setTimeout(function() {
-      window.location.replace([[${targetUrl}]]);
-    }, 1500);
-  </script>
 </body>
 </html>
