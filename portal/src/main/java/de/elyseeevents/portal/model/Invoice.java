@@ -15,6 +15,12 @@ public class Invoice {
     private String notes;
     private String createdAt;
 
+    private String servicePeriodFrom;
+    private String servicePeriodTo;
+    private String introText;
+    private Double taxAmount7;
+    private Double taxAmount19;
+
     // Transient
     private String customerName;
     private String bookingType;
@@ -63,6 +69,21 @@ public class Invoice {
 
     public String getBookingType() { return bookingType; }
     public void setBookingType(String bookingType) { this.bookingType = bookingType; }
+
+    public String getServicePeriodFrom() { return servicePeriodFrom; }
+    public void setServicePeriodFrom(String v) { this.servicePeriodFrom = v; }
+
+    public String getServicePeriodTo() { return servicePeriodTo; }
+    public void setServicePeriodTo(String v) { this.servicePeriodTo = v; }
+
+    public String getIntroText() { return introText; }
+    public void setIntroText(String v) { this.introText = v; }
+
+    public Double getTaxAmount7() { return taxAmount7 != null ? taxAmount7 : 0.0; }
+    public void setTaxAmount7(Double v) { this.taxAmount7 = v; }
+
+    public Double getTaxAmount19() { return taxAmount19 != null ? taxAmount19 : 0.0; }
+    public void setTaxAmount19(Double v) { this.taxAmount19 = v; }
 
     public String getBookingTypeLabel() {
         if (bookingType == null) return "-";

@@ -7,6 +7,7 @@ public class InvoiceItem {
     private Double quantity;
     private Double unitPrice;
     private Double total;
+    private String taxType; // ESSEN (7%), GETRAENKE (19%), BUEFFET (75% 7% + 25% 19%)
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -25,4 +26,15 @@ public class InvoiceItem {
 
     public Double getTotal() { return total; }
     public void setTotal(Double total) { this.total = total; }
+
+    public String getTaxType() { return taxType != null ? taxType : "GETRAENKE"; }
+    public void setTaxType(String taxType) { this.taxType = taxType; }
+
+    public String getTaxTypeLabel() {
+        return switch (getTaxType()) {
+            case "ESSEN" -> "Essen (7%)";
+            case "BUEFFET" -> "Büffet (75/25)";
+            default -> "Getränke (19%)";
+        };
+    }
 }

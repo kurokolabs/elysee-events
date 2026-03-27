@@ -153,6 +153,14 @@ CREATE TABLE IF NOT EXISTS weekly_menus (
     created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Rechnungs-Erweiterungen: Leistungszeitraum, Intro-Text, gemischte Steuersätze
+ALTER TABLE invoices ADD COLUMN service_period_from DATE;
+ALTER TABLE invoices ADD COLUMN service_period_to DATE;
+ALTER TABLE invoices ADD COLUMN intro_text TEXT;
+ALTER TABLE invoices ADD COLUMN tax_amount_7 DECIMAL(12,2) NOT NULL DEFAULT 0;
+ALTER TABLE invoices ADD COLUMN tax_amount_19 DECIMAL(12,2) NOT NULL DEFAULT 0;
+ALTER TABLE invoice_items ADD COLUMN tax_type VARCHAR(20) NOT NULL DEFAULT 'GETRAENKE';
+
 -- Performance-Indexes
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_invoices_number ON invoices(invoice_number);

@@ -90,6 +90,26 @@ public class AdminInvoiceController {
         return "admin/invoice-items";
     }
 
+    // Steuerberechnung pro Posten-Typ
+    private double[] calculateTax(List<InvoiceItem> items) {
+        double netto7 = 0, netto19 = 0;
+        for (InvoiceItem item : items) {
+            double t = item.getTotal();
+            switch (item.getTaxType()) {
+                case "ESSEN" -> netto7 += t;
+                case "BUEFFET" -> { netto7 += t * 0.75; netto19 += t * 0.25; }
+                default -> netto19 += t; // GETRAENKE
+            }
+        }
+        double tax7 = Math.round(netto7 * 0.07 * 100.0) / 100.0;
+        double tax19 = Math.round(netto19 * 0.19 * 100.0) / 100.0;
+        double netto = items.stream().mapToDouble(InvoiceItem::getTotal).sum();
+        netto = Math.round(netto * 100.0) / 100.0;
+        double totalTax = tax7 + tax19;
+        double total = netto + totalTax;
+        return new double[]{netto, tax7, tax19, totalTax, total};
+    }
+
     // Schritt 3: Preview generieren
     @PostMapping("/rechnung/preview")
     public String preview(@RequestParam Long customerId,
@@ -97,16 +117,18 @@ public class AdminInvoiceController {
                          @RequestParam("itemDesc") List<String> descriptions,
                          @RequestParam("itemQty") List<String> quantities,
                          @RequestParam("itemPrice") List<String> prices,
-                         @RequestParam(required = false, defaultValue = "19.0") Double taxRate,
+                         @RequestParam("itemTaxType") List<String> taxTypes,
                          @RequestParam(required = false) String dueDate,
                          @RequestParam(required = false) String notes,
+                         @RequestParam(required = false) String servicePeriodFrom,
+                         @RequestParam(required = false) String servicePeriodTo,
+                         @RequestParam(required = false) String introText,
                          Model model) {
         Customer customer = customerService.findById(customerId).orElse(null);
         if (customer == null) return "redirect:/portal/admin/rechnung/neu";
 
         List<InvoiceItem> items = new ArrayList<>();
-        double netto = 0;
-        int itemCount = Math.min(descriptions.size(), Math.min(quantities.size(), prices.size()));
+        int itemCount = Math.min(descriptions.size(), Math.min(quantities.size(), Math.min(prices.size(), taxTypes.size())));
         for (int i = 0; i < itemCount; i++) {
             String desc = descriptions.get(i);
             if (desc == null || desc.isBlank()) continue;
@@ -119,24 +141,28 @@ public class AdminInvoiceController {
             item.setQuantity(qty);
             item.setUnitPrice(price);
             item.setTotal(total);
+            item.setTaxType(taxTypes.get(i));
             items.add(item);
-            netto += total;
         }
 
-        double taxAmount = Math.round(netto * (taxRate / 100.0) * 100.0) / 100.0;
-        double total = netto + taxAmount;
+        double[] tax = calculateTax(items);
 
         model.addAttribute("pageTitle", "Vorschau");
         model.addAttribute("activeNav", "rechnungen");
         model.addAttribute("customer", customer);
         model.addAttribute("items", items);
-        model.addAttribute("netto", netto);
-        model.addAttribute("taxRate", taxRate);
-        model.addAttribute("taxAmount", taxAmount);
-        model.addAttribute("total", total);
+        model.addAttribute("netto", tax[0]);
+        model.addAttribute("taxRate", 0.0); // Legacy compatibility
+        model.addAttribute("taxAmount7", tax[1]);
+        model.addAttribute("taxAmount19", tax[2]);
+        model.addAttribute("taxAmount", tax[3]);
+        model.addAttribute("total", tax[4]);
         model.addAttribute("dueDate", dueDate);
         model.addAttribute("notes", notes);
         model.addAttribute("bookingId", bookingId);
+        model.addAttribute("servicePeriodFrom", servicePeriodFrom);
+        model.addAttribute("servicePeriodTo", servicePeriodTo);
+        model.addAttribute("introText", introText);
         model.addAttribute("invoiceNumber", invoiceRepository.nextInvoiceNumber());
 
         model.addAttribute("companyName", companyName);
@@ -164,52 +190,54 @@ public class AdminInvoiceController {
                          @RequestParam("itemDesc") List<String> descriptions,
                          @RequestParam("itemQty") List<String> quantities,
                          @RequestParam("itemPrice") List<String> prices,
-                         @RequestParam Double taxRate,
+                         @RequestParam("itemTaxType") List<String> taxTypes,
                          @RequestParam Double netto,
                          @RequestParam Double taxAmount,
                          @RequestParam Double total,
                          @RequestParam(required = false) String dueDate,
                          @RequestParam(required = false) String notes,
+                         @RequestParam(required = false) String servicePeriodFrom,
+                         @RequestParam(required = false) String servicePeriodTo,
+                         @RequestParam(required = false) String introText,
                          RedirectAttributes redirectAttributes) {
 
         // Recalculate server-side - never trust client totals
-        double calcNetto = 0;
-        int calcCount = Math.min(descriptions.size(), Math.min(quantities.size(), prices.size()));
+        List<InvoiceItem> calcItems = new ArrayList<>();
+        int calcCount = Math.min(descriptions.size(), Math.min(quantities.size(), Math.min(prices.size(), taxTypes.size())));
         for (int i = 0; i < calcCount; i++) {
             String desc = descriptions.get(i);
             if (desc == null || desc.isBlank()) continue;
-            double qty = parseDouble(quantities.get(i), 1);
-            double price = parseDouble(prices.get(i), 0);
-            calcNetto += Math.round(qty * price * 100.0) / 100.0;
+            InvoiceItem item = new InvoiceItem();
+            item.setDescription(desc);
+            item.setQuantity(parseDouble(quantities.get(i), 1));
+            item.setUnitPrice(parseDouble(prices.get(i), 0));
+            item.setTotal(Math.round(item.getQuantity() * item.getUnitPrice() * 100.0) / 100.0);
+            item.setTaxType(taxTypes.get(i));
+            calcItems.add(item);
         }
-        double calcTaxAmount = Math.round(calcNetto * (taxRate / 100.0) * 100.0) / 100.0;
-        double calcTotal = calcNetto + calcTaxAmount;
+        double[] tax = calculateTax(calcItems);
 
         Invoice inv = new Invoice();
         inv.setCustomerId(customerId);
         inv.setBookingId(bookingId);
         inv.setInvoiceNumber(invoiceRepository.nextInvoiceNumber());
-        inv.setAmount(calcNetto);
-        inv.setTaxRate(taxRate);
-        inv.setTaxAmount(calcTaxAmount);
-        inv.setTotal(calcTotal);
+        inv.setAmount(tax[0]);
+        inv.setTaxRate(0.0);
+        inv.setTaxAmount(tax[3]);
+        inv.setTaxAmount7(tax[1]);
+        inv.setTaxAmount19(tax[2]);
+        inv.setTotal(tax[4]);
         inv.setStatus("OFFEN");
         inv.setDueDate(dueDate);
         inv.setNotes(notes);
+        inv.setServicePeriodFrom(servicePeriodFrom);
+        inv.setServicePeriodTo(servicePeriodTo);
+        inv.setIntroText(introText);
         inv = invoiceRepository.save(inv);
 
         // Positionen speichern
-        int approveItemCount = Math.min(descriptions.size(), Math.min(quantities.size(), prices.size()));
-        for (int i = 0; i < approveItemCount; i++) {
-            String desc = descriptions.get(i);
-            if (desc == null || desc.isBlank()) continue;
-
-            InvoiceItem item = new InvoiceItem();
+        for (InvoiceItem item : calcItems) {
             item.setInvoiceId(inv.getId());
-            item.setDescription(desc);
-            item.setQuantity(parseDouble(quantities.get(i), 1));
-            item.setUnitPrice(parseDouble(prices.get(i), 0));
-            item.setTotal(Math.round(item.getQuantity() * item.getUnitPrice() * 100.0) / 100.0);
             itemRepository.save(item);
         }
 
@@ -220,9 +248,9 @@ public class AdminInvoiceController {
                 Customer customer = customerOpt.get();
                 List<InvoiceItem> savedItems = itemRepository.findByInvoiceId(inv.getId());
                 byte[] pdfBytes = pdfService.generate(inv, customer, savedItems);
-                String formattedNet = String.format("%,.2f EUR", calcNetto);
-                String formattedTax = String.format("%,.2f EUR", calcTaxAmount);
-                String formattedTotal = String.format("%,.2f EUR", calcTotal);
+                String formattedNet = String.format("%,.2f EUR", tax[0]);
+                String formattedTax = String.format("%,.2f EUR", tax[3]);
+                String formattedTotal = String.format("%,.2f EUR", tax[4]);
                 String displayName = customer.getCompany() != null ? customer.getCompany() : customer.getEmail();
                 emailService.sendHtmlEmailWithAttachment(
                     customer.getEmail(),
@@ -232,7 +260,7 @@ public class AdminInvoiceController {
                         "customerName", displayName,
                         "invoiceNumber", inv.getInvoiceNumber(),
                         "netAmount", formattedNet,
-                        "taxRate", String.valueOf(taxRate.intValue()),
+                        "taxRate", "7/19",
                         "taxAmount", formattedTax,
                         "totalAmount", formattedTotal,
                         "dueDate", dueDate != null ? dueDate : "",

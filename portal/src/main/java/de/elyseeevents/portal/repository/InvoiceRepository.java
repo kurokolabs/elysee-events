@@ -73,7 +73,7 @@ public class InvoiceRepository {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbc.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO invoices (booking_id, customer_id, invoice_number, amount, tax_rate, tax_amount, total, status, due_date, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO invoices (booking_id, customer_id, invoice_number, amount, tax_rate, tax_amount, total, status, due_date, notes, service_period_from, service_period_to, intro_text, tax_amount_7, tax_amount_19) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
                 ps.setLong(1, inv.getBookingId());
                 ps.setLong(2, inv.getCustomerId());
@@ -85,6 +85,11 @@ public class InvoiceRepository {
                 ps.setString(8, inv.getStatus());
                 ps.setString(9, inv.getDueDate());
                 ps.setString(10, inv.getNotes());
+                ps.setString(11, inv.getServicePeriodFrom());
+                ps.setString(12, inv.getServicePeriodTo());
+                ps.setString(13, inv.getIntroText());
+                ps.setDouble(14, inv.getTaxAmount7());
+                ps.setDouble(15, inv.getTaxAmount19());
                 return ps;
             }, keyHolder);
             inv.setId(keyHolder.getKey().longValue());

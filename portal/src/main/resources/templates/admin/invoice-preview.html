@@ -110,10 +110,16 @@
             <div class="inv__meta-title">RECHNUNG</div>
             <div class="inv__meta-line"><span class="inv__meta-label">Rechnungs-Nr.: </span><span th:text="${invoiceNumber}">RE-2026-0001</span></div>
             <div class="inv__meta-line"><span class="inv__meta-label">Rechnungsdatum: </span><span th:text="${T(java.time.LocalDate).now().toString()}">2026-03-22</span></div>
-            <div class="inv__meta-line"><span class="inv__meta-label">Leistungsdatum: </span><span th:text="${dueDate != null and !dueDate.isEmpty() ? dueDate : T(java.time.LocalDate).now().toString()}">2026-03-22</span></div>
+            <div class="inv__meta-line" th:if="${servicePeriodFrom != null and !servicePeriodFrom.isEmpty()}">
+              <span class="inv__meta-label">Leistungszeitraum: </span>
+              <span th:text="${servicePeriodFrom + (servicePeriodTo != null and !servicePeriodTo.isEmpty() and !servicePeriodTo.equals(servicePeriodFrom) ? ' bis ' + servicePeriodTo : '')}">15.02.2026 bis 17.03.2026</span>
+            </div>
             <div class="inv__meta-line" th:if="${dueDate != null and !dueDate.isEmpty()}"><span class="inv__meta-label">Fällig bis: </span><span th:text="${dueDate}">2026-04-01</span></div>
           </div>
         </div>
+
+        <!-- Einleitungstext -->
+        <div th:if="${introText != null and !introText.isEmpty()}" style="margin-bottom:24px; font-size:13px; color:#1A1A1A; line-height:1.7; white-space:pre-line;" th:text="${introText}"></div>
 
         <!-- Positionstabelle -->
         <table class="inv__table">
@@ -124,6 +130,7 @@
               <th class="r">Menge</th>
               <th class="r">Einzelpreis</th>
               <th class="r">Betrag</th>
+              <th style="text-align:center; width:10%">MwSt.</th>
             </tr>
           </thead>
           <tbody>
@@ -133,6 +140,7 @@
               <td class="r" th:text="${#numbers.formatDecimal(item.quantity, 0, 'COMMA', 2, 'POINT')}">1,00</td>
               <td class="r" th:text="${#numbers.formatDecimal(item.unitPrice, 0, 'COMMA', 2, 'POINT')} + ' EUR'">500,00 EUR</td>
               <td class="r" th:text="${#numbers.formatDecimal(item.total, 0, 'COMMA', 2, 'POINT')} + ' EUR'">500,00 EUR</td>
+              <td style="text-align:center; font-size:10px; color:#6B6560;" th:text="${item.taxTypeLabel}">Essen (7%)</td>
             </tr>
           </tbody>
         </table>
@@ -144,9 +152,13 @@
               <span>Zwischensumme (Netto)</span>
               <span th:text="${#numbers.formatDecimal(netto, 0, 'COMMA', 2, 'POINT')} + ' EUR'">1.000,00 EUR</span>
             </div>
-            <div class="inv__sum-row">
-              <span th:text="'MwSt. ' + ${#numbers.formatDecimal(taxRate, 0, 'COMMA', 1, 'POINT')} + ' %'">MwSt. 19,0 %</span>
-              <span th:text="${#numbers.formatDecimal(taxAmount, 0, 'COMMA', 2, 'POINT')} + ' EUR'">190,00 EUR</span>
+            <div class="inv__sum-row" th:if="${taxAmount7 != null and taxAmount7 > 0}">
+              <span>MwSt. 7 % (Essen)</span>
+              <span th:text="${#numbers.formatDecimal(taxAmount7, 0, 'COMMA', 2, 'POINT')} + ' EUR'">0,00 EUR</span>
+            </div>
+            <div class="inv__sum-row" th:if="${taxAmount19 != null and taxAmount19 > 0}">
+              <span>MwSt. 19 % (Getränke/Sonstiges)</span>
+              <span th:text="${#numbers.formatDecimal(taxAmount19, 0, 'COMMA', 2, 'POINT')} + ' EUR'">0,00 EUR</span>
             </div>
             <div class="inv__total-row">
               <span class="inv__total-label">Gesamtbetrag</span>
@@ -183,16 +195,19 @@
         <form th:action="@{/portal/admin/rechnung/approve}" method="post" style="margin:0;">
           <input type="hidden" name="customerId" th:value="${customer.id}">
           <input type="hidden" name="bookingId" th:value="${bookingId}">
-          <input type="hidden" name="taxRate" th:value="${taxRate}">
           <input type="hidden" name="netto" th:value="${netto}">
           <input type="hidden" name="taxAmount" th:value="${taxAmount}">
           <input type="hidden" name="total" th:value="${total}">
           <input type="hidden" name="dueDate" th:value="${dueDate}">
           <input type="hidden" name="notes" th:value="${notes}">
+          <input type="hidden" name="servicePeriodFrom" th:value="${servicePeriodFrom}">
+          <input type="hidden" name="servicePeriodTo" th:value="${servicePeriodTo}">
+          <input type="hidden" name="introText" th:value="${introText}">
           <th:block th:each="item : ${items}">
             <input type="hidden" name="itemDesc" th:value="${item.description}">
             <input type="hidden" name="itemQty" th:value="${item.quantity}">
             <input type="hidden" name="itemPrice" th:value="${item.unitPrice}">
+            <input type="hidden" name="itemTaxType" th:value="${item.taxType}">
           </th:block>
           <button type="submit" class="btn btn--gold">Rechnung erstellen &amp; senden</button>
         </form>

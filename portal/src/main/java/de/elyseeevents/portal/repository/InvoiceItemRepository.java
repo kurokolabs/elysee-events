@@ -20,6 +20,7 @@ public class InvoiceItemRepository {
         i.setQuantity(rs.getDouble("quantity"));
         i.setUnitPrice(rs.getDouble("unit_price"));
         i.setTotal(rs.getDouble("total"));
+        try { i.setTaxType(rs.getString("tax_type")); } catch (Exception e) { i.setTaxType("GETRAENKE"); }
         return i;
     };
 
@@ -32,8 +33,8 @@ public class InvoiceItemRepository {
     }
 
     public void save(InvoiceItem item) {
-        jdbc.update("INSERT INTO invoice_items (invoice_id, description, quantity, unit_price, total) VALUES (?, ?, ?, ?, ?)",
-                item.getInvoiceId(), item.getDescription(), item.getQuantity(), item.getUnitPrice(), item.getTotal());
+        jdbc.update("INSERT INTO invoice_items (invoice_id, description, quantity, unit_price, total, tax_type) VALUES (?, ?, ?, ?, ?, ?)",
+                item.getInvoiceId(), item.getDescription(), item.getQuantity(), item.getUnitPrice(), item.getTotal(), item.getTaxType());
     }
 
     public void deleteByInvoiceId(Long invoiceId) {
