@@ -171,6 +171,21 @@ ALTER TABLE invoices ADD COLUMN recipient_postal_code VARCHAR(10);
 ALTER TABLE invoices ADD COLUMN recipient_city VARCHAR(100);
 ALTER TABLE invoices ADD COLUMN recipient_email VARCHAR(255);
 
+-- Angebote flexibel: Leistungszeitraum, Intro-Text, gemischte Steuersätze, Standalone
+ALTER TABLE quotes ADD COLUMN service_period_from DATE;
+ALTER TABLE quotes ADD COLUMN service_period_to DATE;
+ALTER TABLE quotes ADD COLUMN intro_text TEXT;
+ALTER TABLE quotes ADD COLUMN tax_amount_7 DECIMAL(12,2) NOT NULL DEFAULT 0;
+ALTER TABLE quotes ADD COLUMN tax_amount_19 DECIMAL(12,2) NOT NULL DEFAULT 0;
+ALTER TABLE quotes MODIFY COLUMN customer_id BIGINT NULL;
+ALTER TABLE quotes ADD COLUMN recipient_name VARCHAR(200);
+ALTER TABLE quotes ADD COLUMN recipient_company VARCHAR(200);
+ALTER TABLE quotes ADD COLUMN recipient_address VARCHAR(300);
+ALTER TABLE quotes ADD COLUMN recipient_postal_code VARCHAR(10);
+ALTER TABLE quotes ADD COLUMN recipient_city VARCHAR(100);
+ALTER TABLE quotes ADD COLUMN recipient_email VARCHAR(255);
+ALTER TABLE quote_items ADD COLUMN tax_type VARCHAR(20) NOT NULL DEFAULT 'GETRAENKE';
+
 -- Performance-Indexes
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_invoices_number ON invoices(invoice_number);

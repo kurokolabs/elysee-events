@@ -14,6 +14,18 @@ public class Quote {
     private String notes;
     private String createdAt;
 
+    private String servicePeriodFrom;
+    private String servicePeriodTo;
+    private String introText;
+    private Double taxAmount7;
+    private Double taxAmount19;
+    private String recipientName;
+    private String recipientCompany;
+    private String recipientAddress;
+    private String recipientPostalCode;
+    private String recipientCity;
+    private String recipientEmail;
+
     // Transient
     private String customerName;
 
@@ -55,6 +67,36 @@ public class Quote {
 
     public String getCustomerName() { return customerName; }
     public void setCustomerName(String customerName) { this.customerName = customerName; }
+
+    public String getServicePeriodFrom() { return servicePeriodFrom; }
+    public void setServicePeriodFrom(String v) { this.servicePeriodFrom = v; }
+    public String getServicePeriodTo() { return servicePeriodTo; }
+    public void setServicePeriodTo(String v) { this.servicePeriodTo = v; }
+    public String getIntroText() { return introText; }
+    public void setIntroText(String v) { this.introText = v; }
+    public Double getTaxAmount7() { return taxAmount7 != null ? taxAmount7 : 0.0; }
+    public void setTaxAmount7(Double v) { this.taxAmount7 = v; }
+    public Double getTaxAmount19() { return taxAmount19 != null ? taxAmount19 : 0.0; }
+    public void setTaxAmount19(Double v) { this.taxAmount19 = v; }
+    public String getRecipientName() { return recipientName; }
+    public void setRecipientName(String v) { this.recipientName = v; }
+    public String getRecipientCompany() { return recipientCompany; }
+    public void setRecipientCompany(String v) { this.recipientCompany = v; }
+    public String getRecipientAddress() { return recipientAddress; }
+    public void setRecipientAddress(String v) { this.recipientAddress = v; }
+    public String getRecipientPostalCode() { return recipientPostalCode; }
+    public void setRecipientPostalCode(String v) { this.recipientPostalCode = v; }
+    public String getRecipientCity() { return recipientCity; }
+    public void setRecipientCity(String v) { this.recipientCity = v; }
+    public String getRecipientEmail() { return recipientEmail; }
+    public void setRecipientEmail(String v) { this.recipientEmail = v; }
+    public boolean isStandaloneQuote() { return customerId == null; }
+    public String getDisplayName() {
+        if (customerName != null && !customerName.isBlank()) return customerName;
+        if (recipientName != null && !recipientName.isBlank()) return recipientName;
+        if (recipientCompany != null && !recipientCompany.isBlank()) return recipientCompany;
+        return "Unbekannt";
+    }
 
     public String getStatusLabel() {
         if (status == null) return "-";

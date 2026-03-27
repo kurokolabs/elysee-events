@@ -3,12 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Angebot erstellen - Elysee Events</title>
+  <title>Rechnung erstellen - Élysée Events</title>
   <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
   <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
   <style>
-    .item-row { display: flex; gap: 12px; margin-bottom: 8px; align-items: flex-start; }
+    .item-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start; flex-wrap: wrap; }
     .item-row .form-group { margin-bottom: 0; }
+    .item-header { display: flex; gap: 8px; margin-bottom: 6px; font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    .item-header span:nth-child(1) { flex: 3; }
+    .item-header span:nth-child(2) { flex: 1; }
+    .item-header span:nth-child(3) { flex: 1; }
+    .item-header span:nth-child(4) { flex: 1.2; }
+    .item-header span:nth-child(5) { width: 32px; }
+    .period-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .period-row .form-group { margin-bottom: 0; }
+    @media (max-width: 768px) {
+      .item-row { flex-direction: column; gap: 6px; padding: 12px; background: var(--surface); border-radius: 4px; }
+      .item-row .form-group { width: 100% !important; flex: none !important; }
+      .item-header { display: none; }
+      .period-row { flex-direction: column; }
+    }
   </style>
 </head>
 <body>
@@ -20,66 +34,121 @@
       <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
 
       <div class="portal-header">
-        <h1 class="portal-header__title" th:text="'Angebot f&uuml;r ' + ${customer.fullName}">Angebot f&uuml;r Max Mustermann</h1>
-        <p class="portal-header__subtitle">Positionen und Angebotsdetails eingeben</p>
+        <h1 class="portal-header__title" th:text="${standalone} ? 'Unabhängiges Angebot' : 'Angebot für ' + ${customer.fullName}">Rechnung</h1>
+        <p class="portal-header__subtitle">Positionen, Steuersätze und Rechnungsdetails eingeben</p>
       </div>
 
-      <div class="detail-card" style="max-width:840px;">
-        <div class="detail-card__title">Angebotsdaten</div>
+      <div class="detail-card" style="max-width:920px;">
+        <div class="detail-card__title">Rechnungsdaten</div>
         <form th:action="@{/portal/admin/angebot/preview}" method="post">
-          <input type="hidden" name="customerId" th:value="${customer.id}">
+          <input th:if="${!standalone}" type="hidden" name="customerId" th:value="${customer.id}">
+
+          <!-- Empfänger (nur bei unabhängiger Rechnung) -->
+          <div th:if="${standalone}" style="margin-bottom:24px;">
+            <div class="detail-card__title">Empfänger</div>
+            <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div class="form-group">
+                <label class="form-label">Name *</label>
+                <input type="text" name="recipientName" class="form-input" placeholder="Max Mustermann" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Firma</label>
+                <input type="text" name="recipientCompany" class="form-input" placeholder="Firma GmbH">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Adresse</label>
+                <input type="text" name="recipientAddress" class="form-input" placeholder="Musterstraße 1">
+              </div>
+              <div class="form-group">
+                <label class="form-label">PLZ / Ort</label>
+                <div style="display:flex; gap:8px;">
+                  <input type="text" name="recipientPostalCode" class="form-input" placeholder="86159" style="width:80px;">
+                  <input type="text" name="recipientCity" class="form-input" placeholder="Augsburg" style="flex:1;">
+                </div>
+              </div>
+              <div class="form-group" style="grid-column:1/-1;">
+                <label class="form-label">E-Mail (für Rechnungsversand)</label>
+                <input type="email" name="recipientEmail" class="form-input" placeholder="rechnung@firma.de">
+              </div>
+            </div>
+          </div>
 
           <div class="form-group">
             <label class="form-label" for="bookingId">Buchung (optional)</label>
             <select id="bookingId" name="bookingId" class="form-select">
               <option value="">Keine Buchung zuordnen</option>
-              <option th:each="b : ${bookings}"
-                      th:value="${b.id}"
-                      th:text="'#' + ${b.id} + ' - ' + ${b.bookingType}">
-                #1 - Hochzeit
-              </option>
+              <option th:each="b : ${bookings}" th:value="${b.id}" th:text="'#' + ${b.id} + ' - ' + ${b.bookingType}">#1 - Hochzeit</option>
             </select>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Positionen</label>
-            <div id="itemRows">
-              <div class="item-row">
-                <div class="form-group" style="flex:3"><input type="text" name="itemDesc" class="form-input" placeholder="Saalmiete" required></div>
-                <div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" value="1" step="0.01" min="0.01"></div>
-                <div class="form-group" style="flex:1"><input type="number" name="itemPrice" class="form-input" placeholder="0.00" step="0.01" min="0" required></div>
-                <button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>
-              </div>
-              <div class="item-row">
-                <div class="form-group" style="flex:3"><input type="text" name="itemDesc" class="form-input" placeholder="Men&uuml; pro Person" required></div>
-                <div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" value="1" step="0.01" min="0.01"></div>
-                <div class="form-group" style="flex:1"><input type="number" name="itemPrice" class="form-input" placeholder="0.00" step="0.01" min="0" required></div>
-                <button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>
-              </div>
-              <div class="item-row">
-                <div class="form-group" style="flex:3"><input type="text" name="itemDesc" class="form-input" placeholder="Getr&auml;nkepauschale" required></div>
-                <div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" value="1" step="0.01" min="0.01"></div>
-                <div class="form-group" style="flex:1"><input type="number" name="itemPrice" class="form-input" placeholder="0.00" step="0.01" min="0" required></div>
-                <button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>
-              </div>
+          <!-- Leistungszeitraum -->
+          <div class="detail-card__title" style="margin-top:24px;">Leistungszeitraum</div>
+          <div class="period-row" style="margin-bottom:16px;">
+            <div class="form-group">
+              <label class="form-label" for="servicePeriodFrom">Von</label>
+              <input type="date" id="servicePeriodFrom" name="servicePeriodFrom" class="form-input">
             </div>
-            <button type="button" id="addItem" class="btn btn--outline btn--sm" style="margin-top:8px;">Position hinzuf&uuml;gen</button>
+            <div class="form-group">
+              <label class="form-label" for="servicePeriodTo">Bis</label>
+              <input type="date" id="servicePeriodTo" name="servicePeriodTo" class="form-input">
+            </div>
+            <div class="form-group" style="align-self:flex-end;">
+              <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); cursor:pointer;">
+                <input type="checkbox" id="singleDay" onchange="document.getElementById('servicePeriodTo').disabled=this.checked; if(this.checked) document.getElementById('servicePeriodTo').value=document.getElementById('servicePeriodFrom').value;">
+                Einzeltag
+              </label>
+            </div>
           </div>
 
-          <div style="display:flex; gap:12px;">
-            <div class="form-group" style="flex:1">
-              <label class="form-label" for="taxRate">MwSt.-Satz (%)</label>
-              <input type="number" id="taxRate" name="taxRate" class="form-input" value="19.0" step="0.01" min="0" required>
+          <!-- Intro-Text -->
+          <div class="form-group">
+            <label class="form-label" for="introText">Einleitungstext (erscheint auf der Rechnung)</label>
+            <textarea id="introText" name="introText" class="form-textarea" rows="3" placeholder="Gemäß unserer Vereinbarung berechnen wir Ihnen:&#10;Das Kantinenessen für den Zeitraum von ... bis ... in Höhe von ... Euro.&#10;Zahlungsbedingungen: bis spätestens 14 Tage nach Rechnungsdatum – ohne Abzug"></textarea>
+          </div>
+
+          <!-- Positionen -->
+          <div class="detail-card__title" style="margin-top:24px;">Positionen</div>
+          <div class="item-header">
+            <span>Beschreibung</span>
+            <span>Menge</span>
+            <span>Einzelpreis</span>
+            <span>Steuertyp</span>
+            <span></span>
+          </div>
+          <div id="itemRows">
+            <div class="item-row">
+              <div class="form-group" style="flex:3"><input type="text" name="itemDesc" class="form-input" placeholder="z.B. Kantinenessen Mo-Fr" required></div>
+              <div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" value="1" step="0.01" min="0.01"></div>
+              <div class="form-group" style="flex:1"><input type="number" name="itemPrice" class="form-input" placeholder="0.00" step="0.01" min="0" required></div>
+              <div class="form-group" style="flex:1.2">
+                <select name="itemTaxType" class="form-select">
+                  <option value="ESSEN">Essen (7%)</option>
+                  <option value="GETRAENKE">Getränke (19%)</option>
+                  <option value="BUEFFET">Büffet (75/25)</option>
+                </select>
+              </div>
+              <button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>
             </div>
+          </div>
+          <button type="button" id="addItem" class="btn btn--outline btn--sm" style="margin-top:8px;">Position hinzufügen</button>
+
+          <div style="display:flex; gap:12px; margin-top:24px;">
             <div class="form-group" style="flex:1">
-              <label class="form-label" for="validUntil">G&uuml;ltig bis</label>
+              <label class="form-label" for="dueDate">Gültig bis</label>
               <input type="date" id="validUntil" name="validUntil" class="form-input" required>
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="notes">Notizen</label>
-            <textarea id="notes" name="notes" class="form-textarea" placeholder="Zus&auml;tzliche Hinweise zum Angebot..."></textarea>
+            <label class="form-label" for="notes">Notizen (intern)</label>
+            <textarea id="notes" name="notes" class="form-textarea" placeholder="Zusätzliche interne Hinweise..."></textarea>
+          </div>
+
+          <div style="background:var(--surface); padding:16px; border-radius:4px; margin-top:16px; font-size:13px; color:var(--muted);">
+            <strong>Steuertypen:</strong><br>
+            Essen (7%) – Speisen, Kantinenessen<br>
+            Getränke (19%) – Getränke, Saalmiete, Dienstleistungen<br>
+            Büffet (75/25) – 75% des Betrags mit 7% (Essen) und 25% mit 19% (Getränke) besteuert
           </div>
 
           <div style="display:flex; gap:12px; margin-top:24px;">
@@ -99,14 +168,17 @@
       row.innerHTML = '<div class="form-group" style="flex:3"><input type="text" name="itemDesc" class="form-input" placeholder="Beschreibung" required></div>' +
         '<div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" value="1" step="0.01" min="0.01"></div>' +
         '<div class="form-group" style="flex:1"><input type="number" name="itemPrice" class="form-input" placeholder="0.00" step="0.01" min="0" required></div>' +
+        '<div class="form-group" style="flex:1.2"><select name="itemTaxType" class="form-select"><option value="ESSEN">Essen (7%)</option><option value="GETRAENKE">Getränke (19%)</option><option value="BUEFFET">Büffet (75/25)</option></select></div>' +
         '<button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>';
       container.appendChild(row);
       row.querySelector('.remove-item').addEventListener('click', function() { row.remove(); });
     });
-
     document.querySelectorAll('.remove-item').forEach(function(btn) {
       btn.addEventListener('click', function() { btn.closest('.item-row').remove(); });
     });
+    // Default Gültig bis: 14 Tage ab heute
+    var due = new Date(); due.setDate(due.getDate() + 14);
+    document.getElementById('dueDate').value = due.toISOString().split('T')[0];
   </script>
 </body>
 </html>

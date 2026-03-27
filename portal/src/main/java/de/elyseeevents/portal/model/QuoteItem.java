@@ -25,4 +25,15 @@ public class QuoteItem {
 
     public Double getTotal() { return total; }
     public void setTotal(Double total) { this.total = total; }
+
+    private String taxType;
+    public String getTaxType() { return taxType != null ? taxType : "GETRAENKE"; }
+    public void setTaxType(String taxType) { this.taxType = taxType; }
+    public String getTaxTypeLabel() {
+        return switch (getTaxType()) {
+            case "ESSEN" -> "Essen (7%)";
+            case "BUEFFET" -> "Büffet (75/25)";
+            default -> "Getränke (19%)";
+        };
+    }
 }

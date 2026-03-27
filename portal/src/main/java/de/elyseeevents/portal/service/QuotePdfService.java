@@ -109,13 +109,27 @@ public class QuotePdfService {
                 .setMarginBottom(12));
         infoCell.add(infoLine("Angebots-Nr.", quote.getQuoteNumber()));
         infoCell.add(infoLine("Angebotsdatum", formatDate(quote.getCreatedAt())));
+        if (quote.getServicePeriodFrom() != null && !quote.getServicePeriodFrom().isEmpty()) {
+            String period = quote.getServicePeriodFrom();
+            if (quote.getServicePeriodTo() != null && !quote.getServicePeriodTo().isEmpty()
+                    && !quote.getServicePeriodTo().equals(quote.getServicePeriodFrom())) {
+                period += " bis " + quote.getServicePeriodTo();
+            }
+            infoCell.add(infoLine("Leistungszeitraum", period));
+        }
         if (quote.getValidUntil() != null)
-            infoCell.add(infoLine("G\u00fcltig bis", quote.getValidUntil()));
+            infoCell.add(infoLine("Gültig bis", quote.getValidUntil()));
         header.addCell(infoCell);
         doc.add(header);
 
+        // -- Einleitungstext --
+        if (quote.getIntroText() != null && !quote.getIntroText().isBlank()) {
+            doc.add(new Paragraph(quote.getIntroText())
+                    .setFontSize(10).setFontColor(DARK).setFixedLeading(16).setMarginBottom(20));
+        }
+
         // -- Positionen --
-        Table table = new Table(UnitValue.createPercentArray(new float[]{6, 39, 15, 20, 20}))
+        Table table = new Table(UnitValue.createPercentArray(new float[]{5, 33, 12, 17, 17, 16}))
                 .useAllAvailableWidth();
 
         table.addHeaderCell(thCell("Nr.", TextAlignment.CENTER));
@@ -123,6 +137,7 @@ public class QuotePdfService {
         table.addHeaderCell(thCell("Menge", TextAlignment.CENTER));
         table.addHeaderCell(thCell("Einzelpreis", TextAlignment.RIGHT));
         table.addHeaderCell(thCell("Betrag", TextAlignment.RIGHT));
+        table.addHeaderCell(thCell("MwSt.", TextAlignment.CENTER));
 
         if (items != null && !items.isEmpty()) {
             int pos = 1;
@@ -132,6 +147,7 @@ public class QuotePdfService {
                 table.addCell(tdCell(formatQty(item.getQuantity()), TextAlignment.CENTER));
                 table.addCell(tdCell(EUR.get().format(item.getUnitPrice()), TextAlignment.RIGHT));
                 table.addCell(tdCell(EUR.get().format(item.getTotal()), TextAlignment.RIGHT));
+                table.addCell(tdCell(item.getTaxTypeLabel(), TextAlignment.CENTER));
             }
         } else {
             table.addCell(tdCell("1", TextAlignment.CENTER));
@@ -150,9 +166,21 @@ public class QuotePdfService {
         totals.addCell(sumLabel("Zwischensumme (Netto)"));
         totals.addCell(sumValue(EUR.get().format(quote.getAmount())));
 
-        totals.addCell(emptyCell());
-        totals.addCell(sumLabel("MwSt. " + String.format("%.1f", quote.getTaxRate()) + " %"));
-        totals.addCell(sumValue(EUR.get().format(quote.getTaxAmount())));
+        if (quote.getTaxAmount7() > 0) {
+            totals.addCell(emptyCell());
+            totals.addCell(sumLabel("MwSt. 7 % (Essen)"));
+            totals.addCell(sumValue(EUR.get().format(quote.getTaxAmount7())));
+        }
+        if (quote.getTaxAmount19() > 0) {
+            totals.addCell(emptyCell());
+            totals.addCell(sumLabel("MwSt. 19 % (Getränke/Sonstiges)"));
+            totals.addCell(sumValue(EUR.get().format(quote.getTaxAmount19())));
+        }
+        if (quote.getTaxAmount7() == 0 && quote.getTaxAmount19() == 0 && quote.getTaxAmount() > 0) {
+            totals.addCell(emptyCell());
+            totals.addCell(sumLabel("MwSt. " + String.format("%.1f", quote.getTaxRate()) + " %"));
+            totals.addCell(sumValue(EUR.get().format(quote.getTaxAmount())));
+        }
 
         totals.addCell(emptyCell());
         Cell tLabel = new Cell().setBorder(Border.NO_BORDER)
@@ -197,6 +225,17 @@ public class QuotePdfService {
 
         } // auto-close doc and pdf
         return baos.toByteArray();
+    }
+
+    public byte[] generate(Quote quote, List<QuoteItem> items) {
+        Customer pseudo = new Customer();
+        pseudo.setFirstName(quote.getRecipientName() != null ? quote.getRecipientName() : "");
+        pseudo.setLastName("");
+        pseudo.setCompany(quote.getRecipientCompany());
+        pseudo.setAddress(quote.getRecipientAddress());
+        pseudo.setPostalCode(quote.getRecipientPostalCode());
+        pseudo.setCity(quote.getRecipientCity());
+        return generate(quote, pseudo, items);
     }
 
     private String formatDate(String datetime) {

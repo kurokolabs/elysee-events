@@ -21,7 +21,7 @@ public class QuoteRepository {
     private final RowMapper<Quote> rowMapper = (rs, rowNum) -> {
         Quote q = new Quote();
         q.setId(rs.getLong("id"));
-        q.setCustomerId(rs.getLong("customer_id"));
+        long cid = rs.getLong("customer_id"); q.setCustomerId(rs.wasNull() ? null : cid);
         q.setBookingId(rs.getObject("booking_id") != null ? rs.getLong("booking_id") : null);
         q.setQuoteNumber(rs.getString("quote_number"));
         q.setAmount(rs.getDouble("amount"));
@@ -32,12 +32,23 @@ public class QuoteRepository {
         q.setValidUntil(rs.getString("valid_until"));
         q.setNotes(rs.getString("notes"));
         q.setCreatedAt(rs.getString("created_at"));
+        try { q.setServicePeriodFrom(rs.getString("service_period_from")); } catch (Exception ignored) {}
+        try { q.setServicePeriodTo(rs.getString("service_period_to")); } catch (Exception ignored) {}
+        try { q.setIntroText(rs.getString("intro_text")); } catch (Exception ignored) {}
+        try { q.setTaxAmount7(rs.getDouble("tax_amount_7")); } catch (Exception ignored) {}
+        try { q.setTaxAmount19(rs.getDouble("tax_amount_19")); } catch (Exception ignored) {}
+        try { q.setRecipientName(rs.getString("recipient_name")); } catch (Exception ignored) {}
+        try { q.setRecipientCompany(rs.getString("recipient_company")); } catch (Exception ignored) {}
+        try { q.setRecipientAddress(rs.getString("recipient_address")); } catch (Exception ignored) {}
+        try { q.setRecipientPostalCode(rs.getString("recipient_postal_code")); } catch (Exception ignored) {}
+        try { q.setRecipientCity(rs.getString("recipient_city")); } catch (Exception ignored) {}
+        try { q.setRecipientEmail(rs.getString("recipient_email")); } catch (Exception ignored) {}
         return q;
     };
 
     private final RowMapper<Quote> rowMapperFull = (rs, rowNum) -> {
         Quote q = rowMapper.mapRow(rs, rowNum);
-        q.setCustomerName(rs.getString("customer_name"));
+        try { q.setCustomerName(rs.getString("customer_name")); } catch (Exception ignored) {}
         return q;
     };
 
@@ -47,22 +58,22 @@ public class QuoteRepository {
 
     public List<Quote> findAll() {
         return jdbc.query(
-                "SELECT q.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name " +
-                "FROM quotes q JOIN customers c ON q.customer_id = c.id " +
+                "SELECT q.*, COALESCE(CONCAT(c.first_name, ' ', c.last_name), q.recipient_name) AS customer_name " +
+                "FROM quotes q LEFT JOIN customers c ON q.customer_id = c.id " +
                 "ORDER BY q.created_at DESC", rowMapperFull);
     }
 
     public List<Quote> findByCustomerId(Long customerId) {
         return jdbc.query(
                 "SELECT q.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name " +
-                "FROM quotes q JOIN customers c ON q.customer_id = c.id " +
+                "FROM quotes q LEFT JOIN customers c ON q.customer_id = c.id " +
                 "WHERE q.customer_id = ? ORDER BY q.created_at DESC", rowMapperFull, customerId);
     }
 
     public Optional<Quote> findById(Long id) {
         List<Quote> list = jdbc.query(
-                "SELECT q.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name " +
-                "FROM quotes q JOIN customers c ON q.customer_id = c.id " +
+                "SELECT q.*, COALESCE(CONCAT(c.first_name, ' ', c.last_name), q.recipient_name) AS customer_name " +
+                "FROM quotes q LEFT JOIN customers c ON q.customer_id = c.id " +
                 "WHERE q.id = ?", rowMapperFull, id);
         return list.stream().findFirst();
     }
@@ -72,10 +83,10 @@ public class QuoteRepository {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbc.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO quotes (customer_id, booking_id, quote_number, amount, tax_rate, tax_amount, total, status, valid_until, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO quotes (customer_id, booking_id, quote_number, amount, tax_rate, tax_amount, total, status, valid_until, notes, service_period_from, service_period_to, intro_text, tax_amount_7, tax_amount_19, recipient_name, recipient_company, recipient_address, recipient_postal_code, recipient_city, recipient_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
-                ps.setLong(1, q.getCustomerId());
-                if (q.getBookingId() != null) { ps.setLong(2, q.getBookingId()); } else { ps.setNull(2, Types.BIGINT); }
+                if (q.getCustomerId() != null) ps.setLong(1, q.getCustomerId()); else ps.setNull(1, Types.BIGINT);
+                if (q.getBookingId() != null) ps.setLong(2, q.getBookingId()); else ps.setNull(2, Types.BIGINT);
                 ps.setString(3, q.getQuoteNumber());
                 ps.setDouble(4, q.getAmount());
                 ps.setDouble(5, q.getTaxRate());
@@ -84,6 +95,17 @@ public class QuoteRepository {
                 ps.setString(8, q.getStatus());
                 ps.setString(9, q.getValidUntil());
                 ps.setString(10, q.getNotes());
+                ps.setString(11, q.getServicePeriodFrom());
+                ps.setString(12, q.getServicePeriodTo());
+                ps.setString(13, q.getIntroText());
+                ps.setDouble(14, q.getTaxAmount7());
+                ps.setDouble(15, q.getTaxAmount19());
+                ps.setString(16, q.getRecipientName());
+                ps.setString(17, q.getRecipientCompany());
+                ps.setString(18, q.getRecipientAddress());
+                ps.setString(19, q.getRecipientPostalCode());
+                ps.setString(20, q.getRecipientCity());
+                ps.setString(21, q.getRecipientEmail());
                 return ps;
             }, keyHolder);
             q.setId(keyHolder.getKey().longValue());

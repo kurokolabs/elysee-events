@@ -53,6 +53,24 @@ public class AdminQuoteController {
         this.pdfService = pdfService;
     }
 
+    // Steuerberechnung (identisch zu Invoice)
+    private double[] calculateTax(List<QuoteItem> items) {
+        double netto7 = 0, netto19 = 0;
+        for (QuoteItem item : items) {
+            double t = item.getTotal();
+            switch (item.getTaxType()) {
+                case "ESSEN" -> netto7 += t;
+                case "BUEFFET" -> { netto7 += t * 0.75; netto19 += t * 0.25; }
+                default -> netto19 += t;
+            }
+        }
+        double tax7 = Math.round(netto7 * 0.07 * 100.0) / 100.0;
+        double tax19 = Math.round(netto19 * 0.19 * 100.0) / 100.0;
+        double netto = items.stream().mapToDouble(QuoteItem::getTotal).sum();
+        netto = Math.round(netto * 100.0) / 100.0;
+        return new double[]{netto, tax7, tax19, tax7 + tax19, netto + tax7 + tax19};
+    }
+
     @GetMapping("/angebote")
     public String list(Model model) {
         model.addAttribute("pageTitle", "Angebote");
@@ -61,7 +79,6 @@ public class AdminQuoteController {
         return "admin/quotes";
     }
 
-    // Schritt 1: Kunde ausw\u00e4hlen
     @GetMapping("/angebot/neu")
     public String selectCustomer(Model model) {
         model.addAttribute("pageTitle", "Neues Angebot");
@@ -70,68 +87,88 @@ public class AdminQuoteController {
         return "admin/quote-select-customer";
     }
 
-    // Schritt 2: Positionen eingeben
     @GetMapping("/angebot/neu/{customerId}")
     public String enterItems(@PathVariable Long customerId, Model model) {
         Customer customer = customerService.findById(customerId).orElse(null);
         if (customer == null) return "redirect:/portal/admin/angebot/neu";
-
         model.addAttribute("pageTitle", "Angebot erstellen");
         model.addAttribute("activeNav", "angebote");
         model.addAttribute("customer", customer);
+        model.addAttribute("standalone", false);
         model.addAttribute("bookings", bookingService.findByCustomerId(customerId));
         return "admin/quote-items";
     }
 
-    // Schritt 3: Preview generieren
+    @GetMapping("/angebot/neu/unabhaengig")
+    public String enterItemsStandalone(Model model) {
+        model.addAttribute("pageTitle", "Unabhängiges Angebot");
+        model.addAttribute("activeNav", "angebote");
+        model.addAttribute("standalone", true);
+        model.addAttribute("bookings", java.util.List.of());
+        return "admin/quote-items";
+    }
+
     @PostMapping("/angebot/preview")
-    public String preview(@RequestParam Long customerId,
+    public String preview(@RequestParam(required = false) Long customerId,
                          @RequestParam(required = false) Long bookingId,
                          @RequestParam("itemDesc") List<String> descriptions,
                          @RequestParam("itemQty") List<String> quantities,
                          @RequestParam("itemPrice") List<String> prices,
-                         @RequestParam(required = false, defaultValue = "19.0") Double taxRate,
+                         @RequestParam("itemTaxType") List<String> taxTypes,
                          @RequestParam(required = false) String validUntil,
                          @RequestParam(required = false) String notes,
+                         @RequestParam(required = false) String servicePeriodFrom,
+                         @RequestParam(required = false) String servicePeriodTo,
+                         @RequestParam(required = false) String introText,
+                         @RequestParam(required = false) String recipientName,
+                         @RequestParam(required = false) String recipientCompany,
+                         @RequestParam(required = false) String recipientAddress,
+                         @RequestParam(required = false) String recipientPostalCode,
+                         @RequestParam(required = false) String recipientCity,
+                         @RequestParam(required = false) String recipientEmail,
                          Model model) {
-        Customer customer = customerService.findById(customerId).orElse(null);
-        if (customer == null) return "redirect:/portal/admin/angebot/neu";
+        Customer customer = customerId != null ? customerService.findById(customerId).orElse(null) : null;
+        boolean standalone = (customer == null);
 
         List<QuoteItem> items = new ArrayList<>();
-        double netto = 0;
-        int itemCount = Math.min(descriptions.size(), Math.min(quantities.size(), prices.size()));
-        for (int i = 0; i < itemCount; i++) {
+        int count = Math.min(descriptions.size(), Math.min(quantities.size(), Math.min(prices.size(), taxTypes.size())));
+        for (int i = 0; i < count; i++) {
             String desc = descriptions.get(i);
             if (desc == null || desc.isBlank()) continue;
-            double qty = parseDouble(quantities.get(i), 1);
-            double price = parseDouble(prices.get(i), 0);
-            double total = Math.round(qty * price * 100.0) / 100.0;
-
             QuoteItem item = new QuoteItem();
             item.setDescription(desc);
-            item.setQuantity(qty);
-            item.setUnitPrice(price);
-            item.setTotal(total);
+            item.setQuantity(parseDouble(quantities.get(i), 1));
+            item.setUnitPrice(parseDouble(prices.get(i), 0));
+            item.setTotal(Math.round(item.getQuantity() * item.getUnitPrice() * 100.0) / 100.0);
+            item.setTaxType(taxTypes.get(i));
             items.add(item);
-            netto += total;
         }
 
-        double taxAmount = Math.round(netto * (taxRate / 100.0) * 100.0) / 100.0;
-        double total = netto + taxAmount;
+        double[] tax = calculateTax(items);
 
         model.addAttribute("pageTitle", "Vorschau");
         model.addAttribute("activeNav", "angebote");
         model.addAttribute("customer", customer);
+        model.addAttribute("standalone", standalone);
         model.addAttribute("items", items);
-        model.addAttribute("netto", netto);
-        model.addAttribute("taxRate", taxRate);
-        model.addAttribute("taxAmount", taxAmount);
-        model.addAttribute("total", total);
+        model.addAttribute("netto", tax[0]);
+        model.addAttribute("taxAmount7", tax[1]);
+        model.addAttribute("taxAmount19", tax[2]);
+        model.addAttribute("taxAmount", tax[3]);
+        model.addAttribute("total", tax[4]);
         model.addAttribute("validUntil", validUntil);
         model.addAttribute("notes", notes);
         model.addAttribute("bookingId", bookingId);
+        model.addAttribute("servicePeriodFrom", servicePeriodFrom);
+        model.addAttribute("servicePeriodTo", servicePeriodTo);
+        model.addAttribute("introText", introText);
+        model.addAttribute("recipientName", recipientName);
+        model.addAttribute("recipientCompany", recipientCompany);
+        model.addAttribute("recipientAddress", recipientAddress);
+        model.addAttribute("recipientPostalCode", recipientPostalCode);
+        model.addAttribute("recipientCity", recipientCity);
+        model.addAttribute("recipientEmail", recipientEmail);
         model.addAttribute("quoteNumber", quoteRepository.nextQuoteNumber());
-
         model.addAttribute("companyName", companyName);
         model.addAttribute("companyStreet", companyStreet);
         model.addAttribute("companyCity", companyCity);
@@ -142,69 +179,76 @@ public class AdminQuoteController {
         model.addAttribute("companyHrb", companyHrb);
         model.addAttribute("companyCourt", companyCourt);
         model.addAttribute("companyCeo", companyCeo);
-
         return "admin/quote-preview";
     }
 
-    // Schritt 4: Angebot bestaetigen und erstellen
     @Transactional
     @PostMapping("/angebot/approve")
-    public String approve(@RequestParam Long customerId,
+    public String approve(@RequestParam(required = false) Long customerId,
                          @RequestParam(required = false) Long bookingId,
                          @RequestParam("itemDesc") List<String> descriptions,
                          @RequestParam("itemQty") List<String> quantities,
                          @RequestParam("itemPrice") List<String> prices,
-                         @RequestParam Double taxRate,
-                         @RequestParam Double netto,
-                         @RequestParam Double taxAmount,
-                         @RequestParam Double total,
+                         @RequestParam("itemTaxType") List<String> taxTypes,
+                         @RequestParam Double netto, @RequestParam Double taxAmount, @RequestParam Double total,
                          @RequestParam(required = false) String validUntil,
                          @RequestParam(required = false) String notes,
+                         @RequestParam(required = false) String servicePeriodFrom,
+                         @RequestParam(required = false) String servicePeriodTo,
+                         @RequestParam(required = false) String introText,
+                         @RequestParam(required = false) String recipientName,
+                         @RequestParam(required = false) String recipientCompany,
+                         @RequestParam(required = false) String recipientAddress,
+                         @RequestParam(required = false) String recipientPostalCode,
+                         @RequestParam(required = false) String recipientCity,
+                         @RequestParam(required = false) String recipientEmail,
                          RedirectAttributes redirectAttributes) {
 
-        // Recalculate server-side - never trust client totals
-        double calcNetto = 0;
-        int calcCount = Math.min(descriptions.size(), Math.min(quantities.size(), prices.size()));
-        for (int i = 0; i < calcCount; i++) {
+        List<QuoteItem> calcItems = new ArrayList<>();
+        int count = Math.min(descriptions.size(), Math.min(quantities.size(), Math.min(prices.size(), taxTypes.size())));
+        for (int i = 0; i < count; i++) {
             String desc = descriptions.get(i);
             if (desc == null || desc.isBlank()) continue;
-            double qty = parseDouble(quantities.get(i), 1);
-            double price = parseDouble(prices.get(i), 0);
-            calcNetto += Math.round(qty * price * 100.0) / 100.0;
+            QuoteItem item = new QuoteItem();
+            item.setDescription(desc);
+            item.setQuantity(parseDouble(quantities.get(i), 1));
+            item.setUnitPrice(parseDouble(prices.get(i), 0));
+            item.setTotal(Math.round(item.getQuantity() * item.getUnitPrice() * 100.0) / 100.0);
+            item.setTaxType(taxTypes.get(i));
+            calcItems.add(item);
         }
-        double calcTaxAmount = Math.round(calcNetto * (taxRate / 100.0) * 100.0) / 100.0;
-        double calcTotal = calcNetto + calcTaxAmount;
+        double[] tax = calculateTax(calcItems);
 
         Quote quote = new Quote();
         quote.setCustomerId(customerId);
         quote.setBookingId(bookingId);
         quote.setQuoteNumber(quoteRepository.nextQuoteNumber());
-        quote.setAmount(calcNetto);
-        quote.setTaxRate(taxRate);
-        quote.setTaxAmount(calcTaxAmount);
-        quote.setTotal(calcTotal);
+        quote.setAmount(tax[0]);
+        quote.setTaxRate(0.0);
+        quote.setTaxAmount(tax[3]);
+        quote.setTaxAmount7(tax[1]);
+        quote.setTaxAmount19(tax[2]);
+        quote.setTotal(tax[4]);
         quote.setStatus("OFFEN");
         quote.setValidUntil(validUntil);
         quote.setNotes(notes);
+        quote.setServicePeriodFrom(servicePeriodFrom);
+        quote.setServicePeriodTo(servicePeriodTo);
+        quote.setIntroText(introText);
+        quote.setRecipientName(recipientName);
+        quote.setRecipientCompany(recipientCompany);
+        quote.setRecipientAddress(recipientAddress);
+        quote.setRecipientPostalCode(recipientPostalCode);
+        quote.setRecipientCity(recipientCity);
+        quote.setRecipientEmail(recipientEmail);
         quote = quoteRepository.save(quote);
 
-        // Positionen speichern
-        int approveItemCount = Math.min(descriptions.size(), Math.min(quantities.size(), prices.size()));
-        for (int i = 0; i < approveItemCount; i++) {
-            String desc = descriptions.get(i);
-            if (desc == null || desc.isBlank()) continue;
-
-            QuoteItem item = new QuoteItem();
+        for (QuoteItem item : calcItems) {
             item.setQuoteId(quote.getId());
-            item.setDescription(desc);
-            item.setQuantity(parseDouble(quantities.get(i), 1));
-            item.setUnitPrice(parseDouble(prices.get(i), 0));
-            item.setTotal(Math.round(item.getQuantity() * item.getUnitPrice() * 100.0) / 100.0);
             itemRepository.save(item);
         }
 
-        redirectAttributes.addFlashAttribute("message",
-                "Angebot " + quote.getQuoteNumber() + " erstellt.");
+        redirectAttributes.addFlashAttribute("message", "Angebot " + quote.getQuoteNumber() + " erstellt.");
         return "redirect:/portal/admin/angebot/" + quote.getId();
     }
 
@@ -212,7 +256,6 @@ public class AdminQuoteController {
     public String detail(@PathVariable Long id, Model model) {
         Quote quote = quoteRepository.findById(id).orElse(null);
         if (quote == null) return "redirect:/portal/admin/angebote";
-
         model.addAttribute("pageTitle", "Angebot " + quote.getQuoteNumber());
         model.addAttribute("activeNav", "angebote");
         model.addAttribute("quote", quote);
@@ -220,22 +263,54 @@ public class AdminQuoteController {
         return "admin/quote-detail";
     }
 
-    @Transactional
-    @PostMapping("/angebot/{id}/status")
-    public String updateStatus(@PathVariable Long id,
-                              @RequestParam String status,
-                              RedirectAttributes redirectAttributes) {
+    // Angebot in Rechnung übernehmen
+    @GetMapping("/angebot/{id}/zu-rechnung")
+    public String convertToInvoice(@PathVariable Long id, Model model) {
         Quote quote = quoteRepository.findById(id).orElse(null);
         if (quote == null) return "redirect:/portal/admin/angebote";
 
-        if (!java.util.Set.of("OFFEN", "ANGENOMMEN", "ABGELEHNT", "ABGELAUFEN", "STORNIERT").contains(status)) {
-            redirectAttributes.addFlashAttribute("error", "Ungueltiger Status.");
-            return "redirect:/portal/admin/angebot/" + id;
+        List<QuoteItem> items = itemRepository.findByQuoteId(id);
+
+        // Weiterleitung zum Rechnungsformular mit vorbefüllten Daten
+        if (quote.getCustomerId() != null) {
+            Customer customer = customerService.findById(quote.getCustomerId()).orElse(null);
+            model.addAttribute("customer", customer);
+            model.addAttribute("standalone", false);
+            model.addAttribute("bookings", bookingService.findByCustomerId(quote.getCustomerId()));
+        } else {
+            model.addAttribute("standalone", true);
+            model.addAttribute("bookings", java.util.List.of());
         }
 
+        model.addAttribute("pageTitle", "Rechnung aus Angebot " + quote.getQuoteNumber());
+        model.addAttribute("activeNav", "rechnungen");
+        model.addAttribute("prefillItems", items);
+        model.addAttribute("prefillIntroText", quote.getIntroText());
+        model.addAttribute("prefillServicePeriodFrom", quote.getServicePeriodFrom());
+        model.addAttribute("prefillServicePeriodTo", quote.getServicePeriodTo());
+        model.addAttribute("prefillNotes", "Übernahme aus Angebot " + quote.getQuoteNumber());
+        model.addAttribute("prefillRecipientName", quote.getRecipientName());
+        model.addAttribute("prefillRecipientCompany", quote.getRecipientCompany());
+        model.addAttribute("prefillRecipientAddress", quote.getRecipientAddress());
+        model.addAttribute("prefillRecipientPostalCode", quote.getRecipientPostalCode());
+        model.addAttribute("prefillRecipientCity", quote.getRecipientCity());
+        model.addAttribute("prefillRecipientEmail", quote.getRecipientEmail());
+        model.addAttribute("fromQuote", true);
+        return "admin/invoice-items";
+    }
+
+    @Transactional
+    @PostMapping("/angebot/{id}/status")
+    public String updateStatus(@PathVariable Long id, @RequestParam String status, RedirectAttributes redirectAttributes) {
+        Quote quote = quoteRepository.findById(id).orElse(null);
+        if (quote == null) return "redirect:/portal/admin/angebote";
+        if (!java.util.Set.of("OFFEN", "ANGENOMMEN", "ABGELEHNT", "ABGELAUFEN", "STORNIERT").contains(status)) {
+            redirectAttributes.addFlashAttribute("error", "Ungültiger Status.");
+            return "redirect:/portal/admin/angebot/" + id;
+        }
         quote.setStatus(status);
         quoteRepository.save(quote);
-        redirectAttributes.addFlashAttribute("message", "Status ge\u00e4ndert.");
+        redirectAttributes.addFlashAttribute("message", "Status geändert.");
         return "redirect:/portal/admin/angebot/" + id;
     }
 
@@ -244,11 +319,9 @@ public class AdminQuoteController {
         Quote quote = quoteRepository.findById(id).orElse(null);
         if (quote == null) return ResponseEntity.notFound().build();
 
-        Customer customer = customerService.findById(quote.getCustomerId()).orElse(null);
-        if (customer == null) return ResponseEntity.notFound().build();
-
+        Customer customer = quote.getCustomerId() != null ? customerService.findById(quote.getCustomerId()).orElse(null) : null;
         List<QuoteItem> items = itemRepository.findByQuoteId(id);
-        byte[] pdf = pdfService.generate(quote, customer, items);
+        byte[] pdf = customer != null ? pdfService.generate(quote, customer, items) : pdfService.generate(quote, items);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,

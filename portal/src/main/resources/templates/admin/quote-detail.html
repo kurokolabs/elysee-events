@@ -21,6 +21,7 @@
         <div class="portal-header__actions">
           <a th:href="@{/portal/admin/angebote}" class="btn btn--outline btn--sm">Zur&uuml;ck zur Liste</a>
           <a th:href="@{/portal/admin/angebot/{id}/pdf(id=${quote.id})}" class="btn btn--gold btn--sm">PDF herunterladen</a>
+          <a th:href="@{/portal/admin/angebot/{id}/zu-rechnung(id=${quote.id})}" class="btn btn--outline btn--sm">In Rechnung übernehmen</a>
         </div>
       </div>
 
