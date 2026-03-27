@@ -872,8 +872,8 @@
     .footer__grid {
       max-width: 1200px; margin: 0 auto;
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr;
-      gap: 72px;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 56px;
       padding-bottom: 64px;
       border-bottom: 1px solid rgba(255,255,255,.08);
       margin-bottom: 40px;
@@ -979,11 +979,98 @@
       /* Kapbar */
       .kapbar { padding: 48px 24px; }
 
-      /* Footer */
-      .footer { padding: 64px 24px 32px; }
-      .footer__grid { grid-template-columns: 1fr; gap: 28px; }
-      .footer__col { text-align: left; }
-      .footer__bottom { flex-direction: column; gap: 12px; text-align: center; }
+      /* Footer – mobile redesign */
+      .footer { padding: 56px 24px 28px; }
+      .footer__grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        padding-bottom: 32px;
+        margin-bottom: 24px;
+        text-align: center;
+      }
+      /* Brand column spans full width, centered */
+      .footer__grid > div:first-child {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding-bottom: 28px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+      }
+      .footer__grid > div:first-child .footer__gold-bar {
+        margin: 0 auto;
+      }
+      .footer__grid > div:first-child .footer__desc {
+        max-width: 280px;
+        margin: 0 auto 16px;
+        font-size: 13px;
+      }
+      .footer__grid > div:first-child .footer__address {
+        font-size: 12px;
+      }
+      /* Nav + Rechtliches side by side */
+      .footer__grid > div:nth-child(2),
+      .footer__grid > div:nth-child(3) {
+        text-align: center;
+        padding-top: 4px;
+      }
+      .footer__col-title {
+        margin-bottom: 14px !important;
+        font-size: 9px !important;
+        letter-spacing: .2em !important;
+      }
+      .footer__links { align-items: center; gap: 10px !important; }
+      .footer__links a { font-size: 13px !important; }
+      /* Contact block – full width, gold accent */
+      .footer__contact {
+        grid-column: 1 / -1;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid rgba(255,255,255,.08);
+        text-align: center;
+      }
+      .footer__contact .footer__links {
+        flex-direction: row !important;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0 !important;
+      }
+      .footer__contact .footer__links a {
+        color: var(--gold) !important;
+        font-size: 12px !important;
+        padding: 8px 16px;
+        border: 1px solid rgba(201,168,76,.25);
+        border-radius: 2px;
+        letter-spacing: .02em;
+        transition: background .3s ease, color .3s ease;
+      }
+      /* Social icons */
+      .footer__social {
+        margin-top: 20px;
+        gap: 20px;
+      }
+      .footer__social a {
+        color: rgba(255,255,255,.5) !important;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255,255,255,.1);
+        border-radius: 50%;
+        transition: border-color .3s ease, color .3s ease;
+      }
+      .footer__social a:hover {
+        border-color: var(--gold) !important;
+        color: var(--gold) !important;
+      }
+      /* Bottom bar */
+      .footer__bottom {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+        font-size: 10px;
+      }
+      .footer__bottom span:last-child { display: none; }
 
       /* Section */
       .section { padding: 72px 24px; }
@@ -2026,7 +2113,8 @@ section:not(.hero):not(:first-of-type) {
           <a href="/datenschutz">Datenschutz</a>
           <a href="/agb">AGB</a>
         </nav>
-        <br>
+      </div>
+      <div class="footer__contact">
         <p class="footer__col-title">Kontakt</p>
         <nav class="footer__links">
           <a href="mailto:verwaltung@elysee-events.de">verwaltung@elysee-events.de</a>
