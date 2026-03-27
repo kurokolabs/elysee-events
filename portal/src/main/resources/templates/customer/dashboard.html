@@ -6,6 +6,107 @@
   <title>Dashboard - Elysee Events</title>
   <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
   <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+  <style>
+    .dash-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .dash-action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 20px 12px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all .25s ease;
+    }
+    .dash-action:hover {
+      background: rgba(201,168,76,.06);
+      border-color: rgba(201,168,76,.2);
+    }
+    .dash-action__icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: rgba(201,168,76,.1);
+      color: #C9A84C;
+    }
+    .dash-action__icon svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .dash-action__label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.55);
+      text-align: center;
+    }
+    .dash-action--primary {
+      background: rgba(201,168,76,.08);
+      border-color: rgba(201,168,76,.2);
+    }
+    .dash-action--primary .dash-action__label {
+      color: #C9A84C;
+    }
+
+    .dash-section {
+      margin-bottom: 28px;
+    }
+    .dash-section__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .dash-section__title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 400;
+      color: rgba(255,255,255,.75);
+      letter-spacing: .04em;
+    }
+    .dash-section__link {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(201,168,76,.6);
+      text-decoration: none;
+      transition: color .2s ease;
+    }
+    .dash-section__link:hover {
+      color: #C9A84C;
+    }
+    .dash-empty {
+      padding: 24px 16px;
+      text-align: center;
+      font-size: 13px;
+      color: rgba(255,255,255,.3);
+      border: 1px dashed rgba(255,255,255,.08);
+      border-radius: 10px;
+    }
+
+    @media (min-width: 600px) {
+      .dash-actions {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  </style>
 </head>
 <body>
   <div th:replace="~{fragments/admin-nav :: customer-topnav}"></div>
@@ -14,31 +115,66 @@
     <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
 
     <div class="portal-header">
-      <h1 class="portal-header__title" th:text="'Willkommen, ' + ${customer.firstName}">Willkommen</h1>
-      <p class="portal-header__subtitle">Ihre Buchungen im Überblick</p>
+      <h1 class="portal-header__title" th:text="${customer.firstName != null && !customer.firstName.isEmpty()} ? 'Willkommen, ' + ${customer.firstName} : 'Willkommen'">Willkommen</h1>
+      <p class="portal-header__subtitle">Ihr Kundenportal</p>
     </div>
 
-    <div th:if="${#lists.isEmpty(bookings)}" class="empty-state">
-      <div class="empty-state__title">Keine Buchungen vorhanden</div>
-      <div class="empty-state__text">Sie haben noch keine Buchungen. Kontaktieren Sie uns für eine Anfrage.</div>
-    </div>
-
-    <div th:each="b : ${bookings}">
-      <a th:href="@{/portal/buchung/{id}(id=${b.id})}" class="booking-card">
-        <div class="booking-card__info">
-          <div class="booking-card__type" th:text="${b.bookingTypeEnum.label}">Hochzeit</div>
-          <div class="booking-card__title" th:text="${b.eventDate != null ? 'Event am ' + @dateUtil.format(b.eventDate) : 'Datum noch offen'}">Event am 2024-06-15</div>
-          <div class="booking-card__meta">
-            <span th:if="${b.guestCount != null}" th:text="${b.guestCount} + ' Gäste'">120 Gäste</span>
-            <span th:if="${b.guestCount != null && b.eventTimeSlot != null}"> | </span>
-            <span th:if="${b.eventTimeSlot != null}" th:text="${b.eventTimeSlot}">Abend</span>
-          </div>
+    <!-- Quick Actions -->
+    <div class="dash-actions">
+      <a th:href="@{/portal/anfrage}" class="dash-action dash-action--primary">
+        <div class="dash-action__icon">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </div>
-        <div class="booking-card__right">
-          <span class="status-badge" th:classappend="'status-badge--' + ${b.status}" th:text="${b.statusEnum.label}">Anfrage</span>
+        <div class="dash-action__label">Neue Anfrage</div>
+      </a>
+      <a th:href="@{/portal/rechnungen}" class="dash-action">
+        <div class="dash-action__icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         </div>
+        <div class="dash-action__label">Rechnungen</div>
+      </a>
+      <a th:href="@{/portal/angebote}" class="dash-action">
+        <div class="dash-action__icon">
+          <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        </div>
+        <div class="dash-action__label">Angebote</div>
+      </a>
+      <a th:href="@{/portal/dokumente}" class="dash-action">
+        <div class="dash-action__icon">
+          <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="dash-action__label">Dokumente</div>
       </a>
     </div>
+
+    <!-- Buchungen -->
+    <div class="dash-section">
+      <div class="dash-section__head">
+        <div class="dash-section__title">Ihre Buchungen</div>
+      </div>
+
+      <div th:if="${#lists.isEmpty(bookings)}" class="dash-empty">
+        Noch keine Buchungen vorhanden. Stellen Sie jetzt eine Anfrage.
+      </div>
+
+      <div th:each="b : ${bookings}">
+        <a th:href="@{/portal/buchung/{id}(id=${b.id})}" class="booking-card">
+          <div class="booking-card__info">
+            <div class="booking-card__type" th:text="${b.bookingTypeEnum.label}">Hochzeit</div>
+            <div class="booking-card__title" th:text="${b.eventDate != null ? 'Event am ' + @dateUtil.format(b.eventDate) : 'Datum noch offen'}">Event am 2024-06-15</div>
+            <div class="booking-card__meta">
+              <span th:if="${b.guestCount != null}" th:text="${b.guestCount} + ' Gäste'">120 Gäste</span>
+              <span th:if="${b.guestCount != null && b.eventTimeSlot != null}"> | </span>
+              <span th:if="${b.eventTimeSlot != null}" th:text="${b.eventTimeSlot}">Abend</span>
+            </div>
+          </div>
+          <div class="booking-card__right">
+            <span class="status-badge" th:classappend="'status-badge--' + ${b.status}" th:text="${b.statusEnum.label}">Anfrage</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
   </main>
   <script th:src="@{/portal/js/portal.js}"></script>
 </body>
