@@ -27,14 +27,16 @@ public class TwoFactorService {
 
     private static final int TRUST_HOURS = 2;
     private static final String TRUST_COOKIE = "2fa_trusted";
-    private static final String HMAC_SECRET = "e1y5ee-2fa-tru5t-k3y-s3cr3t";
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final String hmacSecret;
 
-    public TwoFactorService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public TwoFactorService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                            @org.springframework.beans.factory.annotation.Value("${app.2fa.hmac-secret:${random.uuid}}") String hmacSecret) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.hmacSecret = hmacSecret;
     }
 
     public void setTrustedDevice(Long userId, HttpServletResponse response) {
@@ -76,7 +78,7 @@ public class TwoFactorService {
     private String hmacSha256(String data) {
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
-            mac.init(new SecretKeySpec(HMAC_SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+            mac.init(new SecretKeySpec(hmacSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
             byte[] hash = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
             return HexFormat.of().formatHex(hash);
         } catch (Exception e) {
