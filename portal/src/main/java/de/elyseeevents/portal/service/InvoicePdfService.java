@@ -243,6 +243,18 @@ public class InvoicePdfService {
         return generate(invoice, customer, null);
     }
 
+    public byte[] generate(Invoice invoice, List<InvoiceItem> items) {
+        // Standalone-Rechnung: Customer-Objekt aus Recipient-Feldern bauen
+        Customer pseudo = new Customer();
+        pseudo.setFirstName(invoice.getRecipientName() != null ? invoice.getRecipientName() : "");
+        pseudo.setLastName("");
+        pseudo.setCompany(invoice.getRecipientCompany());
+        pseudo.setAddress(invoice.getRecipientAddress());
+        pseudo.setPostalCode(invoice.getRecipientPostalCode());
+        pseudo.setCity(invoice.getRecipientCity());
+        return generate(invoice, pseudo, items);
+    }
+
     private String formatDate(String datetime) {
         if (datetime == null) return "-";
         return datetime.length() >= 10 ? datetime.substring(0, 10) : datetime;

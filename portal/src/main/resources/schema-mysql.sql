@@ -161,6 +161,16 @@ ALTER TABLE invoices ADD COLUMN tax_amount_7 DECIMAL(12,2) NOT NULL DEFAULT 0;
 ALTER TABLE invoices ADD COLUMN tax_amount_19 DECIMAL(12,2) NOT NULL DEFAULT 0;
 ALTER TABLE invoice_items ADD COLUMN tax_type VARCHAR(20) NOT NULL DEFAULT 'GETRAENKE';
 
+-- Unabhängige Rechnungen (ohne Portalkundenbindung)
+ALTER TABLE invoices MODIFY COLUMN customer_id BIGINT NULL;
+ALTER TABLE invoices MODIFY COLUMN booking_id BIGINT NULL;
+ALTER TABLE invoices ADD COLUMN recipient_name VARCHAR(200);
+ALTER TABLE invoices ADD COLUMN recipient_company VARCHAR(200);
+ALTER TABLE invoices ADD COLUMN recipient_address VARCHAR(300);
+ALTER TABLE invoices ADD COLUMN recipient_postal_code VARCHAR(10);
+ALTER TABLE invoices ADD COLUMN recipient_city VARCHAR(100);
+ALTER TABLE invoices ADD COLUMN recipient_email VARCHAR(255);
+
 -- Performance-Indexes
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_invoices_number ON invoices(invoice_number);

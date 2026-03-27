@@ -15,9 +15,12 @@
       <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
       <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
 
-      <div class="portal-header">
-        <h1 class="portal-header__title">Neue Rechnung &mdash; Kunde w&auml;hlen</h1>
-        <p class="portal-header__subtitle">W&auml;hlen Sie den Kunden f&uuml;r die neue Rechnung</p>
+      <div class="portal-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+        <div>
+          <h1 class="portal-header__title">Neue Rechnung</h1>
+          <p class="portal-header__subtitle">Kunde auswählen oder unabhängige Rechnung erstellen</p>
+        </div>
+        <a th:href="@{/portal/admin/rechnung/neu/unabhaengig}" class="btn btn--outline" style="white-space:nowrap;">Unabhängige Rechnung</a>
       </div>
 
       <div th:if="${#lists.isEmpty(customers)}" class="empty-state">

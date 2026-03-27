@@ -97,13 +97,21 @@
           <div>
             <div class="inv__sender-line" th:text="${companyName + ' | ' + companyStreet + ' | ' + companyCity}">Elysee Event GmbH | Werner-von-Siemensstrasse 6 | 86159 Augsburg</div>
             <div class="inv__addr-label">Rechnung an</div>
-            <div class="inv__addr">
+            <div class="inv__addr" th:if="${customer != null}">
               <strong th:text="${customer.fullName}">Name</strong><br>
               <span th:if="${customer.company != null and !customer.company.isEmpty()}" th:text="${customer.company}"></span>
               <br th:if="${customer.company != null and !customer.company.isEmpty()}">
               <span th:if="${customer.address != null and !customer.address.isEmpty()}" th:text="${customer.address}"></span>
               <br th:if="${customer.address != null and !customer.address.isEmpty()}">
               <span th:text="${(customer.postalCode != null ? customer.postalCode + ' ' : '') + (customer.city != null ? customer.city : '')}"></span>
+            </div>
+            <div class="inv__addr" th:if="${customer == null}">
+              <strong th:text="${recipientName}">Name</strong><br>
+              <span th:if="${recipientCompany != null and !recipientCompany.isEmpty()}" th:text="${recipientCompany}"></span>
+              <br th:if="${recipientCompany != null and !recipientCompany.isEmpty()}">
+              <span th:if="${recipientAddress != null and !recipientAddress.isEmpty()}" th:text="${recipientAddress}"></span>
+              <br th:if="${recipientAddress != null and !recipientAddress.isEmpty()}">
+              <span th:text="${(recipientPostalCode != null ? recipientPostalCode + ' ' : '') + (recipientCity != null ? recipientCity : '')}"></span>
             </div>
           </div>
           <div class="inv__meta">
@@ -193,7 +201,13 @@
       <div class="preview-actions">
         <a th:href="@{/portal/admin/rechnung/neu/{id}(id=${customer.id})}" class="btn btn--outline">Zurück bearbeiten</a>
         <form th:action="@{/portal/admin/rechnung/approve}" method="post" style="margin:0;">
-          <input type="hidden" name="customerId" th:value="${customer.id}">
+          <input th:if="${customer != null}" type="hidden" name="customerId" th:value="${customer.id}">
+          <input type="hidden" name="recipientName" th:value="${recipientName}">
+          <input type="hidden" name="recipientCompany" th:value="${recipientCompany}">
+          <input type="hidden" name="recipientAddress" th:value="${recipientAddress}">
+          <input type="hidden" name="recipientPostalCode" th:value="${recipientPostalCode}">
+          <input type="hidden" name="recipientCity" th:value="${recipientCity}">
+          <input type="hidden" name="recipientEmail" th:value="${recipientEmail}">
           <input type="hidden" name="bookingId" th:value="${bookingId}">
           <input type="hidden" name="netto" th:value="${netto}">
           <input type="hidden" name="taxAmount" th:value="${taxAmount}">

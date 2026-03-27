@@ -77,7 +77,7 @@ public class AdminInvoiceController {
         return "admin/invoice-select-customer";
     }
 
-    // Schritt 2: Positionen eingeben
+    // Schritt 2a: Positionen eingeben (mit Kunde)
     @GetMapping("/rechnung/neu/{customerId}")
     public String enterItems(@PathVariable Long customerId, Model model) {
         Customer customer = customerService.findById(customerId).orElse(null);
@@ -86,7 +86,18 @@ public class AdminInvoiceController {
         model.addAttribute("pageTitle", "Rechnung erstellen");
         model.addAttribute("activeNav", "rechnungen");
         model.addAttribute("customer", customer);
+        model.addAttribute("standalone", false);
         model.addAttribute("bookings", bookingService.findByCustomerId(customerId));
+        return "admin/invoice-items";
+    }
+
+    // Schritt 2b: Unabhängige Rechnung (ohne Kunde)
+    @GetMapping("/rechnung/neu/unabhaengig")
+    public String enterItemsStandalone(Model model) {
+        model.addAttribute("pageTitle", "Unabhängige Rechnung");
+        model.addAttribute("activeNav", "rechnungen");
+        model.addAttribute("standalone", true);
+        model.addAttribute("bookings", java.util.List.of());
         return "admin/invoice-items";
     }
 
@@ -112,7 +123,7 @@ public class AdminInvoiceController {
 
     // Schritt 3: Preview generieren
     @PostMapping("/rechnung/preview")
-    public String preview(@RequestParam Long customerId,
+    public String preview(@RequestParam(required = false) Long customerId,
                          @RequestParam(required = false) Long bookingId,
                          @RequestParam("itemDesc") List<String> descriptions,
                          @RequestParam("itemQty") List<String> quantities,
@@ -123,9 +134,18 @@ public class AdminInvoiceController {
                          @RequestParam(required = false) String servicePeriodFrom,
                          @RequestParam(required = false) String servicePeriodTo,
                          @RequestParam(required = false) String introText,
+                         @RequestParam(required = false) String recipientName,
+                         @RequestParam(required = false) String recipientCompany,
+                         @RequestParam(required = false) String recipientAddress,
+                         @RequestParam(required = false) String recipientPostalCode,
+                         @RequestParam(required = false) String recipientCity,
+                         @RequestParam(required = false) String recipientEmail,
                          Model model) {
-        Customer customer = customerService.findById(customerId).orElse(null);
-        if (customer == null) return "redirect:/portal/admin/rechnung/neu";
+        Customer customer = null;
+        if (customerId != null) {
+            customer = customerService.findById(customerId).orElse(null);
+        }
+        boolean standalone = (customer == null);
 
         List<InvoiceItem> items = new ArrayList<>();
         int itemCount = Math.min(descriptions.size(), Math.min(quantities.size(), Math.min(prices.size(), taxTypes.size())));
@@ -150,6 +170,13 @@ public class AdminInvoiceController {
         model.addAttribute("pageTitle", "Vorschau");
         model.addAttribute("activeNav", "rechnungen");
         model.addAttribute("customer", customer);
+        model.addAttribute("standalone", standalone);
+        model.addAttribute("recipientName", recipientName);
+        model.addAttribute("recipientCompany", recipientCompany);
+        model.addAttribute("recipientAddress", recipientAddress);
+        model.addAttribute("recipientPostalCode", recipientPostalCode);
+        model.addAttribute("recipientCity", recipientCity);
+        model.addAttribute("recipientEmail", recipientEmail);
         model.addAttribute("items", items);
         model.addAttribute("netto", tax[0]);
         model.addAttribute("taxRate", 0.0); // Legacy compatibility
@@ -185,7 +212,7 @@ public class AdminInvoiceController {
     // Schritt 4: Rechnung bestätigen und erstellen
     @Transactional
     @PostMapping("/rechnung/approve")
-    public String approve(@RequestParam Long customerId,
+    public String approve(@RequestParam(required = false) Long customerId,
                          @RequestParam(required = false) Long bookingId,
                          @RequestParam("itemDesc") List<String> descriptions,
                          @RequestParam("itemQty") List<String> quantities,
@@ -199,6 +226,12 @@ public class AdminInvoiceController {
                          @RequestParam(required = false) String servicePeriodFrom,
                          @RequestParam(required = false) String servicePeriodTo,
                          @RequestParam(required = false) String introText,
+                         @RequestParam(required = false) String recipientName,
+                         @RequestParam(required = false) String recipientCompany,
+                         @RequestParam(required = false) String recipientAddress,
+                         @RequestParam(required = false) String recipientPostalCode,
+                         @RequestParam(required = false) String recipientCity,
+                         @RequestParam(required = false) String recipientEmail,
                          RedirectAttributes redirectAttributes) {
 
         // Recalculate server-side - never trust client totals
@@ -233,6 +266,12 @@ public class AdminInvoiceController {
         inv.setServicePeriodFrom(servicePeriodFrom);
         inv.setServicePeriodTo(servicePeriodTo);
         inv.setIntroText(introText);
+        inv.setRecipientName(recipientName);
+        inv.setRecipientCompany(recipientCompany);
+        inv.setRecipientAddress(recipientAddress);
+        inv.setRecipientPostalCode(recipientPostalCode);
+        inv.setRecipientCity(recipientCity);
+        inv.setRecipientEmail(recipientEmail);
         inv = invoiceRepository.save(inv);
 
         // Positionen speichern
@@ -243,15 +282,15 @@ public class AdminInvoiceController {
 
         // Rechnung per Email mit PDF-Anhang senden
         try {
-            java.util.Optional<Customer> customerOpt = customerService.findById(customerId);
-            if (customerOpt.isPresent() && customerOpt.get().getEmail() != null) {
-                Customer customer = customerOpt.get();
+            Customer customer = customerId != null ? customerService.findById(customerId).orElse(null) : null;
+            String sendToEmail = customer != null && customer.getEmail() != null ? customer.getEmail() : recipientEmail;
+            if (sendToEmail != null && !sendToEmail.isBlank()) {
                 List<InvoiceItem> savedItems = itemRepository.findByInvoiceId(inv.getId());
-                byte[] pdfBytes = pdfService.generate(inv, customer, savedItems);
+                byte[] pdfBytes = customer != null ? pdfService.generate(inv, customer, savedItems) : pdfService.generate(inv, savedItems);
                 String formattedNet = String.format("%,.2f EUR", tax[0]);
                 String formattedTax = String.format("%,.2f EUR", tax[3]);
                 String formattedTotal = String.format("%,.2f EUR", tax[4]);
-                String displayName = customer.getCompany() != null ? customer.getCompany() : customer.getEmail();
+                String displayName = customer != null ? (customer.getCompany() != null ? customer.getCompany() : customer.getEmail()) : (recipientCompany != null && !recipientCompany.isBlank() ? recipientCompany : recipientName);
                 emailService.sendHtmlEmailWithAttachment(
                     customer.getEmail(),
                     "Élysée Events - Rechnung " + inv.getInvoiceNumber(),
