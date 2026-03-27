@@ -23,9 +23,6 @@ import de.elyseeevents.portal.security.RateLimitFilter;
 import de.elyseeevents.portal.security.TwoFaFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import org.apache.tomcat.util.http.Rfc6265CookieProcessor;
-import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
-
 import java.io.IOException;
 import java.util.Optional;
 
@@ -33,18 +30,6 @@ import java.util.Optional;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-
-    // Safari (WebKit Bug 219650): Cookies mit explizitem SameSite=Lax werden bei
-    // POST-initiierten 302-Redirects nicht mitgesendet. Ohne SameSite-Attribut
-    // behandelt Safari den Cookie permissiver und sendet ihn zuverlaessig.
-    @Bean
-    public TomcatContextCustomizer sameSiteCookieCustomizer() {
-        return context -> {
-            Rfc6265CookieProcessor processor = new Rfc6265CookieProcessor();
-            processor.setSameSiteCookies("unset");
-            context.setCookieProcessor(processor);
-        };
-    }
 
     private final UserRepository userRepository;
     private final TwoFactorService twoFactorService;

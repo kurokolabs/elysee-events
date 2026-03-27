@@ -1,8 +1,10 @@
 package de.elyseeevents.portal.controller;
 
+import de.elyseeevents.portal.model.Customer;
 import de.elyseeevents.portal.model.User;
 import de.elyseeevents.portal.repository.UserRepository;
 import de.elyseeevents.portal.service.AuditService;
+import de.elyseeevents.portal.service.CustomerService;
 import de.elyseeevents.portal.service.EmailService;
 import de.elyseeevents.portal.service.TwoFactorService;
 import jakarta.servlet.http.HttpSession;
@@ -23,15 +25,17 @@ public class AuthController {
     private final TwoFactorService twoFactorService;
     private final AuditService auditService;
     private final EmailService emailService;
+    private final CustomerService customerService;
 
     public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder,
                          TwoFactorService twoFactorService, AuditService auditService,
-                         EmailService emailService) {
+                         EmailService emailService, CustomerService customerService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.twoFactorService = twoFactorService;
         this.auditService = auditService;
         this.emailService = emailService;
+        this.customerService = customerService;
     }
 
     @GetMapping("/portal/register")
@@ -94,6 +98,13 @@ public class AuthController {
         user.setTwoFaEnabled(true);
         user = userRepository.save(user);
 
+        // Customer-Profil anlegen (Dashboard erwartet einen Customer-Eintrag)
+        Customer customer = new Customer();
+        customer.setUserId(user.getId());
+        customer.setFirstName("");
+        customer.setLastName("");
+        customerService.update(customer);
+
         String token = java.util.UUID.randomUUID().toString().replace("-", "")
                      + java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 16);
         userRepository.storeVerificationToken(user.getId(), token);
@@ -155,8 +166,7 @@ public class AuthController {
         session.setAttribute("SPRING_SECURITY_CONTEXT",
             org.springframework.security.core.context.SecurityContextHolder.getContext());
 
-        model.addAttribute("targetUrl", "/portal/dashboard");
-        return "auth/redirect-landing";
+        return "redirect:/portal/dashboard";
     }
 
     @GetMapping("/portal/login")
@@ -238,8 +248,7 @@ public class AuthController {
         }
 
         String target = "ADMIN".equals(role) ? "/portal/admin" : "/portal/dashboard";
-        model.addAttribute("targetUrl", target);
-        return "auth/redirect-landing";
+        return "redirect:" + target;
     }
 
     @PostMapping("/portal/2fa/resend")
