@@ -153,6 +153,13 @@ CREATE TABLE IF NOT EXISTS weekly_menus (
     created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Performance-Indexes
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_invoices_number ON invoices(invoice_number);
+CREATE INDEX IF NOT EXISTS idx_quotes_number ON quotes(quote_number);
+CREATE INDEX IF NOT EXISTS idx_invoices_customer ON invoices(customer_id);
+CREATE INDEX IF NOT EXISTS idx_documents_customer ON documents(customer_id);
+
 -- Wizard-Felder (Anfrage-Formular v2)
 ALTER TABLE bookings ADD COLUMN delivery_address TEXT;
 ALTER TABLE bookings ADD COLUMN catering_package VARCHAR(20);

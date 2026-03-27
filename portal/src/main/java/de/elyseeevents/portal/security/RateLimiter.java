@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 @Component
 public class RateLimiter {
-    private static final int MAX_ATTEMPTS = 5;
+    private static final int MAX_ATTEMPTS = 3;
     private static final long WINDOW_SECONDS = 900;
     private final ConcurrentHashMap<String, Deque<Instant>> attempts = new ConcurrentHashMap<>();
 

@@ -118,6 +118,11 @@ CREATE TABLE IF NOT EXISTS documents (
     created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+-- Performance-Indexes
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_invoices_number ON invoices(invoice_number);
+CREATE INDEX IF NOT EXISTS idx_quotes_number ON quotes(quote_number);
+
 CREATE TABLE IF NOT EXISTS newsletter_subscribers (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     email       TEXT NOT NULL UNIQUE,
