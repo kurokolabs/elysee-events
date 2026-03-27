@@ -944,6 +944,40 @@
     /* =========================================================
        WOCHENKARTE — Section 3
     ========================================================= */
+    .wochenkarte__nav {
+      display: flex; align-items: center; justify-content: center;
+      gap: 24px; margin-bottom: 36px;
+    }
+    .wochenkarte__nav-btn {
+      background: none; border: 1px solid rgba(201,168,76,.3);
+      color: var(--gold); font-size: 18px; width: 40px; height: 40px;
+      border-radius: 50%; cursor: pointer; transition: all .25s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .wochenkarte__nav-btn:hover:not(:disabled) { background: rgba(201,168,76,.15); border-color: var(--gold); }
+    .wochenkarte__nav-btn:disabled { cursor: default; }
+    .wochenkarte__nav-info { text-align: center; min-width: 200px; }
+    .wochenkarte__nav-week {
+      display: block; font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem; font-weight: 500; color: var(--gold); letter-spacing: .04em;
+    }
+    .wochenkarte__nav-dates {
+      display: block; font-size: .75rem; color: rgba(255,255,255,.4);
+      margin-top: 2px; letter-spacing: .04em;
+    }
+    .wochenkarte__today { background: rgba(201,168,76,.08) !important; }
+    .woche-card--today { border-color: rgba(201,168,76,.3) !important; background: rgba(201,168,76,.08) !important; }
+    .woche-card__today-badge {
+      display: inline-block; font-size: .6rem; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase;
+      background: var(--gold); color: var(--dark); padding: 2px 8px;
+      border-radius: 10px; margin-left: 8px; vertical-align: middle;
+    }
+    @media (max-width: 480px) {
+      .wochenkarte__nav { gap: 12px; }
+      .wochenkarte__nav-info { min-width: 140px; }
+      .wochenkarte__nav-week { font-size: 1rem; }
+    }
     .wochenkarte__table {
       width: 100%;
       border-collapse: collapse;
@@ -2458,166 +2492,113 @@ section:not(.hero):not(:first-of-type) {
   <section class="section section--dark" id="wochenkarte" aria-labelledby="wochenkarte-heading">
     <div class="section__inner">
       <div class="section__header section__header--center">
-        <span class="label label--light" data-reveal>Aktuelle Woche</span>
-        <h2 id="wochenkarte-heading" class="u-color-white" data-reveal data-delay="1">Was diese Woche auf den Tisch kommt</h2>
+        <span class="label label--light" data-reveal>Monatliche Speisekarte</span>
+        <h2 id="wochenkarte-heading" class="u-color-white" data-reveal data-delay="1">Was auf den Tisch kommt</h2>
       </div>
 
-      <!-- Desktop table -->
-      <div class="wochenkarte__table-wrap" data-reveal data-delay="2">
-        <table class="wochenkarte__table" role="table" aria-label="Wochenspeisekarte">
-          <thead>
-            <tr>
-              <th scope="col">Tag</th>
-              <th scope="col">Fleisch &amp; Fisch</th>
-              <th scope="col">Vegetarisch</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Mo</td>
-              <td>
-                <div class="wochenkarte__dish">
-                  <span class="wochenkarte__dish-name">Zwiebelrostbraten mit Spätzle</span>
-                  <span class="wochenkarte__price">9,80 &euro;</span>
-                </div>
-              </td>
-              <td>
-                <div class="wochenkarte__dish">
-                  <span class="wochenkarte__dish-name">Kürbisrisotto</span>
-                  <span class="wochenkarte__price">8,50 &euro;</span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>Di</td>
-              <td>
-                <div class="wochenkarte__dish">
-                  <span class="wochenkarte__dish-name">Münchner Schnitzel</span>
-                  <span class="wochenkarte__price">10,20 &euro;</span>
-                </div>
-              </td>
-              <td>
-                <div class="wochenkarte__dish">
-                  <span class="wochenkarte__dish-name">Spinatknödel mit Salbeibutter</span>
-                  <span class="wochenkarte__price">8,20 &euro;</span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>Mi</td>
-              <td>
-                <div class="wochenkarte__dish">
-                  <span class="wochenkarte__dish-name">Tafelspitz mit Meerrettich</span>
-                  <span class="wochenkarte__price">11,50 &euro;</span>
-                </div>
-              </td>
-              <td>
-                <div class="wochenkarte__dish">
-                  <span class="wochenkarte__dish-name">Gemüse-Quiche mit Blattsalat</span>
-                  <span class="wochenkarte__price">8,00 &euro;</span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>Do</td>
-              <td>
-                <div class="wochenkarte__dish">
-                  <span class="wochenkarte__dish-name">Cordon Bleu vom Schwein</span>
-                  <span class="wochenkarte__price">10,80 &euro;</span>
-                </div>
-              </td>
-              <td>
-                <div class="wochenkarte__dish">
-                  <span class="wochenkarte__dish-name">Ratatouille auf Polenta</span>
-                  <span class="wochenkarte__price">8,50 &euro;</span>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>Fr</td>
-              <td>
-                <div class="wochenkarte__dish">
-                  <span class="wochenkarte__dish-name">Zanderfilet auf Blattspinat</span>
-                  <span class="wochenkarte__price">12,50 &euro;</span>
-                </div>
-              </td>
-              <td>
-                <div class="wochenkarte__dish">
-                  <span class="wochenkarte__dish-name">Pasta e Fagioli</span>
-                  <span class="wochenkarte__price">8,00 &euro;</span>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="wochenkarte__note">
-          <p>Karte wechselt wöchentlich. Alle Gerichte inkl. Beilagensalat.</p>
+      <!-- Wochennavigation -->
+      <div class="wochenkarte__nav" data-reveal data-delay="2">
+        <button type="button" class="wochenkarte__nav-btn" id="wkPrev" aria-label="Vorherige Woche">&larr;</button>
+        <div class="wochenkarte__nav-info">
+          <span class="wochenkarte__nav-week" id="wkLabel">Woche 1</span>
+          <span class="wochenkarte__nav-dates" id="wkDates"></span>
         </div>
+        <button type="button" class="wochenkarte__nav-btn" id="wkNext" aria-label="Naechste Woche">&rarr;</button>
       </div>
 
-      <!-- Mobile cards -->
-      <div class="wochenkarte__cards" aria-label="Wochenspeisekarte">
-        <div class="woche-card" data-reveal>
-          <div class="woche-card__day">Montag</div>
-          <div class="woche-card__item">
-            <span class="woche-card__dish">Zwiebelrostbraten mit Spätzle</span>
-            <span class="woche-card__price">9,80 &euro;</span>
-          </div>
-          <div class="woche-card__item">
-            <span class="woche-card__dish">Kürbisrisotto (vegetarisch)</span>
-            <span class="woche-card__price">8,50 &euro;</span>
-          </div>
-        </div>
-        <div class="woche-card" data-reveal data-delay="1">
-          <div class="woche-card__day">Dienstag</div>
-          <div class="woche-card__item">
-            <span class="woche-card__dish">Münchner Schnitzel</span>
-            <span class="woche-card__price">10,20 &euro;</span>
-          </div>
-          <div class="woche-card__item">
-            <span class="woche-card__dish">Spinatknödel mit Salbeibutter (vegetarisch)</span>
-            <span class="woche-card__price">8,20 &euro;</span>
-          </div>
-        </div>
-        <div class="woche-card" data-reveal data-delay="2">
-          <div class="woche-card__day">Mittwoch</div>
-          <div class="woche-card__item">
-            <span class="woche-card__dish">Tafelspitz mit Meerrettich</span>
-            <span class="woche-card__price">11,50 &euro;</span>
-          </div>
-          <div class="woche-card__item">
-            <span class="woche-card__dish">Gemüse-Quiche mit Blattsalat (vegetarisch)</span>
-            <span class="woche-card__price">8,00 &euro;</span>
-          </div>
-        </div>
-        <div class="woche-card" data-reveal data-delay="3">
-          <div class="woche-card__day">Donnerstag</div>
-          <div class="woche-card__item">
-            <span class="woche-card__dish">Cordon Bleu vom Schwein</span>
-            <span class="woche-card__price">10,80 &euro;</span>
-          </div>
-          <div class="woche-card__item">
-            <span class="woche-card__dish">Ratatouille auf Polenta (vegetarisch)</span>
-            <span class="woche-card__price">8,50 &euro;</span>
-          </div>
-        </div>
-        <div class="woche-card" data-reveal data-delay="4">
-          <div class="woche-card__day">Freitag</div>
-          <div class="woche-card__item">
-            <span class="woche-card__dish">Zanderfilet auf Blattspinat</span>
-            <span class="woche-card__price">12,50 &euro;</span>
-          </div>
-          <div class="woche-card__item">
-            <span class="woche-card__dish">Pasta e Fagioli (vegetarisch)</span>
-            <span class="woche-card__price">8,00 &euro;</span>
-          </div>
-        </div>
-        <div class="wochenkarte__note" data-reveal data-delay="5">
-          <p>Karte wechselt wöchentlich. Alle Gerichte inkl. Beilagensalat.</p>
-        </div>
+      <!-- Dynamischer Inhalt -->
+      <div id="wkContent"></div>
+
+      <div class="wochenkarte__note" data-reveal data-delay="3">
+        <p>4-Wochen-Rotation. Beilagen separat erhaeltlich. Vegetarisches Gericht taeglich verfuegbar.</p>
       </div>
     </div>
+
+    <script>
+    (function() {
+      var MENU = [
+        [
+          {day:'Montag',meat:'Haehnchenbrust in Rahmsosse mit Champignons und Butterreis',meatP:'8,50',veg:'Spinat-Ricotta-Lasagne',vegP:'8,00'},
+          {day:'Dienstag',meat:'Rinderhack-Frikadellen in Paprikasosse mit Kartoffelpueree',meatP:'8,50',veg:'Gemuese-Kaesespaetzle',vegP:'8,00'},
+          {day:'Mittwoch',meat:'Putenstreifen in Tomaten-Basilikumsosse mit Penne',meatP:'8,50',veg:'Gefuellte Paprika mit Couscous & Grillgemuese',vegP:'8,00'},
+          {day:'Donnerstag',meat:'Rindergulasch mit Spaetzle',meatP:'8,50',veg:'Gnocchi in Gorgonzola-Spinatsosse',vegP:'8,00'},
+          {day:'Freitag',meat:'Lachsfilet in Zitronensosse mit Rosmarinkartoffeln',meatP:'8,50',veg:'Gemuese-Risotto mit Parmesan',vegP:'8,00'}
+        ],
+        [
+          {day:'Montag',meat:'Putensteak mit Kraeuterrahm und Reis',meatP:'8,50',veg:'Pasta Arrabbiata mit Grillgemuese',vegP:'8,00'},
+          {day:'Dienstag',meat:'Rindergeschnetzeltes Stroganoff mit Nudeln',meatP:'8,50',veg:'Brokkoli-Kartoffel-Auflauf',vegP:'8,00'},
+          {day:'Mittwoch',meat:'Haehnchenkeule mit Ofengemuese',meatP:'8,50',veg:'Pilzrahm-Tagliatelle',vegP:'8,00'},
+          {day:'Donnerstag',meat:'Gefluegel-Cevapcici mit Djuvec-Reis',meatP:'8,50',veg:'Gemuese-Maultaschen in Butter-Salbei',vegP:'8,00'},
+          {day:'Freitag',meat:'Seelachsfilet paniert mit Kartoffelsalat',meatP:'8,50',veg:'Margherita-Gemuese-Pizza',vegP:'8,00'}
+        ],
+        [
+          {day:'Montag',meat:'Haehnchen-Curry mit Basmatireis',meatP:'8,50',veg:'Gemuese-Lasagne',vegP:'8,00'},
+          {day:'Dienstag',meat:'Rinderbraten mit Rotkohl & Kartoffeln',meatP:'8,50',veg:'Spaghetti Aglio e Olio mit Gemuese',vegP:'8,00'},
+          {day:'Mittwoch',meat:'Putenrahmgeschnetzeltes mit Spaetzle',meatP:'8,50',veg:'Kartoffel-Gemuese-Gratin',vegP:'8,00'},
+          {day:'Donnerstag',meat:'Gefluegel-Koefte mit Tomatenreis',meatP:'8,50',veg:'Steinpilz-Risotto',vegP:'8,00'},
+          {day:'Freitag',meat:'Doradenfilet mit Zitronenkruste & Ofenkartoffeln',meatP:'8,50',veg:'Spinat-Kaese-Cannelloni',vegP:'8,00'}
+        ],
+        [
+          {day:'Montag',meat:'Rindergeschnetzeltes in Pfefferrahm mit Nudeln',meatP:'8,50',veg:'Tortellini in Tomaten-Sahnesosse',vegP:'8,00'},
+          {day:'Dienstag',meat:'Haehnchenbrust Caprese mit Reis',meatP:'8,50',veg:'Gemuese-Paella',vegP:'8,00'},
+          {day:'Mittwoch',meat:'Putenhackbaellchen in Paprikarahm mit Kartoffelpueree',meatP:'8,50',veg:'Kaesespaetzle',vegP:'8,00'},
+          {day:'Donnerstag',meat:'Rindergulasch italienische Art mit Polenta',meatP:'8,50',veg:'Zucchini-Melanzani-Auflauf',vegP:'8,00'},
+          {day:'Freitag',meat:'Lachs-Lasagne mit Blattspinat',meatP:'8,50',veg:'Tagliatelle mit Zitronen-Sahnesosse & Brokkoli',vegP:'8,00'}
+        ]
+      ];
+      var currentWeek = 0;
+      function getWeekOfMonth(date) { return Math.min(Math.floor((date.getDate() - 1) / 7), 3); }
+      function getISOWeek(date) {
+        var d = new Date(date.getTime()); d.setHours(0,0,0,0);
+        d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+        var w1 = new Date(d.getFullYear(), 0, 4);
+        return 1 + Math.round(((d.getTime() - w1.getTime()) / 86400000 - 3 + (w1.getDay() + 6) % 7) / 7);
+      }
+      function getWeekDates(weekIdx) {
+        var now = new Date(), y = now.getFullYear(), m = now.getMonth();
+        var start = new Date(y, m, 1 + weekIdx * 7), last = new Date(y, m + 1, 0).getDate(), dates = [];
+        for (var i = 0; i < 7; i++) {
+          var d = new Date(start); d.setDate(start.getDate() + i);
+          if (d.getMonth() !== m) break;
+          if (d.getDay() >= 1 && d.getDay() <= 5) dates.push(d);
+        }
+        return dates;
+      }
+      function fmt(d) { return d.getDate() + '.' + (d.getMonth() + 1) + '.'; }
+      function renderWeek(idx) {
+        currentWeek = idx;
+        var week = MENU[idx], dates = getWeekDates(idx), now = new Date();
+        var kw = getISOWeek(dates.length > 0 ? dates[0] : now);
+        var days = dates.length > 0 && dates.length < 5 ? dates.length : 5;
+        document.getElementById('wkLabel').textContent = 'Woche ' + (idx + 1) + ' (KW ' + kw + ')';
+        document.getElementById('wkDates').textContent = dates.length >= 2 ? fmt(dates[0]) + ' \u2013 ' + fmt(dates[dates.length - 1]) : dates.length === 1 ? fmt(dates[0]) : '';
+        var h = '<div class="wochenkarte__table-wrap"><table class="wochenkarte__table" role="table"><thead><tr><th>Tag</th><th>Fleisch / Fisch</th><th>Vegetarisch</th></tr></thead><tbody>';
+        for (var i = 0; i < days && i < week.length; i++) {
+          var d = week[i], today = dates[i] && dates[i].toDateString() === now.toDateString();
+          h += '<tr' + (today ? ' class="wochenkarte__today"' : '') + '><td>' + d.day.substring(0,2) + '</td>';
+          h += '<td><div class="wochenkarte__dish"><span class="wochenkarte__dish-name">' + d.meat + '</span><span class="wochenkarte__price">' + d.meatP + ' \u20ac</span></div></td>';
+          h += '<td><div class="wochenkarte__dish"><span class="wochenkarte__dish-name">' + d.veg + '</span><span class="wochenkarte__price">' + d.vegP + ' \u20ac</span></div></td></tr>';
+        }
+        h += '</tbody></table></div><div class="wochenkarte__cards">';
+        for (var i = 0; i < days && i < week.length; i++) {
+          var d = week[i], today = dates[i] && dates[i].toDateString() === now.toDateString();
+          h += '<div class="woche-card' + (today ? ' woche-card--today' : '') + '"><div class="woche-card__day">' + d.day + (today ? ' <span class="woche-card__today-badge">Heute</span>' : '') + '</div>';
+          h += '<div class="woche-card__item"><span class="woche-card__dish">' + d.meat + '</span><span class="woche-card__price">' + d.meatP + ' \u20ac</span></div>';
+          h += '<div class="woche-card__item"><span class="woche-card__dish">' + d.veg + ' (vegetarisch)</span><span class="woche-card__price">' + d.vegP + ' \u20ac</span></div></div>';
+        }
+        h += '</div>';
+        document.getElementById('wkContent').innerHTML = h;
+        document.getElementById('wkPrev').style.opacity = idx === 0 ? '0.3' : '1';
+        document.getElementById('wkNext').style.opacity = idx === 3 ? '0.3' : '1';
+        document.getElementById('wkPrev').disabled = idx === 0;
+        document.getElementById('wkNext').disabled = idx === 3;
+      }
+      document.getElementById('wkPrev').addEventListener('click', function() { if (currentWeek > 0) renderWeek(currentWeek - 1); });
+      document.getElementById('wkNext').addEventListener('click', function() { if (currentWeek < 3) renderWeek(currentWeek + 1); });
+      renderWeek(getWeekOfMonth(new Date()));
+    })();
+    </script>
+
   </section>
 
   <!-- ============================================================
