@@ -155,8 +155,7 @@ public class AuthController {
         session.setAttribute("SPRING_SECURITY_CONTEXT",
             org.springframework.security.core.context.SecurityContextHolder.getContext());
 
-        model.addAttribute("targetUrl", "/portal/dashboard");
-        return "auth/redirect-landing";
+        return "redirect:/portal/dashboard";
     }
 
     @GetMapping("/portal/login")
@@ -238,8 +237,7 @@ public class AuthController {
         }
 
         String target = "ADMIN".equals(role) ? "/portal/admin" : "/portal/dashboard";
-        model.addAttribute("targetUrl", target);
-        return "auth/redirect-landing";
+        return "redirect:" + target;
     }
 
     @PostMapping("/portal/2fa/resend")
