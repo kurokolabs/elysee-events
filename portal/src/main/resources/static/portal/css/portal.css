@@ -940,11 +940,18 @@ a:hover { color: var(--gold-dark); }
   .portal-nav__inner { padding: 0 20px; }
   .portal-main { padding: 24px 16px; overflow-x: hidden; }
   .admin-sidebar { display: none; }
-  .admin-content { padding: 24px; }
+  .admin-content { padding: 24px 16px; overflow-x: hidden; }
+  .admin-layout { margin-top: 68px; }
   .form-row { grid-template-columns: 1fr; }
-  .detail-grid { grid-template-columns: 1fr; }
-  .stat-cards { grid-template-columns: 1fr 1fr; }
-  .filter-bar { flex-direction: column; }
+  .detail-grid { grid-template-columns: 1fr; gap: 16px; }
+  .detail-card { padding: 20px; }
+  .detail-field__value { font-size: 14px; }
+  .stat-cards { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-card { padding: 18px; }
+  .stat-card__value { font-size: 28px; }
+  .filter-bar { flex-direction: column; gap: 8px; }
+  .filter-bar .form-group { width: 100%; }
+  .filter-bar .form-select, .filter-bar .form-input { width: 100%; }
   .portal-nav__links { display: none; }
   .portal-nav__burger { display: flex; }
   .portal-nav__user { display: none; }
@@ -954,7 +961,42 @@ a:hover { color: var(--gold-dark); }
   .wizard-cards { grid-template-columns:1fr 1fr; }
   .wizard-cards--4col { grid-template-columns:1fr 1fr; }
   .wizard-step { padding:0 16px; }
-  .admin-sidebar.is-open { display: block; position: fixed; top: 72px; bottom: 0; z-index: 999; overflow-y: auto; max-height: calc(100vh - 72px); }
+  .admin-sidebar.is-open {
+    display: block;
+    position: fixed;
+    top: 68px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    overflow-y: auto;
+    max-height: calc(100vh - 68px);
+    width: 100%;
+    padding-bottom: 40px;
+    animation: navDrop .3s var(--ease-out) both;
+  }
+
+  /* Data Tables: horizontal scroll wrapper */
+  .data-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .data-table thead, .data-table tbody, .data-table tr, .data-table th, .data-table td { min-width: 0; }
+  .data-table th { white-space: nowrap; }
+
+  /* Booking/Action Buttons responsive */
+  .btn-group, .action-buttons, .booking-actions, .preview-actions { display: flex; flex-direction: column; gap: 8px; }
+  .btn-group .btn, .action-buttons .btn, .booking-actions .btn { width: 100%; text-align: center; }
+
+  /* Chart responsive */
+  .chart-wrap { overflow-x: auto; }
+
+  /* Forms: Labels ueber Inputs */
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 11px; margin-bottom: 6px; }
+
+  /* Admin calendar */
+  .admin-calendar .cal-grid { grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .admin-calendar .cal-day { min-height: 48px; padding: 4px; font-size: 9px; }
+  .admin-calendar .cal-day__num { font-size: 11px; }
+  .admin-calendar .cal-day__event { font-size: 7px; padding: 1px 3px; }
 
   /* Kalender Mobile */
   .wizard-calendar { max-width: 100%; }
@@ -1058,12 +1100,24 @@ a:hover { color: var(--gold-dark); }
 }
 
 @media (max-width: 480px) {
-  .stat-cards { grid-template-columns: 1fr; }
+  .admin-content { padding: 16px 12px; }
+  .stat-cards { grid-template-columns: 1fr; gap: 10px; }
+  .stat-card { padding: 14px 16px; }
+  .stat-card__value { font-size: 24px; }
+  .stat-card__label { font-size: 9px; margin-bottom: 6px; }
   .login-card { padding: 24px 20px; }
   .twofa-code-inputs input { width: 36px; height: 44px; font-size: 20px; }
   .twofa-code-inputs { gap: 4px; }
   .inv { padding: 16px !important; }
   .inv__table th, .inv__table td { padding: 4px 2px; font-size: 10px; }
   .portal-header__title { font-size: 22px; }
+  .portal-header { margin-bottom: 20px; }
   .chart-wrap { height: 180px; }
+  .detail-card { padding: 14px; }
+  .detail-card__title { font-size: 9px; margin-bottom: 14px; padding-bottom: 10px; }
+  .data-table th { font-size: 9px; padding: 8px 6px; }
+  .data-table td { padding: 10px 6px; font-size: 12px; }
+  .wizard-cards { grid-template-columns: 1fr; }
+  .wizard-cards--4col { grid-template-columns: 1fr 1fr; }
+  .wizard-cards--small { grid-template-columns: 1fr 1fr; }
 }
