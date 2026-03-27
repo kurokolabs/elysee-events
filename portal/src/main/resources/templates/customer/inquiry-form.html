@@ -419,10 +419,10 @@
         }
 
         if (!isPast && !allBooked) {
-          (function(day, dateStr, dow) {
-            cell.addEventListener('click', function() {
+          (function(day, dateStr, dow, thisCell) {
+            thisCell.addEventListener('click', function() {
               grid.querySelectorAll('.cal-day').forEach(function(c) { c.classList.remove('is-selected'); });
-              cell.classList.add('is-selected');
+              thisCell.classList.add('is-selected');
               state.eventDate = dateStr;
               selectedDay = { num: day, dow: dow };
               if (state.bookingType === 'KANTINE') {
@@ -433,7 +433,7 @@
                 showTimeSlots(day, dow);
               }
             });
-          })(d, calYear + '-' + String(calMonth).padStart(2,'0') + '-' + String(d).padStart(2,'0'), dayOfWeek);
+          })(d, calYear + '-' + String(calMonth).padStart(2,'0') + '-' + String(d).padStart(2,'0'), dayOfWeek, cell);
         }
 
         grid.appendChild(cell);

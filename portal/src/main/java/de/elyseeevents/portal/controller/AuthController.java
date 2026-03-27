@@ -201,6 +201,7 @@ public class AuthController {
     public String verifyTwoFactor(@RequestParam String code,
                                   HttpSession session,
                                   jakarta.servlet.http.HttpServletRequest request,
+                                  jakarta.servlet.http.HttpServletResponse response,
                                   Model model,
                                   RedirectAttributes redirectAttributes) {
         Boolean pending = (Boolean) session.getAttribute("2fa_pending");
@@ -224,6 +225,7 @@ public class AuthController {
             return "redirect:/portal/2fa";
         }
         auditService.log("2FA_VERIFIED", "user", userId, null);
+        twoFactorService.setTrustedDevice(userId, response);
 
         // 2FA verified - clear pending flags
         session.removeAttribute("2fa_pending");

@@ -119,14 +119,18 @@ public class SecurityConfig {
                 }
 
                 if (user.isTwoFaEnabled()) {
-                    String code = twoFactorService.generateAndStoreCode(user.getId());
-                    emailService.sendTwoFactorCode(user.getEmail(), code);
-                    request.getSession().setAttribute("2fa_pending", true);
-                    request.getSession().setAttribute("2fa_user_id", user.getId());
-                    request.getSession().setAttribute("2fa_email", user.getEmail());
-                    request.getSession().setAttribute("2fa_role", user.getRole());
-                    response.sendRedirect("/portal/2fa");
-                    return;
+                    if (twoFactorService.isDeviceTrusted(user.getId(), request)) {
+                        auditLogRepository.log(user.getId(), "2FA_SKIPPED_TRUSTED", "user", user.getId(), null);
+                    } else {
+                        String code = twoFactorService.generateAndStoreCode(user.getId());
+                        emailService.sendTwoFactorCode(user.getEmail(), code);
+                        request.getSession().setAttribute("2fa_pending", true);
+                        request.getSession().setAttribute("2fa_user_id", user.getId());
+                        request.getSession().setAttribute("2fa_email", user.getEmail());
+                        request.getSession().setAttribute("2fa_role", user.getRole());
+                        response.sendRedirect("/portal/2fa");
+                        return;
+                    }
                 }
             }
 
