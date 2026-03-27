@@ -874,10 +874,10 @@ a:hover { color: var(--gold-dark); }
 .wizard-step__label { font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
 .wizard-step__title { font-family:'Cormorant Garamond',serif; font-size:clamp(24px,3vw,32px); font-weight:300; letter-spacing:.03em; color:var(--dark); }
 
-.wizard-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; width:100%; margin-bottom:24px; }
+.wizard-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; width:100%; margin-bottom:24px; padding:2px; }
 .wizard-card { background:var(--white); border:1px solid rgba(201,168,76,.15); border-radius:2px; padding:32px 24px; text-align:center; cursor:pointer; transition:all .3s var(--ease-out); }
 .wizard-card:hover { border-color:var(--gold); transform:translateY(-3px); box-shadow:0 8px 24px rgba(201,168,76,.1); }
-.wizard-card.is-selected { border-color:var(--gold); background:rgba(201,168,76,.06); box-shadow:0 0 0 2px var(--gold); }
+.wizard-card.is-selected { border-color:var(--gold); background:rgba(201,168,76,.06); box-shadow:inset 0 0 0 2px var(--gold); }
 .wizard-card__icon { margin-bottom:16px; }
 .wizard-card__icon svg { width:48px; height:48px; stroke:var(--gold); stroke-width:1.2; fill:none; }
 .wizard-card__title { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:400; margin-bottom:6px; color:var(--dark); }
@@ -900,7 +900,7 @@ a:hover { color: var(--gold-dark); }
 .wizard-calendar .cal-day.is-past .cal-day__num { color:var(--muted); }
 .wizard-calendar .cal-day.is-selectable { cursor:pointer; }
 .wizard-calendar .cal-day.is-selectable:hover { border-color:var(--gold); background:rgba(201,168,76,.04); transform:translateY(-1px); box-shadow:0 4px 12px rgba(201,168,76,.08); }
-.wizard-calendar .cal-day.is-selected { border-color:var(--gold); background:rgba(201,168,76,.1); box-shadow:0 0 0 2px var(--gold); }
+.wizard-calendar .cal-day.is-selected { border-color:var(--gold); background:rgba(201,168,76,.1); box-shadow:inset 0 0 0 2px var(--gold); }
 .wizard-calendar .cal-day.is-full { background:rgba(198,40,40,.03); border-color:rgba(198,40,40,.1); }
 .wizard-calendar .cal-day.is-full .cal-day__num { color:var(--muted); }
 .wizard-calendar .cal-day__slots { display:flex; gap:3px; margin-top:4px; flex-wrap:wrap; }
@@ -917,7 +917,7 @@ a:hover { color: var(--gold-dark); }
 .wizard-slot-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-top:12px; }
 .wizard-slot { padding:16px 12px; border:1px solid rgba(201,168,76,.15); border-radius:4px; text-align:center; font-size:13px; font-weight:500; cursor:pointer; transition:all .25s ease; background:var(--white); position:relative; }
 .wizard-slot:hover { border-color:var(--gold); background:rgba(201,168,76,.04); transform:translateY(-1px); box-shadow:0 4px 12px rgba(201,168,76,.08); }
-.wizard-slot.is-selected { border-color:var(--gold); background:rgba(201,168,76,.1); box-shadow:0 0 0 2px var(--gold); }
+.wizard-slot.is-selected { border-color:var(--gold); background:rgba(201,168,76,.1); box-shadow:inset 0 0 0 2px var(--gold); }
 .wizard-slot.is-selected::after { content:''; position:absolute; top:6px; right:6px; width:8px; height:8px; background:var(--gold); border-radius:50%; }
 .wizard-slot.is-booked { opacity:.3; pointer-events:none; text-decoration:line-through; background:var(--surface); }
 .wizard-slot small { display:block; font-size:11px; color:var(--muted); margin-top:3px; font-weight:400; }
