@@ -1583,47 +1583,61 @@ section:not(.hero):not(:first-of-type) {
 }
 
 .cross-links {
-  padding: 72px 24px;
-  background: var(--dark, #1A1A1A);
-  border-top: 1px solid rgba(201,168,76,.12);
+  padding: 88px 48px;
+  background: var(--surface, #F2EFE9);
+  border-top: 1px solid rgba(26,26,26,.06);
 }
-.cross-links__inner { max-width: 800px; margin: 0 auto; text-align: center; }
+.cross-links__inner { max-width: 720px; margin: 0 auto; text-align: center; }
+.cross-links__label {
+  font-size: 10px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--gold, #C9A84C); margin-bottom: 14px;
+}
 .cross-links__heading {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  font-weight: 400;
-  color: var(--gold, #C9A84C);
-  margin-bottom: 2rem;
-  letter-spacing: .04em;
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 300;
+  color: var(--dark, #1A1A1A);
+  margin-bottom: 40px;
+  letter-spacing: .05em;
+  line-height: 1.1;
+  text-transform: uppercase;
 }
-.cross-links__grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+.cross-links__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .cross-links__card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 20px 32px;
-  border: 1px solid rgba(201,168,76,.25);
-  border-radius: 12px;
+  display: flex; flex-direction: column; align-items: flex-start;
+  padding: 32px 28px;
+  background: #fff;
+  border: 1px solid rgba(201,168,76,.12);
+  border-radius: 2px;
   text-decoration: none;
-  color: #fff;
-  min-width: 240px;
-  transition: border-color .3s ease, background .3s ease;
+  color: var(--dark, #1A1A1A);
+  transition: border-color .3s ease, box-shadow .3s ease, transform .3s ease;
 }
 .cross-links__card:hover {
   border-color: var(--gold, #C9A84C);
-  background: rgba(201,168,76,.06);
+  box-shadow: 0 8px 24px rgba(201,168,76,.1);
+  transform: translateY(-3px);
 }
-.cross-links__card-label { font-size: 1.05rem; font-weight: 500; letter-spacing: .02em; }
+.cross-links__card-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 400; letter-spacing: .04em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.cross-links__card-desc {
+  font-size: 13px; font-weight: 300; color: var(--muted, #6B6560);
+  line-height: 1.6; margin-bottom: 16px;
+}
 .cross-links__card-arrow {
-  font-size: 1.3rem;
+  font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
   color: var(--gold, #C9A84C);
-  transition: transform .3s ease;
+  transition: letter-spacing .3s ease;
 }
-.cross-links__card:hover .cross-links__card-arrow { transform: translateX(4px); }
+.cross-links__card:hover .cross-links__card-arrow { letter-spacing: .18em; }
 @media (max-width: 600px) {
-  .cross-links__grid { flex-direction: column; align-items: center; }
-  .cross-links__card { width: 100%; max-width: 320px; }
+  .cross-links { padding: 64px 24px; }
+  .cross-links__grid { grid-template-columns: 1fr; }
+  .cross-links__card { padding: 24px 20px; }
+  .cross-links__card-label { font-size: 18px; }
 }
 /* ── Sticky Mobile CTA ──────────────────────────────────────────── */
 .mobile-cta {
@@ -2218,15 +2232,18 @@ section:not(.hero):not(:first-of-type) {
   <!-- Cross-Links -->
   <section class="cross-links" aria-label="Weitere Angebote">
     <div class="cross-links__inner">
-      <h2 class="cross-links__heading" data-reveal>Entdecken Sie mehr</h2>
+      <p class="cross-links__label" data-reveal>Weitere Angebote</p>
+      <h2 class="cross-links__heading" data-reveal data-delay="1">Entdecken Sie mehr</h2>
       <div class="cross-links__grid">
-        <a href="/hochzeit" class="cross-links__card" data-reveal data-delay="1">
+        <a href="/hochzeit" class="cross-links__card" data-reveal data-delay="2">
           <span class="cross-links__card-label">Hochzeiten</span>
-          <span class="cross-links__card-arrow">&rarr;</span>
+          <span class="cross-links__card-desc">Feiern Sie den schoensten Tag Ihres Lebens mit bis zu 150 Gaesten.</span>
+          <span class="cross-links__card-arrow">Mehr erfahren</span>
         </a>
-        <a href="/kantine" class="cross-links__card" data-reveal data-delay="2">
+        <a href="/kantine" class="cross-links__card" data-reveal data-delay="3">
           <span class="cross-links__card-label">Mittagskantine</span>
-          <span class="cross-links__card-arrow">&rarr;</span>
+          <span class="cross-links__card-desc">Frische Kueche von Montag bis Freitag im Sigma-Techno Park.</span>
+          <span class="cross-links__card-arrow">Mehr erfahren</span>
         </a>
       </div>
     </div>
