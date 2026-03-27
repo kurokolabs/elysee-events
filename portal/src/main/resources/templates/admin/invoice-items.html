@@ -126,6 +126,7 @@
                   <select name="itemTaxType" class="form-select">
                     <option value="ESSEN" th:selected="${item.taxType == 'ESSEN'}">Essen (7%)</option>
                     <option value="GETRAENKE" th:selected="${item.taxType == 'GETRAENKE'}">Getränke (19%)</option>
+                    <option value="SAALMIETE" th:selected="${item.taxType == 'SAALMIETE'}">Raum-/Saalmiete (19%)</option>
                     <option value="BUEFFET" th:selected="${item.taxType == 'BUEFFET'}">Büffet (75/25)</option>
                   </select>
                 </div>
@@ -141,6 +142,7 @@
                 <select name="itemTaxType" class="form-select">
                   <option value="ESSEN">Essen (7%)</option>
                   <option value="GETRAENKE">Getränke (19%)</option>
+                  <option value="SAALMIETE">Raum-/Saalmiete (19%)</option>
                   <option value="BUEFFET">Büffet (75/25)</option>
                 </select>
               </div>
@@ -164,7 +166,8 @@
           <div style="background:var(--surface); padding:16px; border-radius:4px; margin-top:16px; font-size:13px; color:var(--muted);">
             <strong>Steuertypen:</strong><br>
             Essen (7%) – Speisen, Kantinenessen<br>
-            Getränke (19%) – Getränke, Saalmiete, Dienstleistungen<br>
+            Getränke (19%) – Getränke, Dienstleistungen<br>
+            Raum-/Saalmiete (19%) – Saalmiete, Technikmiete, Raumnutzung<br>
             Büffet (75/25) – 75% des Betrags mit 7% (Essen) und 25% mit 19% (Getränke) besteuert
           </div>
 
@@ -185,7 +188,7 @@
       row.innerHTML = '<div class="form-group" style="flex:3"><input type="text" name="itemDesc" class="form-input" placeholder="Beschreibung" required></div>' +
         '<div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" value="1" step="0.01" min="0.01"></div>' +
         '<div class="form-group" style="flex:1"><input type="number" name="itemPrice" class="form-input" placeholder="0.00" step="0.01" min="0" required></div>' +
-        '<div class="form-group" style="flex:1.2"><select name="itemTaxType" class="form-select"><option value="ESSEN">Essen (7%)</option><option value="GETRAENKE">Getränke (19%)</option><option value="BUEFFET">Büffet (75/25)</option></select></div>' +
+        '<div class="form-group" style="flex:1.2"><select name="itemTaxType" class="form-select"><option value="ESSEN">Essen (7%)</option><option value="GETRAENKE">Getränke (19%)</option><option value="SAALMIETE">Raum-/Saalmiete (19%)</option><option value="BUEFFET">Büffet (75/25)</option></select></div>' +
         '<button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>';
       container.appendChild(row);
       row.querySelector('.remove-item').addEventListener('click', function() { row.remove(); });

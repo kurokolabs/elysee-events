@@ -121,7 +121,7 @@ public class InvoiceRepository {
         String year = java.time.Year.now().toString();
         String prefix = "RE-" + year + "-";
         Long maxNum = jdbc.queryForObject(
-                "SELECT MAX(CAST(SUBSTR(invoice_number, " + (prefix.length() + 1) + ") AS INTEGER)) FROM invoices WHERE invoice_number LIKE ?",
+                "SELECT MAX(CAST(SUBSTR(invoice_number, " + (prefix.length() + 1) + ") AS UNSIGNED)) FROM invoices WHERE invoice_number LIKE ?",
                 Long.class, prefix + "%");
         long next = (maxNum != null ? maxNum : 0) + 1;
         return String.format("RE-%s-%04d", year, next);

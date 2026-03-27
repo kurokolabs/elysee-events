@@ -120,7 +120,7 @@ public class QuoteRepository {
         String year = java.time.Year.now().toString();
         String prefix = "AN-" + year + "-";
         Long maxNum = jdbc.queryForObject(
-                "SELECT MAX(CAST(SUBSTR(quote_number, " + (prefix.length() + 1) + ") AS INTEGER)) FROM quotes WHERE quote_number LIKE ?",
+                "SELECT MAX(CAST(SUBSTR(quote_number, " + (prefix.length() + 1) + ") AS UNSIGNED)) FROM quotes WHERE quote_number LIKE ?",
                 Long.class, prefix + "%");
         long next = (maxNum != null ? maxNum : 0) + 1;
         return String.format("AN-%s-%04d", year, next);

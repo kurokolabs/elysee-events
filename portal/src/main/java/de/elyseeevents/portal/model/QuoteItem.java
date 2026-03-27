@@ -32,6 +32,7 @@ public class QuoteItem {
     public String getTaxTypeLabel() {
         return switch (getTaxType()) {
             case "ESSEN" -> "Essen (7%)";
+            case "SAALMIETE" -> "Saalmiete (19%)";
             case "BUEFFET" -> "Büffet (75/25)";
             default -> "Getränke (19%)";
         };
