@@ -973,10 +973,37 @@
       background: var(--gold); color: var(--dark); padding: 2px 8px;
       border-radius: 10px; margin-left: 8px; vertical-align: middle;
     }
+    /* Uebergangs-Animation */
+    #wkContent {
+      transition: opacity .35s ease, transform .35s ease;
+    }
+    #wkContent.wk-fade-out {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    @media (max-width: 768px) {
+      .wochenkarte__nav { gap: 16px; margin-bottom: 24px; }
+      .wochenkarte__nav-btn { width: 36px; height: 36px; font-size: 16px; }
+      .wochenkarte__nav-info { min-width: 160px; }
+      .wochenkarte__nav-week { font-size: 1.05rem; }
+      .wochenkarte__nav-dates { font-size: .7rem; }
+      .woche-card { padding: 16px 18px; }
+      .woche-card__day { font-size: 1rem; margin-bottom: 10px; }
+      .woche-card__dish { font-size: .8rem; }
+      .woche-card__price { font-size: .9rem; }
+      .wochenkarte__note { margin-top: 20px; }
+      .wochenkarte__note p { font-size: .75rem; }
+    }
     @media (max-width: 480px) {
-      .wochenkarte__nav { gap: 12px; }
-      .wochenkarte__nav-info { min-width: 140px; }
-      .wochenkarte__nav-week { font-size: 1rem; }
+      .wochenkarte__nav { gap: 10px; }
+      .wochenkarte__nav-info { min-width: 130px; }
+      .wochenkarte__nav-week { font-size: .95rem; }
+      .wochenkarte__nav-dates { font-size: .65rem; }
+      .woche-card { padding: 14px 16px; }
+      .woche-card__day { font-size: .9rem; margin-bottom: 8px; }
+      .woche-card__item { gap: 8px; padding: 5px 0; }
+      .woche-card__dish { font-size: .78rem; }
+      .woche-card__price { font-size: .85rem; }
     }
     .wochenkarte__table {
       width: 100%;
@@ -2593,8 +2620,16 @@ section:not(.hero):not(:first-of-type) {
         document.getElementById('wkPrev').disabled = idx === 0;
         document.getElementById('wkNext').disabled = idx === 3;
       }
-      document.getElementById('wkPrev').addEventListener('click', function() { if (currentWeek > 0) renderWeek(currentWeek - 1); });
-      document.getElementById('wkNext').addEventListener('click', function() { if (currentWeek < 3) renderWeek(currentWeek + 1); });
+      function animateToWeek(idx) {
+        var el = document.getElementById('wkContent');
+        el.classList.add('wk-fade-out');
+        setTimeout(function() {
+          renderWeek(idx);
+          el.classList.remove('wk-fade-out');
+        }, 350);
+      }
+      document.getElementById('wkPrev').addEventListener('click', function() { if (currentWeek > 0) animateToWeek(currentWeek - 1); });
+      document.getElementById('wkNext').addEventListener('click', function() { if (currentWeek < 3) animateToWeek(currentWeek + 1); });
       renderWeek(getWeekOfMonth(new Date()));
     })();
     </script>
