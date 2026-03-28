@@ -64,8 +64,16 @@
             <div class="detail-field__label">Netto</div>
             <div class="detail-field__value" th:text="${#numbers.formatDecimal(invoice.amount, 0, 'COMMA', 2, 'POINT')} + ' EUR'">0,00 EUR</div>
           </div>
+          <div class="detail-field" th:if="${invoice.taxAmount7 > 0}">
+            <div class="detail-field__label">MwSt. 7%</div>
+            <div class="detail-field__value" th:text="${#numbers.formatDecimal(invoice.taxAmount7, 0, 'COMMA', 2, 'POINT')} + ' EUR'">0,00 EUR</div>
+          </div>
+          <div class="detail-field" th:if="${invoice.taxAmount19 > 0}">
+            <div class="detail-field__label">MwSt. 19%</div>
+            <div class="detail-field__value" th:text="${#numbers.formatDecimal(invoice.taxAmount19, 0, 'COMMA', 2, 'POINT')} + ' EUR'">0,00 EUR</div>
+          </div>
           <div class="detail-field">
-            <div class="detail-field__label" th:text="'MwSt. ' + ${#numbers.formatDecimal(invoice.taxRate, 0, 'COMMA', 1, 'POINT')} + ' %'">MwSt. 19,0 %</div>
+            <div class="detail-field__label">MwSt. gesamt</div>
             <div class="detail-field__value" th:text="${#numbers.formatDecimal(invoice.taxAmount, 0, 'COMMA', 2, 'POINT')} + ' EUR'">0,00 EUR</div>
           </div>
           <div class="detail-field" style="border-top:2px solid var(--gold); padding-top:12px; margin-top:8px;">
