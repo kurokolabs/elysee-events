@@ -225,6 +225,9 @@ public class InvoicePdfService {
         bank.addCell(bankLabel("Verwendungszweck")); bank.addCell(bankValue(invoice.getInvoiceNumber()));
         doc.add(bank);
 
+        doc.add(new Paragraph("Bitte geben Sie bei jeder Überweisung die Rechnungsnummer im Verwendungszweck an.")
+                .setFontSize(9).setFontColor(MUTED).setItalic().setMarginTop(8));
+
         // ── Footer ──────────────────────────────────────────
         doc.add(new Paragraph("").setBorderBottom(new SolidBorder(GOLD, 0.5f))
                 .setMarginTop(24).setMarginBottom(8));
