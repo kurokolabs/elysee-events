@@ -130,7 +130,7 @@
                   <input type="hidden" name="itemTaxType" th:value="${item.taxType}">
                 </div>
                 <div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" th:value="${item.quantity}" step="0.01" min="0.01"></div>
-                <div class="form-group" style="flex:1"><input type="number" name="itemPrice" class="form-input" th:value="${item.unitPrice}" step="0.01" min="0" required></div>
+                <div class="form-group" style="flex:1"><input type="text" name="itemPrice" class="form-input calc-price" th:value="${item.unitPrice}" placeholder="0.00" required></div>
                 <div class="form-group" style="flex:1"><span class="ust-display" style="display:inline-block;padding:8px 0;font-size:13px;color:var(--muted);">--</span></div>
                 <button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>
               </div>
@@ -148,7 +148,7 @@
                 <input type="hidden" name="itemTaxType" value="">
               </div>
               <div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" value="1" step="0.01" min="0.01"></div>
-              <div class="form-group" style="flex:1"><input type="number" name="itemPrice" class="form-input" placeholder="0.00" step="0.01" min="0" required></div>
+              <div class="form-group" style="flex:1"><input type="text" name="itemPrice" class="form-input calc-price" placeholder="z.B. 59,50+16" required></div>
               <div class="form-group" style="flex:1"><span class="ust-display" style="display:inline-block;padding:8px 0;font-size:13px;color:var(--muted);">--</span></div>
               <button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>
             </div>
@@ -183,6 +183,23 @@
     // Singular/Plural mit Artikel
     var artikelSingular = { 'Raummiete': 'die Raummiete', 'Büffet': 'das Büffet', 'Getränke': 'das Getränk', 'Kantinenspeise': 'die Kantinenspeise' };
     var artikelPlural   = { 'Raummiete': 'die Raummiete', 'Büffet': 'das Büffet', 'Getränke': 'die Getränke', 'Kantinenspeise': 'die Kantinenspeisen' };
+
+    // Preisfeld: Ausdruecke wie "59,50+16" berechnen
+    function calcPrice(input) {
+      var val = input.value.trim();
+      if (!val || !/[+\-]/.test(val)) return;
+      // Kommas zu Punkten
+      var expr = val.replace(/,/g, '.').replace(/[^0-9.+\-]/g, '');
+      try {
+        var parts = expr.split(/(?=[+\-])/);
+        var sum = 0;
+        for (var i = 0; i < parts.length; i++) {
+          sum += parseFloat(parts[i]) || 0;
+        }
+        sum = Math.round(sum * 100) / 100;
+        input.value = sum.toFixed(2).replace('.', ',');
+      } catch(e) {}
+    }
 
     // Bei Posten-Auswahl: USt setzen + Intro-Text aktualisieren
     function onPostenChange(select) {
@@ -226,6 +243,7 @@
     function bindRow(row) {
       row.querySelector('.posten-select').addEventListener('change', function() { onPostenChange(this); });
       row.querySelector('input[name="itemQty"]').addEventListener('input', function() { updateIntroText(); });
+      row.querySelector('.calc-price').addEventListener('blur', function() { calcPrice(this); });
       row.querySelector('.remove-item').addEventListener('click', function() { row.remove(); updateIntroText(); });
     }
     document.querySelectorAll('.item-row').forEach(function(row) { bindRow(row); });
@@ -250,7 +268,7 @@
           '<input type="hidden" name="itemTaxType" value="">' +
         '</div>' +
         '<div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" value="1" step="0.01" min="0.01"></div>' +
-        '<div class="form-group" style="flex:1"><input type="number" name="itemPrice" class="form-input" placeholder="0.00" step="0.01" min="0" required></div>' +
+        '<div class="form-group" style="flex:1"><input type="text" name="itemPrice" class="form-input calc-price" placeholder="z.B. 59,50+16" required></div>' +
         '<div class="form-group" style="flex:1"><span class="ust-display" style="display:inline-block;padding:8px 0;font-size:13px;color:var(--muted);">--</span></div>' +
         '<button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>' +
         '</div>';
@@ -264,6 +282,11 @@
       if (document.getElementById('singleDay').checked) {
         document.getElementById('servicePeriodTo').value = this.value;
       }
+    });
+
+    // Vor Submit: alle Preisfelder berechnen
+    document.querySelector('form').addEventListener('submit', function() {
+      document.querySelectorAll('.calc-price').forEach(function(input) { calcPrice(input); });
     });
 
     // Default Fälligkeitsdatum: 14 Tage ab heute
