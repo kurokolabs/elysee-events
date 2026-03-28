@@ -102,23 +102,24 @@ public class AdminInvoiceController {
         return "admin/invoice-items";
     }
 
-    // Steuerberechnung pro Posten-Typ
+    // Steuerberechnung: Eingegebene Preise sind BRUTTO, USt wird herausgerechnet
     private double[] calculateTax(List<InvoiceItem> items) {
-        double netto7 = 0, netto19 = 0;
+        double brutto7 = 0, brutto19 = 0;
         for (InvoiceItem item : items) {
-            double t = item.getTotal();
+            double t = item.getTotal(); // Brutto (Menge x Einzelpreis)
             switch (item.getTaxType()) {
-                case "ESSEN" -> netto7 += t;
-                case "BUEFFET" -> { netto7 += t * 0.75; netto19 += t * 0.25; }
-                default -> netto19 += t; // GETRAENKE
+                case "ESSEN" -> brutto7 += t;
+                case "BUEFFET" -> { brutto7 += t * 0.75; brutto19 += t * 0.25; }
+                default -> brutto19 += t; // GETRAENKE, SAALMIETE
             }
         }
-        double tax7 = Math.round(netto7 * 0.07 * 100.0) / 100.0;
-        double tax19 = Math.round(netto19 * 0.19 * 100.0) / 100.0;
-        double netto = items.stream().mapToDouble(InvoiceItem::getTotal).sum();
-        netto = Math.round(netto * 100.0) / 100.0;
+        double netto7 = Math.round(brutto7 / 1.07 * 100.0) / 100.0;
+        double netto19 = Math.round(brutto19 / 1.19 * 100.0) / 100.0;
+        double tax7 = Math.round((brutto7 - netto7) * 100.0) / 100.0;
+        double tax19 = Math.round((brutto19 - netto19) * 100.0) / 100.0;
+        double netto = netto7 + netto19;
         double totalTax = tax7 + tax19;
-        double total = netto + totalTax;
+        double total = Math.round((brutto7 + brutto19) * 100.0) / 100.0;
         return new double[]{netto, tax7, tax19, totalTax, total};
     }
 
