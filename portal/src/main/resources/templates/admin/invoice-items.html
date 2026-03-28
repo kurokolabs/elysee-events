@@ -13,8 +13,9 @@
     .item-header span:nth-child(1) { flex: 3; }
     .item-header span:nth-child(2) { flex: 1; }
     .item-header span:nth-child(3) { flex: 1; }
-    .item-header span:nth-child(4) { flex: 1.2; }
-    .item-header span:nth-child(5) { width: 32px; }
+    .item-header span:nth-child(4) { flex: 1; }
+    .item-header span:nth-child(5) { flex: 1; }
+    .item-header span:nth-child(6) { width: 32px; }
     .period-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
     .period-row .form-group { margin-bottom: 0; }
     @media (max-width: 768px) {
@@ -112,6 +113,7 @@
             <span>Abrechnungsposten</span>
             <span>Menge</span>
             <span>Einzelpreis</span>
+            <span>Gesamtpreis</span>
             <span>USt</span>
             <span></span>
           </div>
@@ -134,7 +136,8 @@
                   <input type="hidden" name="itemTaxType" th:value="${item.taxType}">
                 </div>
                 <div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" th:value="${item.quantity}" step="0.01" min="0.01"></div>
-                <div class="form-group" style="flex:1"><input type="text" name="itemPrice" class="form-input calc-price" th:value="${item.unitPrice}" placeholder="0.00" required></div>
+                <div class="form-group" style="flex:1"><input type="text" name="itemPrice" class="form-input calc-price einzel-price" th:value="${item.unitPrice}" placeholder="Einzel" required></div>
+                <div class="form-group" style="flex:1"><input type="text" class="form-input calc-price gesamt-price" placeholder="Gesamt"></div>
                 <div class="form-group" style="flex:1"><span class="ust-display" style="display:inline-block;padding:8px 0;font-size:13px;color:var(--muted);">--</span></div>
                 <button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>
               </div>
@@ -156,7 +159,8 @@
                 <input type="hidden" name="itemTaxType" value="">
               </div>
               <div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" value="1" step="0.01" min="0.01"></div>
-              <div class="form-group" style="flex:1"><input type="text" name="itemPrice" class="form-input calc-price" placeholder="z.B. 59,50+16" required></div>
+              <div class="form-group" style="flex:1"><input type="text" name="itemPrice" class="form-input calc-price einzel-price" placeholder="Einzel" required></div>
+              <div class="form-group" style="flex:1"><input type="text" class="form-input calc-price gesamt-price" placeholder="Gesamt"></div>
               <div class="form-group" style="flex:1"><span class="ust-display" style="display:inline-block;padding:8px 0;font-size:13px;color:var(--muted);">--</span></div>
               <button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>
             </div>
@@ -233,10 +237,11 @@
       row.querySelector('input[name="itemTaxType"]').value = tax;
       row.querySelector('.ust-display').textContent = tax ? ustLabels[tax] : '--';
       // Auto-Preis setzen wenn Feld leer oder 0
-      var priceInput = row.querySelector('.calc-price');
+      var priceInput = row.querySelector('.einzel-price');
       var curPrice = priceInput.value.trim();
       if (autoPreise[select.value] && (!curPrice || curPrice === '0' || curPrice === '0.00' || curPrice === '0,00')) {
         priceInput.value = autoPreise[select.value];
+        syncPrices(row, 'einzel');
       }
       updateIntroText();
     }
@@ -270,10 +275,42 @@
     }
 
     // Event-Listener fuer bestehende Dropdowns
+    function parseNum(s) {
+      if (!s) return 0;
+      return parseFloat(s.replace(',', '.')) || 0;
+    }
+    function formatEur(n) {
+      return n.toFixed(2).replace('.', ',');
+    }
+
+    function syncPrices(row, source) {
+      var qty = parseNum(row.querySelector('input[name="itemQty"]').value) || 1;
+      var einzelInput = row.querySelector('.einzel-price');
+      var gesamtInput = row.querySelector('.gesamt-price');
+      if (source === 'einzel') {
+        calcPrice(einzelInput);
+        var einzel = parseNum(einzelInput.value);
+        if (einzel > 0) gesamtInput.value = formatEur(einzel * qty);
+      } else if (source === 'gesamt') {
+        calcPrice(gesamtInput);
+        var gesamt = parseNum(gesamtInput.value);
+        if (gesamt > 0) {
+          einzelInput.value = formatEur(gesamt / qty);
+          gesamtInput.value = formatEur(gesamt);
+        }
+      } else if (source === 'qty') {
+        var einzel2 = parseNum(einzelInput.value);
+        if (einzel2 > 0) gesamtInput.value = formatEur(einzel2 * qty);
+      }
+      // required nur wenn beide leer
+      einzelInput.required = !gesamtInput.value.trim();
+    }
+
     function bindRow(row) {
       row.querySelector('.posten-select').addEventListener('change', function() { onPostenChange(this); });
-      row.querySelector('input[name="itemQty"]').addEventListener('input', function() { updateIntroText(); });
-      row.querySelector('.calc-price').addEventListener('blur', function() { calcPrice(this); });
+      row.querySelector('input[name="itemQty"]').addEventListener('input', function() { syncPrices(row, 'qty'); updateIntroText(); });
+      row.querySelector('.einzel-price').addEventListener('blur', function() { syncPrices(row, 'einzel'); });
+      row.querySelector('.gesamt-price').addEventListener('blur', function() { syncPrices(row, 'gesamt'); });
       row.querySelector('.remove-item').addEventListener('click', function() { row.remove(); updateIntroText(); });
     }
     document.querySelectorAll('.item-row').forEach(function(row) { bindRow(row); });
@@ -302,7 +339,8 @@
           '<input type="hidden" name="itemTaxType" value="">' +
         '</div>' +
         '<div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" value="1" step="0.01" min="0.01"></div>' +
-        '<div class="form-group" style="flex:1"><input type="text" name="itemPrice" class="form-input calc-price" placeholder="z.B. 59,50+16" required></div>' +
+        '<div class="form-group" style="flex:1"><input type="text" name="itemPrice" class="form-input calc-price einzel-price" placeholder="Einzel" required></div>' +
+        '<div class="form-group" style="flex:1"><input type="text" class="form-input calc-price gesamt-price" placeholder="Gesamt"></div>' +
         '<div class="form-group" style="flex:1"><span class="ust-display" style="display:inline-block;padding:8px 0;font-size:13px;color:var(--muted);">--</span></div>' +
         '<button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>' +
         '</div>';
@@ -318,9 +356,16 @@
       }
     });
 
-    // Vor Submit: alle Preisfelder berechnen
+    // Vor Submit: alle Preisfelder berechnen und Einzelpreis sicherstellen
     document.querySelector('form').addEventListener('submit', function() {
       document.querySelectorAll('.calc-price').forEach(function(input) { calcPrice(input); });
+      document.querySelectorAll('.item-row').forEach(function(row) {
+        var einzel = row.querySelector('.einzel-price');
+        var gesamt = row.querySelector('.gesamt-price');
+        if (einzel && gesamt && !parseNum(einzel.value) && parseNum(gesamt.value)) {
+          syncPrices(row, 'gesamt');
+        }
+      });
     });
 
     // Default Fälligkeitsdatum: 14 Tage ab heute
