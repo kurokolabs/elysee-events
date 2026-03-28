@@ -358,11 +358,12 @@ public class AdminInvoiceController {
         Invoice invoice = invoiceRepository.findById(id).orElse(null);
         if (invoice == null) return ResponseEntity.notFound().build();
 
-        Customer customer = customerService.findById(invoice.getCustomerId()).orElse(null);
-        if (customer == null) return ResponseEntity.notFound().build();
-
         List<InvoiceItem> items = itemRepository.findByInvoiceId(id);
-        byte[] pdf = pdfService.generate(invoice, customer, items);
+        Customer customer = invoice.getCustomerId() != null
+                ? customerService.findById(invoice.getCustomerId()).orElse(null) : null;
+        byte[] pdf = customer != null
+                ? pdfService.generate(invoice, customer, items)
+                : pdfService.generate(invoice, items);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
