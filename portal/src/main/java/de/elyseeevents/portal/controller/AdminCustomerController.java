@@ -116,7 +116,8 @@ public class AdminCustomerController {
             return "redirect:/portal/admin/kunden";
         }
 
-        User user = userRepository.findById(customer.getUserId()).orElse(null);
+        User user = customer.getUserId() != null && customer.getUserId() > 0
+                ? userRepository.findById(customer.getUserId()).orElse(null) : null;
 
         model.addAttribute("pageTitle", customer.getFullName());
         model.addAttribute("activeNav", "kunden");
