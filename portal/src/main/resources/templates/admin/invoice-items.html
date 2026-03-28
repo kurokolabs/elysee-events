@@ -271,8 +271,8 @@
         if (val === 'Kantinenspeise vegetarisch' || val === 'Kantinenspeise Fleisch') {
           if (hatVeg && hatFleisch) {
             // Nur einmal zusammengefasst einfügen
-            if (posten.indexOf('die Kantinenspeisen (Fleisch und vegetarisch)') === -1) {
-              posten.push('die Kantinenspeisen (Fleisch und vegetarisch)');
+            if (posten.indexOf('die Kantinenspeisen') === -1) {
+              posten.push('die Kantinenspeisen');
             }
           } else {
             var row = document.querySelector('.posten-select option[value="' + val + '"]:checked');
