@@ -131,7 +131,7 @@
                     <option value="Tee" data-tax="GETRAENKE" th:selected="${item.description == 'Tee'}">Tee</option>
                     <option value="Kantinenspeise vegetarisch" data-tax="ESSEN" th:selected="${item.description == 'Kantinenspeise vegetarisch'}">Kantinenspeise vegetarisch</option>
                     <option value="Kantinenspeise Fleisch" data-tax="ESSEN" th:selected="${item.description == 'Kantinenspeise Fleisch'}">Kantinenspeise Fleisch</option>
-                    <option value="Butterbreze" data-tax="ESSEN" th:selected="${item.description == 'Butterbreze'}">Butterbreze</option>
+                    <option value="Butterbrezen" data-tax="ESSEN" th:selected="${item.description == 'Butterbrezen'}">Butterbrezen</option>
                   </select>
                   <input type="hidden" name="itemTaxType" th:value="${item.taxType}">
                 </div>
@@ -154,7 +154,7 @@
                   <option value="Tee" data-tax="GETRAENKE">Tee</option>
                   <option value="Kantinenspeise vegetarisch" data-tax="ESSEN">Kantinenspeise vegetarisch</option>
                   <option value="Kantinenspeise Fleisch" data-tax="ESSEN">Kantinenspeise Fleisch</option>
-                  <option value="Butterbreze" data-tax="ESSEN">Butterbreze</option>
+                  <option value="Butterbrezen" data-tax="ESSEN">Butterbrezen</option>
                 </select>
                 <input type="hidden" name="itemTaxType" value="">
               </div>
@@ -198,20 +198,20 @@
       'Softdrink (Cola, Fanta)': 'den Softdrink', 'Tee': 'den Tee',
       'Kantinenspeise vegetarisch': 'die vegetarische Kantinenspeise',
       'Kantinenspeise Fleisch': 'die Kantinenspeise Fleisch',
-      'Butterbreze': 'die Butterbreze'
+      'Butterbrezen': 'die Butterbrezen'
     };
     var artikelPlural = {
       'Raummiete': 'die Raummiete', 'Büffet': 'das Büffet', 'Getränke': 'die Getränke',
       'Softdrink (Cola, Fanta)': 'die Softdrinks', 'Tee': 'den Tee',
       'Kantinenspeise vegetarisch': 'die vegetarischen Kantinenspeisen',
       'Kantinenspeise Fleisch': 'die Kantinenspeisen Fleisch',
-      'Butterbreze': 'die Butterbrezn'
+      'Butterbrezen': 'die Butterbrezen'
     };
     // Kantinenspeisen zusammenfassen wenn beide vorhanden
     var kantinenGroup = ['Kantinenspeise vegetarisch', 'Kantinenspeise Fleisch'];
     // Automatische Preise pro Posten (in EUR)
     var autoPreise = {
-      'Tee': '1,50', 'Softdrink (Cola, Fanta)': '2,00', 'Butterbreze': '2,00'
+      'Tee': '1,50', 'Softdrink (Cola, Fanta)': '2,00', 'Butterbrezen': '2,00'
     };
 
     // Preisfeld: Ausdruecke wie "59,50+16" berechnen
@@ -366,7 +366,7 @@
             '<option value="Tee" data-tax="GETRAENKE">Tee</option>' +
             '<option value="Kantinenspeise vegetarisch" data-tax="ESSEN">Kantinenspeise vegetarisch</option>' +
             '<option value="Kantinenspeise Fleisch" data-tax="ESSEN">Kantinenspeise Fleisch</option>' +
-            '<option value="Butterbreze" data-tax="ESSEN">Butterbreze</option>' +
+            '<option value="Butterbrezen" data-tax="ESSEN">Butterbrezen</option>' +
           '</select>' +
           '<input type="hidden" name="itemTaxType" value="">' +
         '</div>' +
