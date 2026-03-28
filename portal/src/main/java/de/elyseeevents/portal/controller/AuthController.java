@@ -178,17 +178,9 @@ public class AuthController {
         userRepository.updateLastLogin(user.getId());
         auditService.log("EMAIL_VERIFIED", "user", user.getId(), user.getEmail());
 
-        // Erster Login ohne 2FA - Email-Verifizierung reicht als Identitätsnachweis
-        org.springframework.security.authentication.UsernamePasswordAuthenticationToken auth =
-            new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                user.getEmail(), null,
-                java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole()))
-            );
-        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
-        session.setAttribute("SPRING_SECURITY_CONTEXT",
-            org.springframework.security.core.context.SecurityContextHolder.getContext());
-
-        return "redirect:/portal/dashboard";
+        // Nicht auto-einloggen - User muss sich normal anmelden (mit Passwort + 2FA)
+        redirectAttributes.addFlashAttribute("message", "E-Mail bestätigt. Sie können sich jetzt anmelden.");
+        return "redirect:/portal/login";
     }
 
     @GetMapping("/portal/login")

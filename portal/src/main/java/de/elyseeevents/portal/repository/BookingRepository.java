@@ -86,6 +86,17 @@ public class BookingRepository {
         return jdbc.query(sql.toString(), rowMapperWithCustomer, params.toArray());
     }
 
+    public List<Booking> search(String query) {
+        if (query == null || query.isBlank()) return findAll();
+        String escaped = query.toLowerCase().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
+        String like = "%" + escaped + "%";
+        return jdbc.query(
+                "SELECT b.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name, c.company AS customer_company " +
+                "FROM bookings b JOIN customers c ON b.customer_id = c.id " +
+                "WHERE LOWER(CONCAT(c.first_name, ' ', c.last_name)) LIKE ? OR LOWER(b.booking_type) LIKE ? OR LOWER(b.status) LIKE ? " +
+                "ORDER BY b.created_at DESC", rowMapperWithCustomer, like, like, like);
+    }
+
     public List<Booking> findByCustomerId(Long customerId) {
         return jdbc.query("SELECT b.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name, c.company AS customer_company " +
                 "FROM bookings b JOIN customers c ON b.customer_id = c.id WHERE b.customer_id = ? ORDER BY b.created_at DESC",

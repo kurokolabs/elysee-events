@@ -338,7 +338,9 @@ public class AdminInvoiceController {
         try {
             Customer c2 = customerId != null ? customerService.findById(customerId).orElse(null) : null;
             sendToEmail2 = c2 != null && c2.getEmail() != null ? c2.getEmail() : recipientEmail;
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            org.slf4j.LoggerFactory.getLogger(getClass()).error("Fehler beim Ermitteln der E-Mail: {}", e.getMessage());
+        }
         boolean hatEmail = sendToEmail2 != null && !sendToEmail2.isBlank();
         redirectAttributes.addFlashAttribute("message",
                 "Rechnung " + inv.getInvoiceNumber() + (hatEmail ? " erstellt und an den Kunden gesendet." : " erstellt und gespeichert."));

@@ -57,9 +57,7 @@ public class SecurityConfig {
         http
             .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterAfter(twoFaFilter, org.springframework.security.web.authentication.AnonymousAuthenticationFilter.class)
-            .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/newsletter/subscribe")
-            )
+            .csrf(csrf -> {})
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/portal/login", "/portal/register", "/portal/register-success", "/portal/verify-email", "/portal/2fa", "/portal/2fa/resend").permitAll()
                 .requestMatchers("/newsletter/**").permitAll()
