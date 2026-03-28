@@ -34,7 +34,7 @@ public class InvoiceItem {
         return switch (getTaxType()) {
             case "ESSEN" -> "Essen (7%)";
             case "SAALMIETE" -> "Saalmiete (19%)";
-            case "BUEFFET" -> "Büffet (75/25)";
+            case "BUEFFET" -> "75% zu 19%, 25% zu 7%";
             default -> "Getränke (19%)";
         };
     }
