@@ -40,6 +40,16 @@ public class WebsiteController {
         return servePage("corporate.html");
     }
 
+    @GetMapping("/eventlocation")
+    public ResponseEntity<Resource> eventlocation() {
+        return servePage("eventlocation.html");
+    }
+
+    @GetMapping("/catering")
+    public ResponseEntity<Resource> catering() {
+        return servePage("catering.html");
+    }
+
     @GetMapping("/impressum")
     public ResponseEntity<Resource> impressum() {
         return servePage("impressum.html");
