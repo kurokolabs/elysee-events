@@ -222,7 +222,9 @@ public class InvoicePdfService {
         bank.addCell(bankLabel("Bank"));       bank.addCell(bankValue(BANK));
         bank.addCell(bankLabel("IBAN"));       bank.addCell(bankValue(IBAN));
         bank.addCell(bankLabel("BIC"));        bank.addCell(bankValue(BIC));
-        bank.addCell(bankLabel("Verwendungszweck")); bank.addCell(bankValue(invoice.getInvoiceNumber()));
+        bank.addCell(bankLabel("Verwendungszweck"));
+        bank.addCell(new Cell().setBorder(Border.NO_BORDER).setPaddingBottom(3)
+                .add(new Paragraph(invoice.getInvoiceNumber()).setFontSize(9).setFontColor(DARK).setBold()));
         doc.add(bank);
 
         doc.add(new Paragraph("Bitte geben Sie bei jeder Überweisung die Rechnungsnummer im Verwendungszweck an.")
