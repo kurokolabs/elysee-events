@@ -17,16 +17,7 @@
     .item-header span:nth-child(5) { width: 32px; }
     .period-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
     .period-row .form-group { margin-bottom: 0; }
-    .category-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
-    .category-tile { cursor: pointer; }
-    .category-tile input { display: none; }
-    .category-tile__inner { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 8px; border: 2px solid var(--border, #ddd); border-radius: 6px; text-align: center; transition: all .2s; background: var(--surface, #f8f8f8); }
-    .category-tile__name { font-weight: 600; font-size: 14px; color: var(--text, #333); }
-    .category-tile__tax { font-size: 11px; color: var(--muted, #888); }
-    .category-tile input:checked + .category-tile__inner { border-color: var(--gold, #b8860b); background: rgba(184,134,11,.08); }
-    .category-tile input:checked + .category-tile__inner .category-tile__name { color: var(--gold, #b8860b); }
     @media (max-width: 768px) {
-      .category-grid { grid-template-columns: repeat(2, 1fr); }
       .item-row { flex-direction: column; gap: 6px; padding: 12px; background: var(--surface); border-radius: 4px; }
       .item-row .form-group { width: 100% !important; flex: none !important; }
       .item-header { display: none; }
@@ -99,95 +90,66 @@
             </div>
             <div class="form-group">
               <label class="form-label" for="servicePeriodTo">Bis</label>
-              <input type="date" id="servicePeriodTo" name="servicePeriodTo" class="form-input">
+              <input type="date" id="servicePeriodTo" name="servicePeriodTo" class="form-input" disabled>
             </div>
             <div class="form-group" style="align-self:flex-end;">
               <label style="display:flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); cursor:pointer;">
-                <input type="checkbox" id="singleDay" onchange="document.getElementById('servicePeriodTo').disabled=this.checked; if(this.checked) document.getElementById('servicePeriodTo').value=document.getElementById('servicePeriodFrom').value;">
+                <input type="checkbox" id="singleDay" checked onchange="document.getElementById('servicePeriodTo').disabled=this.checked; if(this.checked) document.getElementById('servicePeriodTo').value=document.getElementById('servicePeriodFrom').value;">
                 Einzeltag
               </label>
             </div>
           </div>
 
-          <!-- Schnellauswahl Abrechnungsposten -->
-          <div class="detail-card__title" style="margin-top:24px;">Abrechnungsposten</div>
-          <div class="category-grid">
-            <label class="category-tile">
-              <input type="checkbox" class="category-cb" data-category="raummiete" data-desc="Raummiete" data-tax="SAALMIETE">
-              <span class="category-tile__inner">
-                <span class="category-tile__name">Raummiete</span>
-                <span class="category-tile__tax">19% USt</span>
-              </span>
-            </label>
-            <label class="category-tile">
-              <input type="checkbox" class="category-cb" data-category="bueffet" data-desc="Büffet" data-tax="BUEFFET">
-              <span class="category-tile__inner">
-                <span class="category-tile__name">Büffet</span>
-                <span class="category-tile__tax">75/25 (7%+19%)</span>
-              </span>
-            </label>
-            <label class="category-tile">
-              <input type="checkbox" class="category-cb" data-category="getraenke" data-desc="Getränke" data-tax="GETRAENKE">
-              <span class="category-tile__inner">
-                <span class="category-tile__name">Getränke</span>
-                <span class="category-tile__tax">19% USt</span>
-              </span>
-            </label>
-            <label class="category-tile">
-              <input type="checkbox" class="category-cb" data-category="kantinenspeise" data-desc="Kantinenspeise" data-tax="ESSEN">
-              <span class="category-tile__inner">
-                <span class="category-tile__name">Kantinenspeise</span>
-                <span class="category-tile__tax">7% USt</span>
-              </span>
-            </label>
-          </div>
-
-          <!-- Intro-Text -->
+          <!-- Intro-Text (automatisch generiert) -->
           <div class="form-group" style="margin-top:16px;">
             <label class="form-label" for="introText">Einleitungstext (erscheint auf der Rechnung)</label>
-            <textarea id="introText" name="introText" class="form-textarea" rows="3" th:text="${prefillIntroText}" placeholder="Wird automatisch generiert oder manuell eingeben"></textarea>
+            <textarea id="introText" name="introText" class="form-textarea" rows="3" th:text="${prefillIntroText}" placeholder="Wird automatisch aus den Positionen generiert"></textarea>
           </div>
 
           <!-- Positionen -->
           <div class="detail-card__title" style="margin-top:24px;">Positionen</div>
           <div class="item-header">
-            <span>Beschreibung</span>
+            <span>Abrechnungsposten</span>
             <span>Menge</span>
             <span>Einzelpreis</span>
-            <span>Steuertyp</span>
+            <span>USt</span>
             <span></span>
           </div>
           <div id="itemRows">
             <!-- Vorbefüllte Positionen (z.B. aus Angebot) -->
             <th:block th:if="${prefillItems != null}" th:each="item : ${prefillItems}">
               <div class="item-row">
-                <div class="form-group" style="flex:3"><input type="text" name="itemDesc" class="form-input" th:value="${item.description}" required></div>
+                <div class="form-group" style="flex:3">
+                  <select name="itemDesc" class="form-select posten-select">
+                    <option value="">-- Posten wählen --</option>
+                    <option value="Raummiete" data-tax="SAALMIETE" th:selected="${item.description == 'Raummiete'}">Raummiete</option>
+                    <option value="Büffet" data-tax="BUEFFET" th:selected="${item.description == 'Büffet'}">Büffet</option>
+                    <option value="Getränke" data-tax="GETRAENKE" th:selected="${item.description == 'Getränke'}">Getränke</option>
+                    <option value="Kantinenspeise" data-tax="ESSEN" th:selected="${item.description == 'Kantinenspeise'}">Kantinenspeise</option>
+                  </select>
+                  <input type="hidden" name="itemTaxType" th:value="${item.taxType}">
+                </div>
                 <div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" th:value="${item.quantity}" step="0.01" min="0.01"></div>
                 <div class="form-group" style="flex:1"><input type="number" name="itemPrice" class="form-input" th:value="${item.unitPrice}" step="0.01" min="0" required></div>
-                <div class="form-group" style="flex:1.2">
-                  <select name="itemTaxType" class="form-select">
-                    <option value="ESSEN" th:selected="${item.taxType == 'ESSEN'}">Essen (7%)</option>
-                    <option value="GETRAENKE" th:selected="${item.taxType == 'GETRAENKE'}">Getränke (19%)</option>
-                    <option value="SAALMIETE" th:selected="${item.taxType == 'SAALMIETE'}">Raum-/Saalmiete (19%)</option>
-                    <option value="BUEFFET" th:selected="${item.taxType == 'BUEFFET'}">Büffet (75/25)</option>
-                  </select>
-                </div>
+                <div class="form-group" style="flex:1"><span class="ust-display" style="display:inline-block;padding:8px 0;font-size:13px;color:var(--muted);">--</span></div>
                 <button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>
               </div>
             </th:block>
             <!-- Leere Zeile wenn keine Vorbefüllung -->
             <div class="item-row" th:if="${prefillItems == null}">
-              <div class="form-group" style="flex:3"><input type="text" name="itemDesc" class="form-input" placeholder="z.B. Kantinenessen Mo-Fr" required></div>
+              <div class="form-group" style="flex:3">
+                <select name="itemDesc" class="form-select posten-select" required>
+                  <option value="">-- Posten wählen --</option>
+                  <option value="Raummiete" data-tax="SAALMIETE">Raummiete</option>
+                  <option value="Büffet" data-tax="BUEFFET">Büffet</option>
+                  <option value="Getränke" data-tax="GETRAENKE">Getränke</option>
+                  <option value="Kantinenspeise" data-tax="ESSEN">Kantinenspeise</option>
+                </select>
+                <input type="hidden" name="itemTaxType" value="">
+              </div>
               <div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" value="1" step="0.01" min="0.01"></div>
               <div class="form-group" style="flex:1"><input type="number" name="itemPrice" class="form-input" placeholder="0.00" step="0.01" min="0" required></div>
-              <div class="form-group" style="flex:1.2">
-                <select name="itemTaxType" class="form-select">
-                  <option value="ESSEN">Essen (7%)</option>
-                  <option value="GETRAENKE">Getränke (19%)</option>
-                  <option value="SAALMIETE">Raum-/Saalmiete (19%)</option>
-                  <option value="BUEFFET">Büffet (75/25)</option>
-                </select>
-              </div>
+              <div class="form-group" style="flex:1"><span class="ust-display" style="display:inline-block;padding:8px 0;font-size:13px;color:var(--muted);">--</span></div>
               <button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>
             </div>
           </div>
@@ -205,14 +167,6 @@
             <textarea id="notes" name="notes" class="form-textarea" placeholder="Zusätzliche interne Hinweise..."></textarea>
           </div>
 
-          <div style="background:var(--surface); padding:16px; border-radius:4px; margin-top:16px; font-size:13px; color:var(--muted);">
-            <strong>Steuertypen:</strong><br>
-            Essen (7%) – Speisen, Kantinenessen<br>
-            Getränke (19%) – Getränke, Dienstleistungen<br>
-            Raum-/Saalmiete (19%) – Saalmiete, Technikmiete, Raumnutzung<br>
-            Büffet (75/25) – 75% des Betrags mit 7% (Essen) und 25% mit 19% (Getränke) besteuert
-          </div>
-
           <div style="display:flex; gap:12px; margin-top:24px;">
             <button type="submit" class="btn btn--gold">Vorschau anzeigen</button>
             <a th:href="@{/portal/admin/rechnungen}" class="btn btn--outline">Abbrechen</a>
@@ -223,97 +177,81 @@
   </div>
   <script th:src="@{/portal/js/portal.js}"></script>
   <script>
-    // Kategorie-Definitionen
-    var categories = {
-      raummiete:      { desc: 'Raummiete',       tax: 'SAALMIETE',  article: 'die Raummiete' },
-      bueffet:        { desc: 'Büffet',          tax: 'BUEFFET',    article: 'das Büffet' },
-      getraenke:      { desc: 'Getränke',        tax: 'GETRAENKE',  article: 'die Getränke' },
-      kantinenspeise: { desc: 'Kantinenspeise',  tax: 'ESSEN',      article: 'die Kantinenspeise' }
-    };
-    var introTextManual = false;
+    // USt-Anzeige-Map
+    var ustLabels = { SAALMIETE: '19%', GETRAENKE: '19%', ESSEN: '7%', BUEFFET: '75/25' };
+    // Artikel fuer Einleitungstext
+    var artikelMap = { 'Raummiete': 'die Raummiete', 'Büffet': 'das Büffet', 'Getränke': 'die Getränke', 'Kantinenspeise': 'die Kantinenspeise' };
 
-    function buildItemRowHtml(desc, tax, categoryKey) {
-      var dataAttr = categoryKey ? ' data-category="' + categoryKey + '"' : '';
-      return '<div class="item-row"' + dataAttr + '>' +
-        '<div class="form-group" style="flex:3"><input type="text" name="itemDesc" class="form-input" value="' + desc + '" required></div>' +
-        '<div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" value="1" step="0.01" min="0.01"></div>' +
-        '<div class="form-group" style="flex:1"><input type="number" name="itemPrice" class="form-input" placeholder="0.00" step="0.01" min="0" required></div>' +
-        '<div class="form-group" style="flex:1.2"><select name="itemTaxType" class="form-select">' +
-          '<option value="ESSEN"' + (tax === 'ESSEN' ? ' selected' : '') + '>Essen (7%)</option>' +
-          '<option value="GETRAENKE"' + (tax === 'GETRAENKE' ? ' selected' : '') + '>Getränke (19%)</option>' +
-          '<option value="SAALMIETE"' + (tax === 'SAALMIETE' ? ' selected' : '') + '>Raum-/Saalmiete (19%)</option>' +
-          '<option value="BUEFFET"' + (tax === 'BUEFFET' ? ' selected' : '') + '>Büffet (75/25)</option>' +
-        '</select></div>' +
-        '<button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>' +
-        '</div>';
-    }
-
-    function addCategoryRow(key) {
-      var cat = categories[key];
-      var container = document.getElementById('itemRows');
-      container.insertAdjacentHTML('beforeend', buildItemRowHtml(cat.desc, cat.tax, key));
-      var row = container.querySelector('.item-row[data-category="' + key + '"]');
-      row.querySelector('.remove-item').addEventListener('click', function() {
-        row.remove();
-        // Checkbox abwählen
-        var cb = document.querySelector('.category-cb[data-category="' + key + '"]');
-        if (cb) cb.checked = false;
-        updateIntroText();
-      });
-    }
-
-    function removeCategoryRow(key) {
-      var row = document.querySelector('.item-row[data-category="' + key + '"]');
-      if (row) row.remove();
+    // Bei Posten-Auswahl: USt setzen + Intro-Text aktualisieren
+    function onPostenChange(select) {
+      var row = select.closest('.item-row');
+      var opt = select.options[select.selectedIndex];
+      var tax = opt.dataset.tax || '';
+      row.querySelector('input[name="itemTaxType"]').value = tax;
+      row.querySelector('.ust-display').textContent = tax ? ustLabels[tax] : '--';
+      updateIntroText();
     }
 
     function updateIntroText() {
-      if (introTextManual) return;
-      var active = [];
-      document.querySelectorAll('.category-cb:checked').forEach(function(cb) {
-        active.push(categories[cb.dataset.category].article);
+      var posten = [];
+      document.querySelectorAll('.posten-select').forEach(function(sel) {
+        var val = sel.value;
+        if (val && artikelMap[val] && posten.indexOf(artikelMap[val]) === -1) {
+          posten.push(artikelMap[val]);
+        }
       });
       var textarea = document.getElementById('introText');
-      if (active.length === 0) {
+      if (posten.length === 0) {
         textarea.value = '';
-      } else if (active.length === 1) {
-        textarea.value = 'Gemäß unserer Vereinbarung berechnen wir Ihnen ' + active[0] + '.';
+      } else if (posten.length === 1) {
+        textarea.value = 'Gemäß unserer Vereinbarung berechnen wir Ihnen ' + posten[0] + '.';
       } else {
-        var last = active.pop();
-        textarea.value = 'Gemäß unserer Vereinbarung berechnen wir Ihnen ' + active.join(', ') + ' sowie ' + last + '.';
+        var last = posten.pop();
+        textarea.value = 'Gemäß unserer Vereinbarung berechnen wir Ihnen ' + posten.join(', ') + ' sowie ' + last + '.';
       }
     }
 
-    // Checkbox Event-Listener
-    document.querySelectorAll('.category-cb').forEach(function(cb) {
-      cb.addEventListener('change', function() {
-        var key = this.dataset.category;
-        if (this.checked) {
-          addCategoryRow(key);
-        } else {
-          removeCategoryRow(key);
-        }
-        introTextManual = false;
-        updateIntroText();
-      });
+    // Event-Listener fuer bestehende Dropdowns
+    function bindRow(row) {
+      row.querySelector('.posten-select').addEventListener('change', function() { onPostenChange(this); });
+      row.querySelector('.remove-item').addEventListener('click', function() { row.remove(); updateIntroText(); });
+    }
+    document.querySelectorAll('.item-row').forEach(function(row) { bindRow(row); });
+
+    // Initiale USt-Anzeige setzen (bei vorbefuellten Zeilen)
+    document.querySelectorAll('.posten-select').forEach(function(sel) {
+      if (sel.value) onPostenChange(sel);
     });
 
-    // Manuelle Bearbeitung erkennen
-    document.getElementById('introText').addEventListener('input', function() {
-      introTextManual = true;
-    });
-
-    // Position manuell hinzufügen
+    // Position hinzufuegen
     document.getElementById('addItem').addEventListener('click', function() {
       var container = document.getElementById('itemRows');
-      container.insertAdjacentHTML('beforeend', buildItemRowHtml('', 'ESSEN', ''));
+      var html = '<div class="item-row">' +
+        '<div class="form-group" style="flex:3">' +
+          '<select name="itemDesc" class="form-select posten-select" required>' +
+            '<option value="">-- Posten wählen --</option>' +
+            '<option value="Raummiete" data-tax="SAALMIETE">Raummiete</option>' +
+            '<option value="Büffet" data-tax="BUEFFET">Büffet</option>' +
+            '<option value="Getränke" data-tax="GETRAENKE">Getränke</option>' +
+            '<option value="Kantinenspeise" data-tax="ESSEN">Kantinenspeise</option>' +
+          '</select>' +
+          '<input type="hidden" name="itemTaxType" value="">' +
+        '</div>' +
+        '<div class="form-group" style="flex:1"><input type="number" name="itemQty" class="form-input" value="1" step="0.01" min="0.01"></div>' +
+        '<div class="form-group" style="flex:1"><input type="number" name="itemPrice" class="form-input" placeholder="0.00" step="0.01" min="0" required></div>' +
+        '<div class="form-group" style="flex:1"><span class="ust-display" style="display:inline-block;padding:8px 0;font-size:13px;color:var(--muted);">--</span></div>' +
+        '<button type="button" class="btn btn--danger btn--sm remove-item" style="align-self:center;">X</button>' +
+        '</div>';
+      container.insertAdjacentHTML('beforeend', html);
       var rows = container.querySelectorAll('.item-row');
-      var lastRow = rows[rows.length - 1];
-      lastRow.querySelector('.remove-item').addEventListener('click', function() { lastRow.remove(); });
+      bindRow(rows[rows.length - 1]);
     });
 
-    document.querySelectorAll('.remove-item').forEach(function(btn) {
-      btn.addEventListener('click', function() { btn.closest('.item-row').remove(); });
+    // Einzeltag: Bei Von-Datum-Änderung Bis synchronisieren
+    document.getElementById('servicePeriodFrom').addEventListener('change', function() {
+      if (document.getElementById('singleDay').checked) {
+        document.getElementById('servicePeriodTo').value = this.value;
+      }
     });
 
     // Default Fälligkeitsdatum: 14 Tage ab heute
