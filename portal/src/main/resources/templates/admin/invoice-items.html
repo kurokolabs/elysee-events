@@ -125,7 +125,11 @@
                     <option value="Raummiete" data-tax="SAALMIETE" th:selected="${item.description == 'Raummiete'}">Raummiete</option>
                     <option value="Büffet" data-tax="BUEFFET" th:selected="${item.description == 'Büffet'}">Büffet</option>
                     <option value="Getränke" data-tax="GETRAENKE" th:selected="${item.description == 'Getränke'}">Getränke</option>
+                    <option value="Softdrink (Cola, Fanta)" data-tax="GETRAENKE" th:selected="${item.description == 'Softdrink (Cola, Fanta)'}">Softdrink (Cola, Fanta)</option>
+                    <option value="Tee" data-tax="GETRAENKE" th:selected="${item.description == 'Tee'}">Tee</option>
                     <option value="Kantinenspeise" data-tax="ESSEN" th:selected="${item.description == 'Kantinenspeise'}">Kantinenspeise</option>
+                    <option value="Kantinenspeise vegetarisch" data-tax="ESSEN" th:selected="${item.description == 'Kantinenspeise vegetarisch'}">Kantinenspeise vegetarisch</option>
+                    <option value="Kantinenspeise Fleisch" data-tax="ESSEN" th:selected="${item.description == 'Kantinenspeise Fleisch'}">Kantinenspeise Fleisch</option>
                   </select>
                   <input type="hidden" name="itemTaxType" th:value="${item.taxType}">
                 </div>
@@ -143,7 +147,11 @@
                   <option value="Raummiete" data-tax="SAALMIETE">Raummiete</option>
                   <option value="Büffet" data-tax="BUEFFET">Büffet</option>
                   <option value="Getränke" data-tax="GETRAENKE">Getränke</option>
+                  <option value="Softdrink (Cola, Fanta)" data-tax="GETRAENKE">Softdrink (Cola, Fanta)</option>
+                  <option value="Tee" data-tax="GETRAENKE">Tee</option>
                   <option value="Kantinenspeise" data-tax="ESSEN">Kantinenspeise</option>
+                  <option value="Kantinenspeise vegetarisch" data-tax="ESSEN">Kantinenspeise vegetarisch</option>
+                  <option value="Kantinenspeise Fleisch" data-tax="ESSEN">Kantinenspeise Fleisch</option>
                 </select>
                 <input type="hidden" name="itemTaxType" value="">
               </div>
@@ -181,8 +189,18 @@
     var ustLabels = { SAALMIETE: '19%', GETRAENKE: '19%', ESSEN: '7%', BUEFFET: '75% zu 19%, 25% zu 7%' };
     // Artikel fuer Einleitungstext
     // Singular/Plural mit Artikel
-    var artikelSingular = { 'Raummiete': 'die Raummiete', 'Büffet': 'das Büffet', 'Getränke': 'das Getränk', 'Kantinenspeise': 'die Kantinenspeise' };
-    var artikelPlural   = { 'Raummiete': 'die Raummiete', 'Büffet': 'das Büffet', 'Getränke': 'die Getränke', 'Kantinenspeise': 'die Kantinenspeisen' };
+    var artikelSingular = {
+      'Raummiete': 'die Raummiete', 'Büffet': 'das Büffet', 'Getränke': 'das Getränk',
+      'Softdrink (Cola, Fanta)': 'den Softdrink', 'Tee': 'den Tee',
+      'Kantinenspeise': 'die Kantinenspeise', 'Kantinenspeise vegetarisch': 'die Kantinenspeise vegetarisch',
+      'Kantinenspeise Fleisch': 'die Kantinenspeise Fleisch'
+    };
+    var artikelPlural = {
+      'Raummiete': 'die Raummiete', 'Büffet': 'das Büffet', 'Getränke': 'die Getränke',
+      'Softdrink (Cola, Fanta)': 'die Softdrinks', 'Tee': 'den Tee',
+      'Kantinenspeise': 'die Kantinenspeisen', 'Kantinenspeise vegetarisch': 'die Kantinenspeisen vegetarisch',
+      'Kantinenspeise Fleisch': 'die Kantinenspeisen Fleisch'
+    };
 
     // Preisfeld: Ausdruecke wie "59,50+16" berechnen
     function calcPrice(input) {
@@ -263,7 +281,11 @@
             '<option value="Raummiete" data-tax="SAALMIETE">Raummiete</option>' +
             '<option value="Büffet" data-tax="BUEFFET">Büffet</option>' +
             '<option value="Getränke" data-tax="GETRAENKE">Getränke</option>' +
+            '<option value="Softdrink (Cola, Fanta)" data-tax="GETRAENKE">Softdrink (Cola, Fanta)</option>' +
+            '<option value="Tee" data-tax="GETRAENKE">Tee</option>' +
             '<option value="Kantinenspeise" data-tax="ESSEN">Kantinenspeise</option>' +
+            '<option value="Kantinenspeise vegetarisch" data-tax="ESSEN">Kantinenspeise vegetarisch</option>' +
+            '<option value="Kantinenspeise Fleisch" data-tax="ESSEN">Kantinenspeise Fleisch</option>' +
           '</select>' +
           '<input type="hidden" name="itemTaxType" value="">' +
         '</div>' +
