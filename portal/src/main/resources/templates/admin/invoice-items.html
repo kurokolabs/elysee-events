@@ -127,9 +127,9 @@
                     <option value="Getränke" data-tax="GETRAENKE" th:selected="${item.description == 'Getränke'}">Getränke</option>
                     <option value="Softdrink (Cola, Fanta)" data-tax="GETRAENKE" th:selected="${item.description == 'Softdrink (Cola, Fanta)'}">Softdrink (Cola, Fanta)</option>
                     <option value="Tee" data-tax="GETRAENKE" th:selected="${item.description == 'Tee'}">Tee</option>
-                    <option value="Kantinenspeise" data-tax="ESSEN" th:selected="${item.description == 'Kantinenspeise'}">Kantinenspeise</option>
                     <option value="Kantinenspeise vegetarisch" data-tax="ESSEN" th:selected="${item.description == 'Kantinenspeise vegetarisch'}">Kantinenspeise vegetarisch</option>
                     <option value="Kantinenspeise Fleisch" data-tax="ESSEN" th:selected="${item.description == 'Kantinenspeise Fleisch'}">Kantinenspeise Fleisch</option>
+                    <option value="Butterbreze" data-tax="ESSEN" th:selected="${item.description == 'Butterbreze'}">Butterbreze</option>
                   </select>
                   <input type="hidden" name="itemTaxType" th:value="${item.taxType}">
                 </div>
@@ -149,9 +149,9 @@
                   <option value="Getränke" data-tax="GETRAENKE">Getränke</option>
                   <option value="Softdrink (Cola, Fanta)" data-tax="GETRAENKE">Softdrink (Cola, Fanta)</option>
                   <option value="Tee" data-tax="GETRAENKE">Tee</option>
-                  <option value="Kantinenspeise" data-tax="ESSEN">Kantinenspeise</option>
                   <option value="Kantinenspeise vegetarisch" data-tax="ESSEN">Kantinenspeise vegetarisch</option>
                   <option value="Kantinenspeise Fleisch" data-tax="ESSEN">Kantinenspeise Fleisch</option>
+                  <option value="Butterbreze" data-tax="ESSEN">Butterbreze</option>
                 </select>
                 <input type="hidden" name="itemTaxType" value="">
               </div>
@@ -192,14 +192,20 @@
     var artikelSingular = {
       'Raummiete': 'die Raummiete', 'Büffet': 'das Büffet', 'Getränke': 'das Getränk',
       'Softdrink (Cola, Fanta)': 'den Softdrink', 'Tee': 'den Tee',
-      'Kantinenspeise': 'die Kantinenspeise', 'Kantinenspeise vegetarisch': 'die Kantinenspeise vegetarisch',
-      'Kantinenspeise Fleisch': 'die Kantinenspeise Fleisch'
+      'Kantinenspeise vegetarisch': 'die Kantinenspeise vegetarisch',
+      'Kantinenspeise Fleisch': 'die Kantinenspeise Fleisch',
+      'Butterbreze': 'die Butterbreze'
     };
     var artikelPlural = {
       'Raummiete': 'die Raummiete', 'Büffet': 'das Büffet', 'Getränke': 'die Getränke',
       'Softdrink (Cola, Fanta)': 'die Softdrinks', 'Tee': 'den Tee',
-      'Kantinenspeise': 'die Kantinenspeisen', 'Kantinenspeise vegetarisch': 'die Kantinenspeisen vegetarisch',
-      'Kantinenspeise Fleisch': 'die Kantinenspeisen Fleisch'
+      'Kantinenspeise vegetarisch': 'die Kantinenspeisen vegetarisch',
+      'Kantinenspeise Fleisch': 'die Kantinenspeisen Fleisch',
+      'Butterbreze': 'die Butterbrezn'
+    };
+    // Automatische Preise pro Posten (in EUR)
+    var autoPreise = {
+      'Tee': '1,50', 'Softdrink (Cola, Fanta)': '2,00', 'Butterbreze': '2,00'
     };
 
     // Preisfeld: Ausdruecke wie "59,50+16" berechnen
@@ -226,6 +232,12 @@
       var tax = opt.dataset.tax || '';
       row.querySelector('input[name="itemTaxType"]').value = tax;
       row.querySelector('.ust-display').textContent = tax ? ustLabels[tax] : '--';
+      // Auto-Preis setzen wenn Feld leer oder 0
+      var priceInput = row.querySelector('.calc-price');
+      var curPrice = priceInput.value.trim();
+      if (autoPreise[select.value] && (!curPrice || curPrice === '0' || curPrice === '0.00' || curPrice === '0,00')) {
+        priceInput.value = autoPreise[select.value];
+      }
       updateIntroText();
     }
 
@@ -283,9 +295,9 @@
             '<option value="Getränke" data-tax="GETRAENKE">Getränke</option>' +
             '<option value="Softdrink (Cola, Fanta)" data-tax="GETRAENKE">Softdrink (Cola, Fanta)</option>' +
             '<option value="Tee" data-tax="GETRAENKE">Tee</option>' +
-            '<option value="Kantinenspeise" data-tax="ESSEN">Kantinenspeise</option>' +
             '<option value="Kantinenspeise vegetarisch" data-tax="ESSEN">Kantinenspeise vegetarisch</option>' +
             '<option value="Kantinenspeise Fleisch" data-tax="ESSEN">Kantinenspeise Fleisch</option>' +
+            '<option value="Butterbreze" data-tax="ESSEN">Butterbreze</option>' +
           '</select>' +
           '<input type="hidden" name="itemTaxType" value="">' +
         '</div>' +
