@@ -19,8 +19,9 @@
         <h1 class="portal-header__title" th:text="'Rechnung ' + ${invoice.invoiceNumber}">Rechnung</h1>
         <p class="portal-header__subtitle" th:text="${invoice.customerName}">Kunde</p>
         <div class="portal-header__actions">
+          <a th:href="@{/portal/admin/rechnung/neu}" class="btn btn--gold btn--sm">Weitere Rechnung erstellen</a>
+          <a th:href="@{/portal/admin/rechnung/{id}/pdf(id=${invoice.id})}" class="btn btn--outline btn--sm">PDF herunterladen</a>
           <a th:href="@{/portal/admin/rechnungen}" class="btn btn--outline btn--sm">Zurück zur Liste</a>
-          <a th:href="@{/portal/admin/rechnung/{id}/pdf(id=${invoice.id})}" class="btn btn--gold btn--sm">PDF herunterladen</a>
         </div>
       </div>
 
