@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS customers (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id     BIGINT NOT NULL UNIQUE,
+    user_id     BIGINT NULL UNIQUE,
     first_name  VARCHAR(100) NOT NULL,
     last_name   VARCHAR(100) NOT NULL,
     company     VARCHAR(200),
@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS customers (
     postal_code VARCHAR(10),
     city        VARCHAR(100),
     notes       TEXT,
+    email       VARCHAR(255),
     created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE

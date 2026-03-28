@@ -72,10 +72,11 @@ public class AdminQuoteController {
     }
 
     @GetMapping("/angebote")
-    public String list(Model model) {
+    public String list(@RequestParam(required = false) String q, Model model) {
         model.addAttribute("pageTitle", "Angebote");
         model.addAttribute("activeNav", "angebote");
-        model.addAttribute("quotes", quoteRepository.findAll());
+        model.addAttribute("quotes", q != null && !q.isBlank() ? quoteRepository.search(q) : quoteRepository.findAll());
+        model.addAttribute("searchQuery", q);
         return "admin/quotes";
     }
 

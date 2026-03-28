@@ -63,6 +63,18 @@ public class QuoteRepository {
                 "ORDER BY q.created_at DESC", rowMapperFull);
     }
 
+    public List<Quote> search(String query) {
+        if (query == null || query.isBlank()) return findAll();
+        String escaped = query.toLowerCase().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
+        String like = "%" + escaped + "%";
+        return jdbc.query(
+                "SELECT q.*, COALESCE(CONCAT(c.first_name, ' ', c.last_name), q.recipient_name) AS customer_name " +
+                "FROM quotes q LEFT JOIN customers c ON q.customer_id = c.id " +
+                "WHERE LOWER(q.quote_number) LIKE ? OR LOWER(COALESCE(CONCAT(c.first_name, ' ', c.last_name), q.recipient_name)) LIKE ? " +
+                "OR LOWER(q.recipient_company) LIKE ? OR LOWER(q.status) LIKE ? " +
+                "ORDER BY q.created_at DESC", rowMapperFull, like, like, like, like);
+    }
+
     public List<Quote> findByCustomerId(Long customerId) {
         return jdbc.query(
                 "SELECT q.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name " +

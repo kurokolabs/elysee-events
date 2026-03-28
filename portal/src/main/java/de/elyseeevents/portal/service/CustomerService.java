@@ -63,6 +63,10 @@ public class CustomerService {
         return new CreateResult(customer, tempPassword);
     }
 
+    public Customer save(Customer customer) {
+        return customerRepository.save(customer);
+    }
+
     public Customer update(Customer customer) {
         return customerRepository.save(customer);
     }

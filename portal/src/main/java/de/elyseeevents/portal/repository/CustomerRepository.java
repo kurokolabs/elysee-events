@@ -46,20 +46,20 @@ public class CustomerRepository {
 
     public List<Customer> findAll() {
         return jdbc.query(
-                "SELECT c.*, u.email FROM customers c JOIN users u ON c.user_id = u.id ORDER BY c.last_name, c.first_name",
+                "SELECT c.*, COALESCE(u.email, c.email) AS email FROM customers c LEFT JOIN users u ON c.user_id = u.id ORDER BY c.last_name, c.first_name",
                 rowMapperWithEmail);
     }
 
     public Optional<Customer> findById(Long id) {
         List<Customer> list = jdbc.query(
-                "SELECT c.*, u.email FROM customers c JOIN users u ON c.user_id = u.id WHERE c.id = ?",
+                "SELECT c.*, COALESCE(u.email, c.email) AS email FROM customers c LEFT JOIN users u ON c.user_id = u.id WHERE c.id = ?",
                 rowMapperWithEmail, id);
         return list.stream().findFirst();
     }
 
     public Optional<Customer> findByUserId(Long userId) {
         List<Customer> list = jdbc.query(
-                "SELECT c.*, u.email FROM customers c JOIN users u ON c.user_id = u.id WHERE c.user_id = ?",
+                "SELECT c.*, COALESCE(u.email, c.email) AS email FROM customers c LEFT JOIN users u ON c.user_id = u.id WHERE c.user_id = ?",
                 rowMapperWithEmail, userId);
         return list.stream().findFirst();
     }
@@ -72,8 +72,8 @@ public class CustomerRepository {
                 .replace("_", "\\_");
         String like = "%" + escaped + "%";
         return jdbc.query(
-                "SELECT c.*, u.email FROM customers c JOIN users u ON c.user_id = u.id " +
-                "WHERE LOWER(c.first_name) LIKE ? OR LOWER(c.last_name) LIKE ? OR LOWER(c.company) LIKE ? OR LOWER(c.city) LIKE ? OR LOWER(u.email) LIKE ? " +
+                "SELECT c.*, COALESCE(u.email, c.email) AS email FROM customers c LEFT JOIN users u ON c.user_id = u.id " +
+                "WHERE LOWER(c.first_name) LIKE ? OR LOWER(c.last_name) LIKE ? OR LOWER(c.company) LIKE ? OR LOWER(c.city) LIKE ? OR LOWER(COALESCE(u.email, c.email)) LIKE ? " +
                 "ORDER BY c.last_name",
                 rowMapperWithEmail, like, like, like, like, like);
     }
@@ -83,9 +83,9 @@ public class CustomerRepository {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbc.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO customers (user_id, first_name, last_name, company, phone, address, postal_code, city, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO customers (user_id, first_name, last_name, company, phone, address, postal_code, city, notes, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
-                ps.setLong(1, c.getUserId());
+                if (c.getUserId() != null) ps.setLong(1, c.getUserId()); else ps.setNull(1, java.sql.Types.BIGINT);
                 ps.setString(2, c.getFirstName());
                 ps.setString(3, c.getLastName());
                 ps.setString(4, c.getCompany());
@@ -94,13 +94,14 @@ public class CustomerRepository {
                 ps.setString(7, c.getPostalCode());
                 ps.setString(8, c.getCity());
                 ps.setString(9, c.getNotes());
+                ps.setString(10, c.getEmail());
                 return ps;
             }, keyHolder);
             c.setId(keyHolder.getKey().longValue());
         } else {
-            jdbc.update("UPDATE customers SET first_name = ?, last_name = ?, company = ?, phone = ?, address = ?, postal_code = ?, city = ?, notes = ?, updated_at = NOW() WHERE id = ?",
+            jdbc.update("UPDATE customers SET first_name = ?, last_name = ?, company = ?, phone = ?, address = ?, postal_code = ?, city = ?, notes = ?, email = ?, updated_at = NOW() WHERE id = ?",
                     c.getFirstName(), c.getLastName(), c.getCompany(), c.getPhone(),
-                    c.getAddress(), c.getPostalCode(), c.getCity(), c.getNotes(), c.getId());
+                    c.getAddress(), c.getPostalCode(), c.getCity(), c.getNotes(), c.getEmail(), c.getId());
         }
         return c;
     }

@@ -64,6 +64,18 @@ public class InvoiceRepository {
                 "ORDER BY i.created_at DESC", rowMapperFull);
     }
 
+    public List<Invoice> search(String query) {
+        if (query == null || query.isBlank()) return findAll();
+        String escaped = query.toLowerCase().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
+        String like = "%" + escaped + "%";
+        return jdbc.query(
+                "SELECT i.*, COALESCE(CONCAT(c.first_name, ' ', c.last_name), i.recipient_name) AS customer_name, b.booking_type " +
+                "FROM invoices i LEFT JOIN customers c ON i.customer_id = c.id LEFT JOIN bookings b ON i.booking_id = b.id " +
+                "WHERE LOWER(i.invoice_number) LIKE ? OR LOWER(COALESCE(CONCAT(c.first_name, ' ', c.last_name), i.recipient_name)) LIKE ? " +
+                "OR LOWER(i.recipient_company) LIKE ? OR LOWER(i.status) LIKE ? " +
+                "ORDER BY i.created_at DESC", rowMapperFull, like, like, like, like);
+    }
+
     public List<Invoice> findByCustomerId(Long customerId) {
         return jdbc.query(
                 "SELECT i.*, CONCAT(c.first_name, ' ', c.last_name) AS customer_name, b.booking_type " +

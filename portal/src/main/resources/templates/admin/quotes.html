@@ -23,6 +23,17 @@
         </div>
       </div>
 
+      <div class="filter-bar">
+        <form th:action="@{/portal/admin/angebote}" method="get" style="display:flex; gap:12px; align-items:flex-end;">
+          <div class="form-group">
+            <label class="form-label">Suche</label>
+            <input type="text" name="q" class="form-input" placeholder="Angebotsnr., Kunde, Firma, Status..."
+                   th:value="${searchQuery}">
+          </div>
+          <button type="submit" class="btn btn--outline btn--sm">Suchen</button>
+        </form>
+      </div>
+
       <div th:if="${#lists.isEmpty(quotes)}" class="empty-state">
         <div class="empty-state__title">Keine Angebote vorhanden</div>
         <div class="empty-state__text">Erstellen Sie ein neues Angebot &uuml;ber den Button oben.</div>

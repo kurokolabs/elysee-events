@@ -61,10 +61,11 @@ public class AdminInvoiceController {
     }
 
     @GetMapping("/rechnungen")
-    public String list(Model model) {
+    public String list(@RequestParam(required = false) String q, Model model) {
         model.addAttribute("pageTitle", "Rechnungen");
         model.addAttribute("activeNav", "rechnungen");
-        model.addAttribute("invoices", invoiceRepository.findAll());
+        model.addAttribute("invoices", q != null && !q.isBlank() ? invoiceRepository.search(q) : invoiceRepository.findAll());
+        model.addAttribute("searchQuery", q);
         return "admin/invoices";
     }
 
@@ -274,6 +275,22 @@ public class AdminInvoiceController {
         inv.setRecipientPostalCode(recipientPostalCode);
         inv.setRecipientCity(recipientCity);
         inv.setRecipientEmail(recipientEmail);
+
+        // Bei Standalone-Rechnung: Kunde automatisch anlegen (ohne Portal-Zugang)
+        if (customerId == null && recipientName != null && !recipientName.isBlank()) {
+            Customer newCustomer = new Customer();
+            String[] nameParts = recipientName.trim().split("\\s+", 2);
+            newCustomer.setFirstName(nameParts[0]);
+            newCustomer.setLastName(nameParts.length > 1 ? nameParts[1] : "");
+            newCustomer.setCompany(recipientCompany);
+            newCustomer.setAddress(recipientAddress);
+            newCustomer.setPostalCode(recipientPostalCode);
+            newCustomer.setCity(recipientCity);
+            newCustomer.setEmail(recipientEmail);
+            newCustomer = customerService.save(newCustomer);
+            inv.setCustomerId(newCustomer.getId());
+        }
+
         inv = invoiceRepository.save(inv);
 
         // Positionen speichern
