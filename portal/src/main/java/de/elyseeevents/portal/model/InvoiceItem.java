@@ -32,10 +32,10 @@ public class InvoiceItem {
 
     public String getTaxTypeLabel() {
         return switch (getTaxType()) {
-            case "ESSEN" -> "Essen (7%)";
-            case "SAALMIETE" -> "Saalmiete (19%)";
-            case "BUEFFET" -> "75% zu 19%, 25% zu 7%";
-            default -> "Getränke (19%)";
+            case "ESSEN" -> "7%";
+            case "SAALMIETE" -> "19%";
+            case "BUEFFET" -> "75/25";
+            default -> "19%";
         };
     }
 }

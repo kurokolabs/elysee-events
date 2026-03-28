@@ -196,17 +196,19 @@
     var artikelSingular = {
       'Raummiete': 'die Raummiete', 'Büffet': 'das Büffet', 'Getränke': 'das Getränk',
       'Softdrink (Cola, Fanta)': 'den Softdrink', 'Tee': 'den Tee',
-      'Kantinenspeise vegetarisch': 'die Kantinenspeise vegetarisch',
+      'Kantinenspeise vegetarisch': 'die vegetarische Kantinenspeise',
       'Kantinenspeise Fleisch': 'die Kantinenspeise Fleisch',
       'Butterbreze': 'die Butterbreze'
     };
     var artikelPlural = {
       'Raummiete': 'die Raummiete', 'Büffet': 'das Büffet', 'Getränke': 'die Getränke',
       'Softdrink (Cola, Fanta)': 'die Softdrinks', 'Tee': 'den Tee',
-      'Kantinenspeise vegetarisch': 'die Kantinenspeisen vegetarisch',
+      'Kantinenspeise vegetarisch': 'die vegetarischen Kantinenspeisen',
       'Kantinenspeise Fleisch': 'die Kantinenspeisen Fleisch',
       'Butterbreze': 'die Butterbrezn'
     };
+    // Kantinenspeisen zusammenfassen wenn beide vorhanden
+    var kantinenGroup = ['Kantinenspeise vegetarisch', 'Kantinenspeise Fleisch'];
     // Automatische Preise pro Posten (in EUR)
     var autoPreise = {
       'Tee': '1,50', 'Softdrink (Cola, Fanta)': '2,00', 'Butterbreze': '2,00'
@@ -253,16 +255,46 @@
 
     function updateIntroText() {
       var seen = {};
-      var posten = [];
+      var rawPosten = [];
       document.querySelectorAll('.posten-select').forEach(function(sel) {
         var val = sel.value;
         if (!val || seen[val]) return;
         seen[val] = true;
-        var row = sel.closest('.item-row');
-        var qtyInput = row.querySelector('input[name="itemQty"]');
-        var qty = qtyInput ? parseFloat(qtyInput.value) || 1 : 1;
-        posten.push(getArtikel(val, qty));
+        rawPosten.push(val);
       });
+      // Kantinenspeisen zusammenfassen
+      var hatVeg = rawPosten.indexOf('Kantinenspeise vegetarisch') !== -1;
+      var hatFleisch = rawPosten.indexOf('Kantinenspeise Fleisch') !== -1;
+      var posten = [];
+      for (var i = 0; i < rawPosten.length; i++) {
+        var val = rawPosten[i];
+        if (val === 'Kantinenspeise vegetarisch' || val === 'Kantinenspeise Fleisch') {
+          if (hatVeg && hatFleisch) {
+            // Nur einmal zusammengefasst einfügen
+            if (posten.indexOf('die Kantinenspeisen (Fleisch und vegetarisch)') === -1) {
+              posten.push('die Kantinenspeisen (Fleisch und vegetarisch)');
+            }
+          } else {
+            var row = document.querySelector('.posten-select option[value="' + val + '"]:checked');
+            var parentRow = row ? row.closest('.item-row') : null;
+            var qty = 1;
+            if (parentRow) {
+              var qtyInput = parentRow.querySelector('input[name="itemQty"]');
+              qty = qtyInput ? parseFloat(qtyInput.value) || 1 : 1;
+            }
+            posten.push(getArtikel(val, qty));
+          }
+        } else {
+          var selEl = document.querySelector('.posten-select option[value="' + val + '"]:checked');
+          var pRow = selEl ? selEl.closest('.item-row') : null;
+          var q = 1;
+          if (pRow) {
+            var qI = pRow.querySelector('input[name="itemQty"]');
+            q = qI ? parseFloat(qI.value) || 1 : 1;
+          }
+          posten.push(getArtikel(val, q));
+        }
+      }
       var textarea = document.getElementById('introText');
       if (posten.length === 0) {
         textarea.value = '';

@@ -113,17 +113,17 @@ public class InvoicePdfService {
         infoCell.add(infoLine("Rechnungsdatum", formatDate(invoice.getCreatedAt())));
         // Leistungszeitraum
         if (invoice.getServicePeriodFrom() != null && !invoice.getServicePeriodFrom().isEmpty()) {
-            String period = invoice.getServicePeriodFrom();
+            String period = formatDate(invoice.getServicePeriodFrom());
             if (invoice.getServicePeriodTo() != null && !invoice.getServicePeriodTo().isEmpty()
                     && !invoice.getServicePeriodTo().equals(invoice.getServicePeriodFrom())) {
-                period += " bis " + invoice.getServicePeriodTo();
+                period += " bis " + formatDate(invoice.getServicePeriodTo());
             }
             infoCell.add(infoLine("Leistungszeitraum", period));
         } else {
             infoCell.add(infoLine("Leistungsdatum", formatDate(invoice.getCreatedAt())));
         }
         if (invoice.getDueDate() != null)
-            infoCell.add(infoLine("Fällig bis", invoice.getDueDate()));
+            infoCell.add(infoLine("Fällig bis", formatDate(invoice.getDueDate())));
         header.addCell(infoCell);
         doc.add(header);
 
@@ -257,7 +257,12 @@ public class InvoicePdfService {
 
     private String formatDate(String datetime) {
         if (datetime == null) return "-";
-        return datetime.length() >= 10 ? datetime.substring(0, 10) : datetime;
+        String iso = datetime.length() >= 10 ? datetime.substring(0, 10) : datetime;
+        // ISO (YYYY-MM-DD) zu deutsch (DD.MM.YYYY)
+        if (iso.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return iso.substring(8, 10) + "." + iso.substring(5, 7) + "." + iso.substring(0, 4);
+        }
+        return iso;
     }
 
     private String formatQty(Double qty) {
