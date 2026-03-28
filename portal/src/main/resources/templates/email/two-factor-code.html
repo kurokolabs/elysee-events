@@ -1,58 +1,58 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0; padding:0; background:#0a0804; font-family:Georgia,'Times New Roman',serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0804;">
+<body style="margin:0; padding:0; background:#F2EFE9; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F2EFE9;">
     <tr><td align="center" style="padding:40px 16px;">
-      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px; width:100%;">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px; width:100%; background:#ffffff; border:1px solid rgba(201,168,76,.15); border-radius:2px;">
 
-        <!-- BRAND -->
-        <tr><td align="center" style="padding:0 0 40px 0;">
-          <div style="font-family:Georgia,'Times New Roman',serif; font-size:13px; font-weight:normal; font-style:italic; letter-spacing:.25em; color:rgba(201,168,76,.7);">ELYSEE EVENTS</div>
+        <!-- HEADER -->
+        <tr><td align="center" style="padding:40px 48px 0 48px;">
+          <div style="font-family:Georgia,'Times New Roman',serif; font-size:22px; font-weight:bold; color:#C9A84C; letter-spacing:.06em;">ELYSEE EVENTS</div>
         </td></tr>
 
-        <!-- DIVIDER -->
-        <tr><td align="center" style="padding:0 0 48px 0;">
-          <div style="width:40px; height:1px; background:rgba(201,168,76,.3);"></div>
+        <!-- GOLD LINE -->
+        <tr><td style="padding:16px 48px 0 48px;">
+          <div style="height:2px; background:#C9A84C;"></div>
         </td></tr>
 
         <!-- TITLE -->
-        <tr><td align="center" style="padding:0 0 12px 0;">
-          <h1 style="font-family:Georgia,'Times New Roman',serif; font-size:28px; font-weight:normal; color:#ffffff; margin:0; letter-spacing:.02em;">Verifizierung</h1>
+        <tr><td align="center" style="padding:32px 48px 8px 48px;">
+          <h1 style="font-family:Georgia,'Times New Roman',serif; font-size:24px; font-weight:bold; color:#1A1A1A; margin:0;">Verifizierung</h1>
         </td></tr>
 
         <!-- SUBTITLE -->
-        <tr><td align="center" style="padding:0 0 40px 0;">
-          <p style="font-family:Georgia,'Times New Roman',serif; font-size:14px; color:rgba(255,255,255,.45); margin:0; line-height:1.7;">
+        <tr><td align="center" style="padding:0 48px 32px 48px;">
+          <p style="font-size:14px; color:#6B6560; margin:0; line-height:1.7;">
             Verwenden Sie den folgenden Code,<br>um sich im Portal zu verifizieren.
           </p>
         </td></tr>
 
         <!-- CODE -->
-        <tr><td align="center" style="padding:0 0 40px 0;">
-          <div style="display:inline-block; border:1px solid rgba(201,168,76,.25); padding:28px 48px; letter-spacing:12px; font-family:'Courier New',Courier,monospace; font-size:34px; font-weight:normal; color:#C9A84C;" th:text="${code}">[CODE]</div>
+        <tr><td align="center" style="padding:0 48px 12px 48px;">
+          <div style="display:inline-block; background:#F2EFE9; border:2px solid #C9A84C; border-radius:4px; padding:24px 48px; letter-spacing:10px; font-family:'Courier New',Courier,monospace; font-size:32px; font-weight:bold; color:#1A1A1A;" th:text="${code}">[CODE]</div>
+        </td></tr>
+
+        <!-- COPY HINT -->
+        <tr><td align="center" style="padding:0 48px 8px 48px;">
+          <p style="font-size:11px; color:#6B6560; margin:0;">Code markieren und kopieren</p>
         </td></tr>
 
         <!-- EXPIRY -->
-        <tr><td align="center" style="padding:0 0 16px 0;">
-          <p style="font-family:Georgia,'Times New Roman',serif; font-size:12px; color:rgba(255,255,255,.3); margin:0; letter-spacing:.08em; text-transform:uppercase;">Gültig für 10 Minuten</p>
+        <tr><td align="center" style="padding:0 48px 16px 48px;">
+          <div style="display:inline-block; background:#F2EFE9; border-radius:4px; padding:8px 20px; font-size:11px; font-weight:bold; letter-spacing:.08em; text-transform:uppercase; color:#C9A84C;">Gültig für 10 Minuten</div>
         </td></tr>
 
         <!-- SECURITY -->
-        <tr><td align="center" style="padding:0 0 56px 0;">
-          <p style="font-family:Georgia,'Times New Roman',serif; font-size:13px; color:rgba(255,255,255,.25); margin:0; font-style:italic;">
+        <tr><td align="center" style="padding:0 48px 40px 48px;">
+          <p style="font-size:12px; color:#6B6560; margin:0; font-style:italic;">
             Falls Sie diese Anfrage nicht gestellt haben, ignorieren Sie diese E-Mail.
           </p>
         </td></tr>
 
-        <!-- DIVIDER -->
-        <tr><td align="center" style="padding:0 0 32px 0;">
-          <div style="width:40px; height:1px; background:rgba(201,168,76,.15);"></div>
-        </td></tr>
-
         <!-- FOOTER -->
-        <tr><td align="center">
-          <p style="font-family:Georgia,'Times New Roman',serif; font-size:10px; color:rgba(255,255,255,.2); margin:0; line-height:2.2; letter-spacing:.04em;">
+        <tr><td style="padding:0 48px 32px 48px; border-top:1px solid #C9A84C;">
+          <p style="font-size:10px; color:#6B6560; margin:16px 0 0 0; line-height:2; text-align:center; letter-spacing:.04em;">
             Elysee Event GmbH &middot; Werner-von-Siemensstrasse 6 &middot; 86159 Augsburg<br>
             +49 176 30472811 &middot; verwaltung@elysee-events.de
           </p>

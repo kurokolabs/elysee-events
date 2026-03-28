@@ -1,81 +1,72 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0; padding:0; background:#0a0804; font-family:Georgia,'Times New Roman',serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0804;">
+<body style="margin:0; padding:0; background:#F2EFE9; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F2EFE9;">
     <tr><td align="center" style="padding:40px 16px;">
-      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px; width:100%;">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px; width:100%; background:#ffffff; border:1px solid rgba(201,168,76,.15); border-radius:2px;">
 
-        <!-- BRAND -->
-        <tr><td align="center" style="padding:0 0 40px 0;">
-          <div style="font-family:Georgia,'Times New Roman',serif; font-size:13px; font-style:italic; letter-spacing:.25em; color:rgba(201,168,76,.7);">ELYSEE EVENTS</div>
-        </td></tr>
-
-        <!-- DIVIDER -->
-        <tr><td align="center" style="padding:0 0 48px 0;">
-          <div style="width:40px; height:1px; background:rgba(201,168,76,.3);"></div>
+        <!-- HEADER -->
+        <tr><td align="center" style="padding:40px 48px 0 48px;">
+          <div style="font-family:Georgia,'Times New Roman',serif; font-size:22px; font-weight:bold; color:#C9A84C; letter-spacing:.06em;">ELYSEE EVENTS</div>
         </td></tr>
 
-        <!-- TITLE -->
-        <tr><td align="center" style="padding:0 0 8px 0;">
-          <p style="font-family:Georgia,'Times New Roman',serif; font-size:11px; color:rgba(201,168,76,.5); margin:0; letter-spacing:.15em; text-transform:uppercase;">Wochenkarte</p>
+        <tr><td style="padding:16px 48px 0 48px;"><div style="height:2px; background:#C9A84C;"></div></td></tr>
+
+        <tr><td align="center" style="padding:24px 48px 4px 48px;">
+          <div style="font-size:10px; font-weight:bold; letter-spacing:.15em; text-transform:uppercase; color:#C9A84C;">Wochenkarte</div>
         </td></tr>
-        <tr><td align="center" style="padding:0 0 12px 0;">
-          <h1 style="font-family:Georgia,'Times New Roman',serif; font-size:28px; font-weight:normal; color:#ffffff; margin:0;">Guten Appetit</h1>
+        <tr><td align="center" style="padding:0 48px 8px 48px;">
+          <h1 style="font-family:Georgia,'Times New Roman',serif; font-size:24px; font-weight:bold; color:#1A1A1A; margin:0;">Guten Appetit</h1>
         </td></tr>
-        <tr><td align="center" style="padding:0 0 40px 0;">
-          <p style="font-family:Georgia,'Times New Roman',serif; font-size:14px; color:rgba(255,255,255,.4); margin:0;">
+        <tr><td align="center" style="padding:0 48px 28px 48px;">
+          <p style="font-size:13px; color:#6B6560; margin:0;">
             <span th:text="${weekStart}">[Start]</span> &ndash; <span th:text="${weekEnd}">[Ende]</span>
           </p>
         </td></tr>
 
         <!-- MENU -->
-        <tr><td style="padding:0;">
+        <tr><td style="padding:0 48px 8px 48px;">
           <table width="100%" cellpadding="0" cellspacing="0">
-            <tr><td style="padding:20px 0; border-top:1px solid rgba(201,168,76,.1);">
-              <div style="font-family:Georgia,'Times New Roman',serif; font-size:10px; color:rgba(201,168,76,.45); letter-spacing:.18em; text-transform:uppercase; margin-bottom:8px;">Montag</div>
-              <div style="font-family:Georgia,'Times New Roman',serif; font-size:15px; color:rgba(255,255,255,.7); line-height:1.6;" th:text="${menu.monday}">[Gericht]</div>
+            <tr><td style="padding:16px 0; border-top:1px solid rgba(201,168,76,.15);">
+              <div style="font-size:10px; font-weight:bold; color:#C9A84C; letter-spacing:.15em; text-transform:uppercase; margin-bottom:6px;">Montag</div>
+              <div style="font-size:14px; color:#1A1A1A; line-height:1.6;" th:text="${menu.monday}">[Gericht]</div>
             </td></tr>
-            <tr><td style="padding:20px 0; border-top:1px solid rgba(201,168,76,.06);">
-              <div style="font-family:Georgia,'Times New Roman',serif; font-size:10px; color:rgba(201,168,76,.45); letter-spacing:.18em; text-transform:uppercase; margin-bottom:8px;">Dienstag</div>
-              <div style="font-family:Georgia,'Times New Roman',serif; font-size:15px; color:rgba(255,255,255,.7); line-height:1.6;" th:text="${menu.tuesday}">[Gericht]</div>
+            <tr><td style="padding:16px 0; border-top:1px solid rgba(201,168,76,.08);">
+              <div style="font-size:10px; font-weight:bold; color:#C9A84C; letter-spacing:.15em; text-transform:uppercase; margin-bottom:6px;">Dienstag</div>
+              <div style="font-size:14px; color:#1A1A1A; line-height:1.6;" th:text="${menu.tuesday}">[Gericht]</div>
             </td></tr>
-            <tr><td style="padding:20px 0; border-top:1px solid rgba(201,168,76,.06);">
-              <div style="font-family:Georgia,'Times New Roman',serif; font-size:10px; color:rgba(201,168,76,.45); letter-spacing:.18em; text-transform:uppercase; margin-bottom:8px;">Mittwoch</div>
-              <div style="font-family:Georgia,'Times New Roman',serif; font-size:15px; color:rgba(255,255,255,.7); line-height:1.6;" th:text="${menu.wednesday}">[Gericht]</div>
+            <tr><td style="padding:16px 0; border-top:1px solid rgba(201,168,76,.08);">
+              <div style="font-size:10px; font-weight:bold; color:#C9A84C; letter-spacing:.15em; text-transform:uppercase; margin-bottom:6px;">Mittwoch</div>
+              <div style="font-size:14px; color:#1A1A1A; line-height:1.6;" th:text="${menu.wednesday}">[Gericht]</div>
             </td></tr>
-            <tr><td style="padding:20px 0; border-top:1px solid rgba(201,168,76,.06);">
-              <div style="font-family:Georgia,'Times New Roman',serif; font-size:10px; color:rgba(201,168,76,.45); letter-spacing:.18em; text-transform:uppercase; margin-bottom:8px;">Donnerstag</div>
-              <div style="font-family:Georgia,'Times New Roman',serif; font-size:15px; color:rgba(255,255,255,.7); line-height:1.6;" th:text="${menu.thursday}">[Gericht]</div>
+            <tr><td style="padding:16px 0; border-top:1px solid rgba(201,168,76,.08);">
+              <div style="font-size:10px; font-weight:bold; color:#C9A84C; letter-spacing:.15em; text-transform:uppercase; margin-bottom:6px;">Donnerstag</div>
+              <div style="font-size:14px; color:#1A1A1A; line-height:1.6;" th:text="${menu.thursday}">[Gericht]</div>
             </td></tr>
-            <tr><td style="padding:20px 0; border-top:1px solid rgba(201,168,76,.06); border-bottom:1px solid rgba(201,168,76,.1);">
-              <div style="font-family:Georgia,'Times New Roman',serif; font-size:10px; color:rgba(201,168,76,.45); letter-spacing:.18em; text-transform:uppercase; margin-bottom:8px;">Freitag</div>
-              <div style="font-family:Georgia,'Times New Roman',serif; font-size:15px; color:rgba(255,255,255,.7); line-height:1.6;" th:text="${menu.friday}">[Gericht]</div>
+            <tr><td style="padding:16px 0; border-top:1px solid rgba(201,168,76,.08); border-bottom:1px solid rgba(201,168,76,.15);">
+              <div style="font-size:10px; font-weight:bold; color:#C9A84C; letter-spacing:.15em; text-transform:uppercase; margin-bottom:6px;">Freitag</div>
+              <div style="font-size:14px; color:#1A1A1A; line-height:1.6;" th:text="${menu.friday}">[Gericht]</div>
             </td></tr>
           </table>
         </td></tr>
 
         <!-- NOTES -->
-        <tr th:if="${menu.notes != null and !menu.notes.isEmpty()}"><td style="padding:24px 0 0 0;">
-          <p style="font-family:Georgia,'Times New Roman',serif; font-size:13px; color:rgba(255,255,255,.3); font-style:italic; line-height:1.7; margin:0;" th:text="${menu.notes}">[Hinweise]</p>
+        <tr th:if="${menu.notes != null and !menu.notes.isEmpty()}"><td style="padding:16px 48px 0 48px;">
+          <p style="font-size:13px; color:#6B6560; font-style:italic; line-height:1.7; margin:0;" th:text="${menu.notes}">[Hinweise]</p>
         </td></tr>
 
         <!-- CTA -->
-        <tr><td align="center" style="padding:40px 0;">
-          <a href="https://www.elysee-events.de/kantine" style="display:inline-block; border:1px solid rgba(201,168,76,.4); color:#C9A84C; font-family:Georgia,'Times New Roman',serif; font-size:12px; text-decoration:none; padding:14px 36px; letter-spacing:.14em; text-transform:uppercase;">Zur Speisekarte</a>
+        <tr><td align="center" style="padding:28px 48px 40px 48px;">
+          <a href="https://www.elysee-events.de/kantine" style="display:inline-block; background:#C9A84C; color:#ffffff; font-size:12px; font-weight:bold; text-decoration:none; padding:14px 36px; letter-spacing:.1em; text-transform:uppercase; border-radius:2px;">Zur Speisekarte</a>
         </td></tr>
 
-        <!-- DIVIDER -->
-        <tr><td align="center" style="padding:0 0 32px 0;">
-          <div style="width:40px; height:1px; background:rgba(201,168,76,.15);"></div>
-        </td></tr>
-
-        <!-- UNSUBSCRIBE + FOOTER -->
-        <tr><td align="center">
-          <p style="font-family:Georgia,'Times New Roman',serif; font-size:11px; color:rgba(255,255,255,.2); margin:0 0 16px 0;">
-            <a th:href="${unsubscribeUrl}" href="#" style="color:rgba(255,255,255,.25); text-decoration:underline; text-underline-offset:3px;">Newsletter abbestellen</a>
+        <!-- FOOTER -->
+        <tr><td style="padding:0 48px 32px 48px; border-top:1px solid #C9A84C;">
+          <p style="font-size:11px; color:#6B6560; margin:16px 0 8px 0; text-align:center;">
+            <a th:href="${unsubscribeUrl}" href="#" style="color:#6B6560; text-decoration:underline;">Newsletter abbestellen</a>
           </p>
-          <p style="font-family:Georgia,'Times New Roman',serif; font-size:10px; color:rgba(255,255,255,.15); margin:0; line-height:2.2; letter-spacing:.04em;">
+          <p style="font-size:10px; color:#6B6560; margin:0; line-height:2; text-align:center; letter-spacing:.04em;">
             Elysee Event GmbH &middot; Werner-von-Siemensstrasse 6 &middot; 86159 Augsburg<br>
             +49 176 30472811 &middot; verwaltung@elysee-events.de
           </p>
