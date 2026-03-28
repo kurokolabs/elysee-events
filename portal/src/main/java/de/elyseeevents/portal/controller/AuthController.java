@@ -48,21 +48,32 @@ public class AuthController {
     }
 
     @PostMapping("/portal/register")
-    public String register(@RequestParam String email,
+    public String register(@RequestParam String firstName,
+                          @RequestParam String lastName,
+                          @RequestParam(required = false) String company,
+                          @RequestParam String email,
                           @RequestParam String password,
                           @RequestParam String confirmPassword,
                           RedirectAttributes redirectAttributes) {
+        firstName = firstName.trim();
+        lastName = lastName.trim();
         email = email.trim().toLowerCase();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Bitte alle Felder ausfüllen.");
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Bitte alle Pflichtfelder ausfüllen.");
             redirectAttributes.addFlashAttribute("email", email);
+            redirectAttributes.addFlashAttribute("firstName", firstName);
+            redirectAttributes.addFlashAttribute("lastName", lastName);
+            redirectAttributes.addFlashAttribute("company", company);
             return "redirect:/portal/register";
         }
 
         if (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
             redirectAttributes.addFlashAttribute("error", "Bitte eine gültige E-Mail-Adresse eingeben.");
             redirectAttributes.addFlashAttribute("email", email);
+            redirectAttributes.addFlashAttribute("firstName", firstName);
+            redirectAttributes.addFlashAttribute("lastName", lastName);
+            redirectAttributes.addFlashAttribute("company", company);
             return "redirect:/portal/register";
         }
 
@@ -74,18 +85,27 @@ public class AuthController {
             redirectAttributes.addFlashAttribute("error",
                     "Das Passwort muss mind. 8 Zeichen, Groß-/Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.");
             redirectAttributes.addFlashAttribute("email", email);
+            redirectAttributes.addFlashAttribute("firstName", firstName);
+            redirectAttributes.addFlashAttribute("lastName", lastName);
+            redirectAttributes.addFlashAttribute("company", company);
             return "redirect:/portal/register";
         }
 
         if (!password.equals(confirmPassword)) {
             redirectAttributes.addFlashAttribute("error", "Die Passwörter stimmen nicht überein.");
             redirectAttributes.addFlashAttribute("email", email);
+            redirectAttributes.addFlashAttribute("firstName", firstName);
+            redirectAttributes.addFlashAttribute("lastName", lastName);
+            redirectAttributes.addFlashAttribute("company", company);
             return "redirect:/portal/register";
         }
 
         if (userRepository.findByEmail(email).isPresent()) {
             redirectAttributes.addFlashAttribute("error", "Diese E-Mail-Adresse ist bereits registriert.");
             redirectAttributes.addFlashAttribute("email", email);
+            redirectAttributes.addFlashAttribute("firstName", firstName);
+            redirectAttributes.addFlashAttribute("lastName", lastName);
+            redirectAttributes.addFlashAttribute("company", company);
             return "redirect:/portal/register";
         }
 
@@ -98,12 +118,14 @@ public class AuthController {
         user.setTwoFaEnabled(true);
         user = userRepository.save(user);
 
-        // Customer-Profil anlegen (Dashboard erwartet einen Customer-Eintrag)
+        // Customer-Profil anlegen
         Customer customer = new Customer();
         customer.setUserId(user.getId());
-        customer.setFirstName("");
-        customer.setLastName("");
-        customerService.update(customer);
+        customer.setFirstName(firstName);
+        customer.setLastName(lastName);
+        customer.setCompany(company != null ? company.trim() : null);
+        customer.setEmail(email);
+        customerService.save(customer);
 
         String token = java.util.UUID.randomUUID().toString().replace("-", "")
                      + java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 16);

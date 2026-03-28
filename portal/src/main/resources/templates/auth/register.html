@@ -39,14 +39,34 @@
       <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
 
       <form th:action="@{/portal/register}" method="post">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div class="form-group">
+            <label class="form-label" for="firstName">Vorname *</label>
+            <input type="text" id="firstName" name="firstName" class="form-input"
+                   placeholder="Vorname" required autofocus
+                   th:value="${firstName}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="lastName">Nachname *</label>
+            <input type="text" id="lastName" name="lastName" class="form-input"
+                   placeholder="Nachname" required
+                   th:value="${lastName}">
+          </div>
+        </div>
         <div class="form-group">
-          <label class="form-label" for="email">E-Mail</label>
+          <label class="form-label" for="company">Firma</label>
+          <input type="text" id="company" name="company" class="form-input"
+                 placeholder="Firma (optional)"
+                 th:value="${company}">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">E-Mail *</label>
           <input type="email" id="email" name="email" class="form-input"
-                 placeholder="ihre@email.de" required autofocus
+                 placeholder="ihre@email.de" required
                  th:value="${email}">
         </div>
         <div class="form-group">
-          <label class="form-label" for="password">Passwort</label>
+          <label class="form-label" for="password">Passwort *</label>
           <input type="password" id="password" name="password" class="form-input"
                  placeholder="Ihr Passwort" required minlength="8">
           <p class="pw-hint">Mind. 8 Zeichen, Groß-/Kleinbuchstaben, Zahl und Sonderzeichen</p>
