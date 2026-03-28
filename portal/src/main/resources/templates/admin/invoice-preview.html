@@ -224,7 +224,7 @@
             <input type="hidden" name="itemPrice" th:value="${item.unitPrice}">
             <input type="hidden" name="itemTaxType" th:value="${item.taxType}">
           </th:block>
-          <button type="submit" class="btn btn--gold">Rechnung erstellen &amp; senden</button>
+          <button type="submit" class="btn btn--gold" th:text="${hasEmail} ? 'Rechnung erstellen &amp; senden' : 'Rechnung erstellen &amp; speichern'">Rechnung erstellen &amp; senden</button>
         </form>
       </div>
     </div>

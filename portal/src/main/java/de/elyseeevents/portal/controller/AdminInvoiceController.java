@@ -177,6 +177,8 @@ public class AdminInvoiceController {
         model.addAttribute("recipientPostalCode", recipientPostalCode);
         model.addAttribute("recipientCity", recipientCity);
         model.addAttribute("recipientEmail", recipientEmail);
+        String emailForSend = customer != null && customer.getEmail() != null ? customer.getEmail() : recipientEmail;
+        model.addAttribute("hasEmail", emailForSend != null && !emailForSend.isBlank());
         model.addAttribute("items", items);
         model.addAttribute("netto", tax[0]);
         model.addAttribute("taxRate", 0.0); // Legacy compatibility
@@ -263,8 +265,8 @@ public class AdminInvoiceController {
         inv.setStatus("OFFEN");
         inv.setDueDate(dueDate);
         inv.setNotes(notes);
-        inv.setServicePeriodFrom(servicePeriodFrom);
-        inv.setServicePeriodTo(servicePeriodTo);
+        inv.setServicePeriodFrom(servicePeriodFrom != null && !servicePeriodFrom.isBlank() ? servicePeriodFrom : null);
+        inv.setServicePeriodTo(servicePeriodTo != null && !servicePeriodTo.isBlank() ? servicePeriodTo : null);
         inv.setIntroText(introText);
         inv.setRecipientName(recipientName);
         inv.setRecipientCompany(recipientCompany);
@@ -292,7 +294,7 @@ public class AdminInvoiceController {
                 String formattedTotal = String.format("%,.2f EUR", tax[4]);
                 String displayName = customer != null ? (customer.getCompany() != null ? customer.getCompany() : customer.getEmail()) : (recipientCompany != null && !recipientCompany.isBlank() ? recipientCompany : recipientName);
                 emailService.sendHtmlEmailWithAttachment(
-                    customer.getEmail(),
+                    sendToEmail,
                     "Élysée Events - Rechnung " + inv.getInvoiceNumber(),
                     "email/invoice-notification",
                     java.util.Map.of(
@@ -314,8 +316,14 @@ public class AdminInvoiceController {
             org.slf4j.LoggerFactory.getLogger(getClass()).error("Rechnungs-Email konnte nicht gesendet werden: {}", e.getMessage());
         }
 
+        String sendToEmail2 = null;
+        try {
+            Customer c2 = customerId != null ? customerService.findById(customerId).orElse(null) : null;
+            sendToEmail2 = c2 != null && c2.getEmail() != null ? c2.getEmail() : recipientEmail;
+        } catch (Exception ignored) {}
+        boolean hatEmail = sendToEmail2 != null && !sendToEmail2.isBlank();
         redirectAttributes.addFlashAttribute("message",
-                "Rechnung " + inv.getInvoiceNumber() + " erstellt und an den Kunden gesendet.");
+                "Rechnung " + inv.getInvoiceNumber() + (hatEmail ? " erstellt und an den Kunden gesendet." : " erstellt und gespeichert."));
         return "redirect:/portal/admin/rechnung/" + inv.getId();
     }
 
