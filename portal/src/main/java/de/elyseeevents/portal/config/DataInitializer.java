@@ -115,7 +115,7 @@ public class DataInitializer implements CommandLineRunner {
 
             Booking b3 = new Booking();
             b3.setCustomerId(demoCustomer.getId());
-            b3.setBookingType("KANTINE");
+            b3.setBookingType("CATERING");
             b3.setStatus("ANFRAGE");
             b3.setEventDate("2026-07-01");
             b3.setEventTimeSlot("Mittag (12-15 Uhr)");
@@ -128,14 +128,14 @@ public class DataInitializer implements CommandLineRunner {
             String[][] hist = {
                 {"2025-06-15", "HOCHZEIT", "ABGESCHLOSSEN", "9500", "2025-06-01"},
                 {"2025-07-20", "CORPORATE", "ABGESCHLOSSEN", "6200", "2025-07-05"},
-                {"2025-08-10", "KANTINE", "ABGESCHLOSSEN", "3100", "2025-08-01"},
+                {"2025-08-10", "CATERING", "ABGESCHLOSSEN", "3100", "2025-08-01"},
                 {"2025-09-25", "HOCHZEIT", "ABGESCHLOSSEN", "14000", "2025-09-10"},
                 {"2025-10-12", "CORPORATE", "ABGESCHLOSSEN", "7800", "2025-10-02"},
-                {"2025-11-05", "KANTINE", "ABGESCHLOSSEN", "4200", "2025-11-01"},
+                {"2025-11-05", "CATERING", "ABGESCHLOSSEN", "4200", "2025-11-01"},
                 {"2025-12-18", "CORPORATE", "ABGESCHLOSSEN", "11500", "2025-12-03"},
                 {"2026-01-22", "HOCHZEIT", "ABGESCHLOSSEN", "8900", "2026-01-08"},
                 {"2026-02-14", "CORPORATE", "BESTAETIGT", "5600", "2026-02-01"},
-                {"2026-03-10", "KANTINE", "IN_PLANUNG", "3800", "2026-03-01"},
+                {"2026-03-10", "CATERING", "IN_PLANUNG", "3800", "2026-03-01"},
             };
             for (String[] h : hist) {
                 Booking hb = new Booking();

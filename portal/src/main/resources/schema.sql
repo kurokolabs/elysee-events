@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS customers (
 CREATE TABLE IF NOT EXISTS bookings (
     id               INTEGER PRIMARY KEY AUTOINCREMENT,
     customer_id      INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
-    booking_type     TEXT NOT NULL CHECK(booking_type IN ('KANTINE','HOCHZEIT','CORPORATE')),
+    booking_type     TEXT NOT NULL CHECK(booking_type IN ('CATERING','HOCHZEIT','CORPORATE')),
     status           TEXT NOT NULL DEFAULT 'ANFRAGE'
                      CHECK(status IN ('ANFRAGE','BESTAETIGT','IN_PLANUNG','ABGESCHLOSSEN','STORNIERT')),
     event_date       TEXT,

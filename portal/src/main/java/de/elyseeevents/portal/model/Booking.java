@@ -85,9 +85,9 @@ public class Booking {
     public void setCustomerCompany(String customerCompany) { this.customerCompany = customerCompany; }
 
     public BookingType getBookingTypeEnum() {
-        if (bookingType == null) return BookingType.KANTINE;
+        if (bookingType == null) return BookingType.CATERING;
         try { return BookingType.valueOf(bookingType); }
-        catch (IllegalArgumentException e) { return BookingType.KANTINE; }
+        catch (IllegalArgumentException e) { return BookingType.CATERING; }
     }
 
     public BookingStatus getStatusEnum() {

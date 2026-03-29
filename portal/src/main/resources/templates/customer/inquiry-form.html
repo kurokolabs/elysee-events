@@ -67,7 +67,7 @@
             <div class="wizard-card__title">Hochzeit</div>
             <div class="wizard-card__desc">Ihr besonderer Tag</div>
           </div>
-          <div class="wizard-card" data-type="KANTINE">
+          <div class="wizard-card" data-type="CATERING">
             <div class="wizard-card__icon">
               <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2">
                 <ellipse cx="24" cy="30" rx="18" ry="6"/>
@@ -370,7 +370,7 @@
         var isPast = cellDate < today;
         var bookedSlots = bookedByDay[d] || [];
         var daySlots = getSlotsForDay(dayOfWeek);
-        var allBooked = state.bookingType === 'KANTINE' ? false : true;
+        var allBooked = state.bookingType === 'CATERING' ? false : true;
         if (allBooked) {
           daySlots.forEach(function(ds) {
             if (bookedSlots.indexOf(ds.value) === -1) allBooked = false;
@@ -427,11 +427,25 @@
               thisCell.classList.add('is-selected');
               state.eventDate = dateStr;
               selectedDay = { num: day, dow: dow };
-              if (state.bookingType === 'KANTINE') {
-                state.eventTimeSlot = '';
+              if (state.bookingType === 'CATERING') {
                 document.getElementById('wizSlots').style.display = 'none';
+                var ctp = document.getElementById('cateringTimePicker');
+                if (!ctp) {
+                  ctp = document.createElement('div');
+                  ctp.id = 'cateringTimePicker';
+                  ctp.style.cssText = 'text-align:center; margin-top:20px;';
+                  ctp.innerHTML = '<label style="display:block; font-size:13px; color:var(--muted); margin-bottom:8px;">Wann soll das Essen geliefert werden?</label>' +
+                    '<input type="time" id="cateringTimeInput" class="form-input" style="max-width:160px; margin:0 auto; text-align:center; font-size:16px;" value="12:00">';
+                  document.getElementById('wizSlots').parentElement.insertBefore(ctp, document.getElementById('wizSlots').nextSibling);
+                }
+                ctp.style.display = 'block';
+                var timeInput = document.getElementById('cateringTimeInput');
+                state.eventTimeSlot = timeInput.value;
                 document.getElementById('next2').disabled = false;
+                timeInput.onchange = function() { state.eventTimeSlot = this.value; };
               } else {
+                var ctp2 = document.getElementById('cateringTimePicker');
+                if (ctp2) ctp2.style.display = 'none';
                 showTimeSlots(day, dow);
               }
             });
@@ -554,7 +568,7 @@
 
     /* ── STEP 4: Konditional ── */
     function setupStep4() {
-      var isCatering = state.bookingType === 'KANTINE';
+      var isCatering = state.bookingType === 'CATERING';
       var cs = document.getElementById('cateringSection');
       var es = document.getElementById('eventSection');
       cs.classList.toggle('is-visible', isCatering);
@@ -613,7 +627,7 @@
 
     document.getElementById('back4').addEventListener('click', function() { showStep(3); });
     document.getElementById('next4').addEventListener('click', function() {
-      if (state.bookingType === 'KANTINE') {
+      if (state.bookingType === 'CATERING') {
         var addr = document.getElementById('deliveryAddr').value.trim();
         if (!addr) {
           document.getElementById('deliveryAddr').style.borderColor = '#C62828';

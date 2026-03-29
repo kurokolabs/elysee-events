@@ -1,7 +1,7 @@
 package de.elyseeevents.portal.model;
 
 public enum BookingType {
-    KANTINE("Kantine"),
+    CATERING("Catering"),
     HOCHZEIT("Hochzeit"),
     CORPORATE("Corporate");
 

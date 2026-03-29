@@ -149,7 +149,7 @@ public class CustomerController {
         Customer customer = getCustomer(authentication);
         if (customer == null) return "redirect:/portal/login";
 
-        if (!Set.of("KANTINE", "HOCHZEIT", "CORPORATE").contains(bookingType)) {
+        if (!Set.of("CATERING", "HOCHZEIT", "CORPORATE").contains(bookingType)) {
             redirectAttributes.addFlashAttribute("error", "Ung\u00fcltiger Buchungstyp.");
             return "redirect:/portal/anfrage";
         }
