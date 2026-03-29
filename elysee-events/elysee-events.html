@@ -3029,11 +3029,6 @@ section:not(.hero):not(:first-of-type) {
       overlay.classList.remove('is-closing');
       overlay.classList.add('is-open');
       setTimeout(function(){ var firstBtn = overlay.querySelector('.bk__step.is-active button, .bk__step.is-active input'); if(firstBtn) firstBtn.focus(); }, 900);
-
-      // Morph fires after slide-in completes
-      morphTimer = setTimeout(function(){
-        if(morphGen === myGen) morphBouquetToBar(1000);
-      }, 950);
     }
 
     function closeOverlay() {
