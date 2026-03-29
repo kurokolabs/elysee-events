@@ -270,12 +270,12 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
   document.documentElement.classList.add('preloading');
   var counter = pre.querySelector('.pre__counter');
   var n = 0;
-  var iv = setInterval(function(){ n = Math.min(n + Math.floor(Math.random()*3)+1, 100); counter.textContent = n; if(n>=100) clearInterval(iv); }, 60);
+  var iv = setInterval(function(){ n = Math.min(n + Math.floor(Math.random()*2)+1, 100); counter.textContent = n; if(n>=100) clearInterval(iv); }, 80);
   window.addEventListener('load', function(){
     clearInterval(iv); counter.textContent = '100';
-    setTimeout(function(){ pre.classList.add('is-done'); document.documentElement.classList.remove('preloading'); }, 1200);
+    setTimeout(function(){ pre.classList.add('is-done'); document.documentElement.classList.remove('preloading'); }, 3500);
   });
-  setTimeout(function(){ pre.classList.add('is-done'); document.documentElement.classList.remove('preloading'); }, 7000);
+  setTimeout(function(){ pre.classList.add('is-done'); document.documentElement.classList.remove('preloading'); }, 8000);
 })();
 </script>
 
