@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests">
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; base-uri 'self'; upgrade-insecure-requests">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-site-verification" content="ofkC7lPrk_nZWmrvExHFGgzJfkxqi6bsh7TLckbX5MQ" />
   <meta name="theme-color" content="#C9A84C">
@@ -109,7 +109,10 @@
     [data-delay="4"] { transition-delay: .40s; }
     [data-delay="5"] { transition-delay: .52s; }
 
-    /* ─── Cursor ───────────────────────────────────────────────────────────── */
+    /* ─── Cursor (hidden on touch) ────────────────────────────────────────── */
+    @media (hover: none), (pointer: coarse) {
+      .cursor-dot, .cursor-ring { display: none !important; }
+    }
     .cursor-dot {
       position: fixed; left: 0; top: 0; width: 8px; height: 8px;
       background: #fff;
@@ -380,6 +383,7 @@
       background-position: center;
       transform: scale(1.08);
       will-change: transform;
+      contain: strict;
     }
 
     .hero__overlay {
@@ -513,7 +517,7 @@
     }
     .btn--gold {
       background: var(--gold);
-      color: var(--white);
+      color: #1A1A1A;
       padding: 16px 44px;
       border: none;
     }
