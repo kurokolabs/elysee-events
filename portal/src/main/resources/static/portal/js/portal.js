@@ -10,12 +10,14 @@ function updateStatus(sel) {
   input.name = 'status';
   input.value = status;
   form.appendChild(input);
-  var csrf = document.querySelector('meta[name="_csrf"]');
-  var csrfHeader = document.querySelector('meta[name="_csrf_header"]');
-  if (csrf && csrfHeader) {
+  // CSRF Token aus existierendem Formular oder meta-Tag lesen
+  var csrfInput = document.querySelector('input[name="_csrf"]');
+  var csrfMeta = document.querySelector('meta[name="_csrf"]');
+  var csrfVal = csrfInput ? csrfInput.value : (csrfMeta ? csrfMeta.content : null);
+  if (csrfVal) {
     var ci = document.createElement('input');
     ci.name = '_csrf';
-    ci.value = csrf.content;
+    ci.value = csrfVal;
     form.appendChild(ci);
   }
   document.body.appendChild(form);

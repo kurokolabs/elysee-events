@@ -39,6 +39,7 @@
         <div class="empty-state__text">Erstellen Sie ein neues Angebot &uuml;ber den Button oben.</div>
       </div>
 
+      <form th:action="@{/portal/admin/angebote}" method="post" style="display:none" id="csrfForm"></form>
       <div class="table-wrap" th:if="${!#lists.isEmpty(quotes)}">
         <table class="data-table">
           <thead>

@@ -59,6 +59,7 @@
         <div class="empty-state__text">Erstellen Sie eine neue Buchung oder passen Sie die Filter an.</div>
       </div>
 
+      <form th:action="@{/portal/admin/buchungen}" method="post" style="display:none" id="csrfForm"></form>
       <div class="table-wrap" th:if="${!#lists.isEmpty(bookings)}">
         <table class="data-table">
           <thead>

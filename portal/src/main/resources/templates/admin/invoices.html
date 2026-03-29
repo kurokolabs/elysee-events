@@ -39,6 +39,7 @@
         <div class="empty-state__text">Erstellen Sie eine neue Rechnung über den Button oben.</div>
       </div>
 
+      <form th:action="@{/portal/admin/rechnungen}" method="post" style="display:none" id="csrfForm"></form>
       <div class="table-wrap" th:if="${!#lists.isEmpty(invoices)}">
         <table class="data-table">
           <thead>
