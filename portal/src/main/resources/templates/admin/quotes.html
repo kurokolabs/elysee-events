@@ -52,16 +52,22 @@
             </tr>
           </thead>
           <tbody>
-            <tr th:each="q : ${quotes}">
-              <td><a th:href="@{/portal/admin/angebot/{id}(id=${q.id})}" th:text="${q.quoteNumber}">AN-001</a></td>
+            <tr th:each="q : ${quotes}" th:data-href="@{/portal/admin/angebot/{id}(id=${q.id})}">
+              <td th:text="${q.quoteNumber}">AN-001</td>
               <td th:text="${q.customerName}">Max Mustermann</td>
               <td th:text="${#numbers.formatDecimal(q.amount, 0, 'COMMA', 2, 'POINT')} + ' EUR'">1.000,00 EUR</td>
               <td th:text="${#numbers.formatDecimal(q.total, 0, 'COMMA', 2, 'POINT')} + ' EUR'">1.190,00 EUR</td>
               <td th:text="${q.validUntil}">2024-07-01</td>
-              <td>
-                <span class="status-badge"
-                      th:classappend="'status-badge--' + ${q.status}"
-                      th:text="${q.status}">OFFEN</span>
+              <td onclick="event.stopPropagation()">
+                <select class="status-select" th:classappend="'status-select--' + ${q.status}"
+                        th:data-url="@{/portal/admin/angebot/{id}/status(id=${q.id})}"
+                        onchange="updateStatus(this)">
+                  <option value="OFFEN" th:selected="${q.status == 'OFFEN'}">Offen</option>
+                  <option value="ANGENOMMEN" th:selected="${q.status == 'ANGENOMMEN'}">Angenommen</option>
+                  <option value="ABGELEHNT" th:selected="${q.status == 'ABGELEHNT'}">Abgelehnt</option>
+                  <option value="ABGELAUFEN" th:selected="${q.status == 'ABGELAUFEN'}">Abgelaufen</option>
+                  <option value="STORNIERT" th:selected="${q.status == 'STORNIERT'}">Storniert</option>
+                </select>
               </td>
             </tr>
           </tbody>

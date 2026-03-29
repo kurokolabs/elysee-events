@@ -73,14 +73,24 @@
             </tr>
           </thead>
           <tbody>
-            <tr th:each="b : ${bookings}">
-              <td><a th:href="@{/portal/admin/buchung/{id}(id=${b.id})}" th:text="'#' + ${b.id}">#1</a></td>
+            <tr th:each="b : ${bookings}" th:data-href="@{/portal/admin/buchung/{id}(id=${b.id})}">
+              <td th:text="'#' + ${b.id}">#1</td>
               <td th:text="${b.customerName}">Max Mustermann</td>
               <td th:text="${b.bookingTypeEnum.label}">Hochzeit</td>
               <td th:text="${b.eventDate != null ? @dateUtil.format(b.eventDate) : '-'}">2024-06-15</td>
               <td th:text="${b.guestCount ?: '-'}">120</td>
               <td th:text="${b.budget != null ? #numbers.formatDecimal(b.budget, 0, 'COMMA', 0, 'POINT') + ' EUR' : '-'}">5.000 EUR</td>
-              <td><span class="status-badge" th:classappend="'status-badge--' + ${b.status}" th:text="${b.statusEnum.label}">Anfrage</span></td>
+              <td onclick="event.stopPropagation()">
+                <select class="status-select" th:classappend="'status-select--' + ${b.status}"
+                        th:data-url="@{/portal/admin/buchung/{id}/status(id=${b.id})}"
+                        onchange="updateStatus(this)">
+                  <option value="ANFRAGE" th:selected="${b.status == 'ANFRAGE'}">Anfrage</option>
+                  <option value="BESTAETIGT" th:selected="${b.status == 'BESTAETIGT'}">Bestätigt</option>
+                  <option value="IN_PLANUNG" th:selected="${b.status == 'IN_PLANUNG'}">In Planung</option>
+                  <option value="ABGESCHLOSSEN" th:selected="${b.status == 'ABGESCHLOSSEN'}">Abgeschlossen</option>
+                  <option value="STORNIERT" th:selected="${b.status == 'STORNIERT'}">Storniert</option>
+                </select>
+              </td>
             </tr>
           </tbody>
         </table>

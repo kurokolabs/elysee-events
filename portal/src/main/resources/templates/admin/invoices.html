@@ -53,17 +53,23 @@
             </tr>
           </thead>
           <tbody>
-            <tr th:each="inv : ${invoices}">
-              <td><a th:href="@{/portal/admin/rechnung/{id}(id=${inv.id})}" th:text="${inv.invoiceNumber}">RE-001</a></td>
+            <tr th:each="inv : ${invoices}" th:data-href="@{/portal/admin/rechnung/{id}(id=${inv.id})}">
+              <td th:text="${inv.invoiceNumber}">RE-001</td>
               <td th:text="${inv.customerName}">Max Mustermann</td>
               <td th:text="${inv.bookingTypeLabel}">Hochzeit</td>
               <td th:text="${#numbers.formatDecimal(inv.amount, 0, 'COMMA', 2, 'POINT')} + ' EUR'">1.000,00 EUR</td>
               <td th:text="${#numbers.formatDecimal(inv.total, 0, 'COMMA', 2, 'POINT')} + ' EUR'">1.190,00 EUR</td>
               <td th:text="${inv.dueDate != null ? @dateUtil.format(inv.dueDate) : '-'}">2024-07-01</td>
-              <td>
-                <span class="status-badge"
-                      th:classappend="'status-badge--' + ${inv.status}"
-                      th:text="${inv.status}">OFFEN</span>
+              <td onclick="event.stopPropagation()">
+                <select class="status-select" th:classappend="'status-select--' + ${inv.status}"
+                        th:data-url="@{/portal/admin/rechnung/{id}/status(id=${inv.id})}"
+                        onchange="updateStatus(this)">
+                  <option value="OFFEN" th:selected="${inv.status == 'OFFEN'}">Offen</option>
+                  <option value="BEZAHLT" th:selected="${inv.status == 'BEZAHLT'}">Bezahlt</option>
+                  <option value="UEBERFAELLIG" th:selected="${inv.status == 'UEBERFAELLIG'}">Überfällig</option>
+                  <option value="MAHNUNG" th:selected="${inv.status == 'MAHNUNG'}">Mahnung</option>
+                  <option value="STORNIERT" th:selected="${inv.status == 'STORNIERT'}">Storniert</option>
+                </select>
               </td>
             </tr>
           </tbody>

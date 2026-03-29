@@ -51,8 +51,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr th:each="c : ${customers}">
-              <td><a th:href="@{/portal/admin/kunde/{id}(id=${c.id})}" th:text="${c.fullName}">Max Mustermann</a></td>
+            <tr th:each="c : ${customers}" th:data-href="@{/portal/admin/kunde/{id}(id=${c.id})}">
+              <td th:text="${c.fullName}">Max Mustermann</td>
               <td th:text="${c.company ?: '-'}">Firma GmbH</td>
               <td th:text="${c.email ?: '-'}">email@example.de</td>
               <td th:text="${c.phone ?: '-'}">0821 12345</td>

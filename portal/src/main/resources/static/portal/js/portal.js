@@ -1,3 +1,27 @@
+/* ── Inline Status Update (global) ───────────────────── */
+function updateStatus(sel) {
+  var url = sel.dataset.url;
+  var status = sel.value;
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = url;
+  form.style.display = 'none';
+  var input = document.createElement('input');
+  input.name = 'status';
+  input.value = status;
+  form.appendChild(input);
+  var csrf = document.querySelector('meta[name="_csrf"]');
+  var csrfHeader = document.querySelector('meta[name="_csrf_header"]');
+  if (csrf && csrfHeader) {
+    var ci = document.createElement('input');
+    ci.name = '_csrf';
+    ci.value = csrf.content;
+    form.appendChild(ci);
+  }
+  document.body.appendChild(form);
+  form.submit();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 
   /* ── Mobile Burger Menu ─────────────────────────────────── */
@@ -46,9 +70,12 @@ document.addEventListener('DOMContentLoaded', function() {
     revealElements.forEach(function(el) { observer.observe(el); });
   }
 
-  /* ── Smooth table row highlights ──────────────────────── */
-  document.querySelectorAll('.data-table tbody tr').forEach(function(row) {
+  /* ── Clickable table rows ─────────────────────────────── */
+  document.querySelectorAll('.data-table tbody tr[data-href]').forEach(function(row) {
     row.style.transition = 'background .2s ease';
+    row.addEventListener('click', function() {
+      window.location.href = this.dataset.href;
+    });
   });
 
   /* ── Form input animation on focus ────────────────────── */
