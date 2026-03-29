@@ -149,9 +149,79 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
 @media(max-width:1024px){.footer-top{grid-template-columns:1fr 1fr;gap:28px}}
 @media(max-width:768px){.section{padding:72px 24px}.cta-section{padding:72px 24px}.hero-content{padding:0 24px;max-width:100%}.hero h1{font-size:clamp(2rem,8vw,3rem)}.anlass-grid{grid-template-columns:1fr;gap:24px}.kapa-grid{grid-template-columns:1fr;gap:20px}.ausstattung-grid{grid-template-columns:1fr}.footer-top{grid-template-columns:1fr 1fr;gap:32px}.footer{padding:56px 24px 32px}.footer-bottom{flex-direction:column;align-items:flex-start;gap:12px}}
 @media(max-width:480px){h1{font-size:2rem}h2{font-size:1.75rem}.hero-actions{flex-direction:column}.btn{width:100%;justify-content:center}.footer-top{grid-template-columns:1fr;gap:24px}.footer{padding:48px 20px 24px}.footer-legal{flex-wrap:wrap;gap:16px}}
+
+/* ── Preloader ─────────────────────────── */
+#preloader{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:all}
+#preloader .pre__bg{position:absolute;inset:0;background:var(--bg,#090807)}
+.pre__map{position:relative;z-index:1;width:200px;height:200px}
+.pre__draw{stroke-dasharray:1000;stroke-dashoffset:1000;animation:preDraw 2s ease forwards}
+.pre__pin-drop{opacity:0;animation:prePin .6s ease forwards}
+.pre__pulse{opacity:0;animation:prePulse 1.2s ease-out infinite}
+.pre__wordmark{position:relative;z-index:1;margin-top:24px;font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:rgba(255,255,255,.7);letter-spacing:.2em;opacity:0;animation:preFadeIn .6s ease .4s forwards}
+.pre__wordmark em{font-weight:600;color:var(--white,#fff);font-style:normal}
+.pre__counter{position:relative;z-index:1;margin-top:12px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.3em;color:rgba(201,168,76,.5);opacity:0;animation:preFadeIn .5s ease .6s forwards}
+.pre__line{position:relative;z-index:1;width:48px;height:1px;margin-top:16px;background:rgba(201,168,76,.15);overflow:hidden;opacity:0;animation:preFadeIn .4s ease .7s forwards}
+.pre__line::after{content:'';position:absolute;left:-100%;width:100%;height:100%;background:rgba(201,168,76,.6);animation:preLineSlide 1.5s ease-in-out infinite}
+#preloader.is-done{opacity:0;pointer-events:none;transition:opacity .6s ease}
+.preloading body,.preloading html{overflow:hidden}
+@keyframes preDraw{to{stroke-dashoffset:0}}
+@keyframes prePin{0%{opacity:0;transform:translateY(-20px) scale(.5)}60%{opacity:1;transform:translateY(4px) scale(1.1)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes prePulse{0%{opacity:.5;r:3}50%{opacity:.2;r:12}100%{opacity:0;r:20}}
+@keyframes preFadeIn{to{opacity:1}}
+@keyframes preLineSlide{0%{left:-100%}100%{left:100%}}
+@media(prefers-reduced-motion:reduce){.pre__draw,.pre__pin-drop,.pre__pulse,.pre__wordmark,.pre__counter,.pre__line,.pre__line::after,#preloader.is-done{animation:none!important;transition:none!important;opacity:1;stroke-dashoffset:0}}
   </style>
 </head>
 <body>
+
+<div id="preloader" aria-hidden="true">
+  <div class="pre__bg"></div>
+  <svg class="pre__map" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Straßennetz (zeichnet sich) -->
+    <path class="pre__draw" style="animation-delay:.0s;animation-duration:1.4s"
+          d="M 20,100 L 80,100 L 100,60 L 140,60 L 180,100"
+          stroke="rgba(201,168,76,.25)" stroke-width="1" stroke-linecap="round"/>
+    <path class="pre__draw" style="animation-delay:.2s;animation-duration:1.2s"
+          d="M 100,20 L 100,60 L 100,140 L 100,180"
+          stroke="rgba(201,168,76,.2)" stroke-width=".8" stroke-linecap="round"/>
+    <path class="pre__draw" style="animation-delay:.3s;animation-duration:1s"
+          d="M 40,40 L 80,80 L 80,140 L 40,180"
+          stroke="rgba(201,168,76,.15)" stroke-width=".7" stroke-linecap="round"/>
+    <path class="pre__draw" style="animation-delay:.4s;animation-duration:1s"
+          d="M 160,30 L 140,60 L 150,120 L 170,170"
+          stroke="rgba(201,168,76,.15)" stroke-width=".7" stroke-linecap="round"/>
+    <!-- Route (goldene Linie, zeichnet sich als letztes) -->
+    <path class="pre__draw" style="animation-delay:.6s;animation-duration:1.6s"
+          d="M 20,160 C 50,140 70,120 80,100 C 90,80 95,65 100,60"
+          stroke="rgba(201,168,76,.7)" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 4"/>
+    <!-- Pulsierender Kreis am Ziel -->
+    <circle class="pre__pulse" style="animation-delay:1.8s" cx="100" cy="60" r="3" fill="none" stroke="rgba(201,168,76,.4)" stroke-width=".5"/>
+    <!-- Location Pin (fällt rein) -->
+    <g class="pre__pin-drop" style="animation-delay:1.6s" transform="translate(100,60)">
+      <path d="M 0,-22 C -8,-22 -14,-16 -14,-9 C -14,0 0,14 0,14 C 0,14 14,0 14,-9 C 14,-16 8,-22 0,-22 Z"
+            fill="rgba(201,168,76,.85)" stroke="rgba(201,168,76,1)" stroke-width=".8"/>
+      <circle cx="0" cy="-9" r="4.5" fill="var(--bg,#090807)" stroke="rgba(201,168,76,.6)" stroke-width=".6"/>
+    </g>
+  </svg>
+  <div class="pre__wordmark"><em>Élysée</em> Events</div>
+  <div class="pre__counter" aria-live="off">0</div>
+  <div class="pre__line"></div>
+</div>
+<script>
+(function(){
+  var pre = document.getElementById('preloader');
+  document.documentElement.classList.add('preloading');
+  var counter = pre.querySelector('.pre__counter');
+  var n = 0;
+  var iv = setInterval(function(){ n = Math.min(n + Math.floor(Math.random()*8)+2, 100); counter.textContent = n; if(n>=100) clearInterval(iv); }, 40);
+  window.addEventListener('load', function(){
+    clearInterval(iv); counter.textContent = '100';
+    setTimeout(function(){ pre.classList.add('is-done'); document.documentElement.classList.remove('preloading'); }, 600);
+  });
+  setTimeout(function(){ pre.classList.add('is-done'); document.documentElement.classList.remove('preloading'); }, 5000);
+})();
+</script>
+
   <div class="cursor-dot"></div>
   <div class="cursor-ring"></div>
 
