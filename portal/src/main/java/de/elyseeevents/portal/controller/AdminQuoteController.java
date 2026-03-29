@@ -315,7 +315,7 @@ public class AdminQuoteController {
         quote.setStatus(status);
         quoteRepository.save(quote);
         redirectAttributes.addFlashAttribute("message", "Status geändert.");
-        return "redirect:/portal/admin/angebot/" + id;
+        return "redirect:/portal/admin/angebote";
     }
 
     @GetMapping("/angebot/{id}/pdf")

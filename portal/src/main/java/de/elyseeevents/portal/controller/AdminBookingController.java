@@ -166,6 +166,6 @@ public class AdminBookingController {
         }
         bookingService.updateStatus(id, status);
         redirectAttributes.addFlashAttribute("message", "Status erfolgreich geändert.");
-        return "redirect:/portal/admin/buchung/" + id;
+        return "redirect:/portal/admin/buchungen";
     }
 }

@@ -378,7 +378,7 @@ public class AdminInvoiceController {
         }
         invoiceRepository.save(inv);
         redirectAttributes.addFlashAttribute("message", "Status geändert.");
-        return "redirect:/portal/admin/rechnung/" + id;
+        return "redirect:/portal/admin/rechnungen";
     }
 
     @GetMapping("/rechnung/{id}/pdf")
