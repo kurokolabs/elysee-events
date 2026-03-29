@@ -3025,10 +3025,20 @@ section:not(.hero):not(:first-of-type) {
       void svg.offsetWidth; // reflow — ensures CSS base state is applied
       svg.classList.add('is-blooming');
 
-      // Open overlay immediately
-      overlay.classList.remove('is-closing');
-      overlay.classList.add('is-open');
-      setTimeout(function(){ var firstBtn = overlay.querySelector('.bk__step.is-active button, .bk__step.is-active input'); if(firstBtn) firstBtn.focus(); }, 900);
+      // Wait 2 rAFs so the GPU compositor re-renders the overlay texture
+      // with the reset state before the slide-in transition begins
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          overlay.classList.remove('is-closing');
+          overlay.classList.add('is-open');
+          setTimeout(function(){ var firstBtn = overlay.querySelector('.bk__step.is-active button, .bk__step.is-active input'); if(firstBtn) firstBtn.focus(); }, 800);
+        });
+      });
+
+      // Morph fires 1700ms after open — guard with generation
+      morphTimer = setTimeout(function(){
+        if(morphGen === myGen) morphBouquetToBar(1300);
+      }, 1700);
     }
 
     function closeOverlay() {
