@@ -370,10 +370,12 @@
         var isPast = cellDate < today;
         var bookedSlots = bookedByDay[d] || [];
         var daySlots = getSlotsForDay(dayOfWeek);
-        var allBooked = true;
-        daySlots.forEach(function(ds) {
-          if (bookedSlots.indexOf(ds.value) === -1) allBooked = false;
-        });
+        var allBooked = state.bookingType === 'KANTINE' ? false : true;
+        if (allBooked) {
+          daySlots.forEach(function(ds) {
+            if (bookedSlots.indexOf(ds.value) === -1) allBooked = false;
+          });
+        }
 
         cell.className = 'cal-day';
         if (isPast) cell.classList.add('is-past');
