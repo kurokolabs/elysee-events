@@ -129,6 +129,28 @@ public class InvoiceRepository {
         return inv;
     }
 
+    public java.util.List<java.util.Map<String, Object>> monthlyActualRevenue(int months) {
+        return jdbc.queryForList(
+                "SELECT DATE_FORMAT(d.m, '%Y-%m') AS month, COALESCE(SUM(i.total), 0) AS revenue " +
+                "FROM (SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL n MONTH), '%Y-%m-01') AS m " +
+                "FROM (SELECT 0 n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 " +
+                "UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11) nums " +
+                "WHERE n < ?) d LEFT JOIN invoices i ON DATE_FORMAT(i.created_at, '%Y-%m') = DATE_FORMAT(d.m, '%Y-%m') " +
+                "AND i.status = 'BEZAHLT' " +
+                "GROUP BY DATE_FORMAT(d.m, '%Y-%m') ORDER BY month", months);
+    }
+
+    public java.util.List<java.util.Map<String, Object>> monthlyPotentialRevenue(int months) {
+        return jdbc.queryForList(
+                "SELECT DATE_FORMAT(d.m, '%Y-%m') AS month, COALESCE(SUM(i.total), 0) AS revenue " +
+                "FROM (SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL n MONTH), '%Y-%m-01') AS m " +
+                "FROM (SELECT 0 n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 " +
+                "UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11) nums " +
+                "WHERE n < ?) d LEFT JOIN invoices i ON DATE_FORMAT(i.created_at, '%Y-%m') = DATE_FORMAT(d.m, '%Y-%m') " +
+                "AND i.status != 'STORNIERT' " +
+                "GROUP BY DATE_FORMAT(d.m, '%Y-%m') ORDER BY month", months);
+    }
+
     public synchronized String nextInvoiceNumber() {
         String year = java.time.Year.now().toString();
         String prefix = "RE-" + year + "-";

@@ -79,7 +79,7 @@
       <!-- Umsatz-Diagramm -->
       <div class="chart-card">
         <div class="chart-card__header">
-          <div class="chart-card__title">Umsatz (letzte 12 Monate)</div>
+          <div class="chart-card__title">Umsatz: Bezahlt vs. Potenziell (12 Monate)</div>
           <div class="chart-card__total" th:text="${#numbers.formatDecimal(totalBudget, 0, 'COMMA', 0, 'POINT')} + ' EUR'">0 EUR</div>
         </div>
         <div class="chart-wrap">
@@ -122,7 +122,9 @@
   <script th:inline="javascript">
     /*<![CDATA[*/
     (function() {
-      var data = /*[[${monthlyRevenue}]]*/ [];
+      var dataActual = /*[[${monthlyActualRevenue}]]*/ [];
+      var dataPotential = /*[[${monthlyPotentialRevenue}]]*/ [];
+      var data = dataPotential.length ? dataPotential : (/*[[${monthlyRevenue}]]*/ []);
       var canvas = document.getElementById('revenueChart');
       if (!canvas || !data.length) return;
 
@@ -140,18 +142,30 @@
       var cH = H - pad.top - pad.bottom;
 
       var labels = [];
-      var values = [];
+      var valActual = [];
+      var valPotential = [];
       var monthNames = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+
+      function parseData(src) {
+        var out = [];
+        for (var i = 0; i < src.length; i++) {
+          var r = src[i].revenue || src[i].REVENUE || 0;
+          out.push(typeof r === 'number' ? r : parseFloat(r));
+        }
+        return out;
+      }
 
       for (var i = 0; i < data.length; i++) {
         var m = data[i].month || data[i].MONTH;
-        var r = data[i].revenue || data[i].REVENUE || 0;
         var parts = m.split('-');
         labels.push(monthNames[parseInt(parts[1], 10) - 1] + ' ' + parts[0].slice(2));
-        values.push(typeof r === 'number' ? r : parseFloat(r));
       }
+      valActual = parseData(dataActual.length ? dataActual : data);
+      valPotential = parseData(dataPotential.length ? dataPotential : data);
+      var values = valPotential;
 
-      var maxVal = Math.max.apply(null, values);
+      var allVals = valActual.concat(valPotential);
+      var maxVal = Math.max.apply(null, allVals);
       if (maxVal === 0) maxVal = 1000;
       maxVal = Math.ceil(maxVal / 1000) * 1000;
 
@@ -177,48 +191,54 @@
         ctx.fillText(gridVal >= 1000 ? (gridVal / 1000).toFixed(0) + 'k' : gridVal.toFixed(0), pad.left - 10, gy);
       }
 
-      // Gradient fill
-      var grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + cH);
-      grad.addColorStop(0, 'rgba(201,168,76,0.18)');
-      grad.addColorStop(1, 'rgba(201,168,76,0.01)');
+      // Gradients
+      var gradPotential = ctx.createLinearGradient(0, pad.top, 0, pad.top + cH);
+      gradPotential.addColorStop(0, 'rgba(201,168,76,0.10)');
+      gradPotential.addColorStop(1, 'rgba(201,168,76,0.01)');
+      var gradActual = ctx.createLinearGradient(0, pad.top, 0, pad.top + cH);
+      gradActual.addColorStop(0, 'rgba(76,201,120,0.15)');
+      gradActual.addColorStop(1, 'rgba(76,201,120,0.01)');
 
-      ctx.beginPath();
-      ctx.moveTo(x(0), y(0));
-      for (var i = 0; i < values.length; i++) {
-        ctx.lineTo(x(i), y(values[i]));
-      }
-      ctx.lineTo(x(values.length - 1), pad.top + cH);
-      ctx.lineTo(x(0), pad.top + cH);
-      ctx.closePath();
-      ctx.fillStyle = grad;
-      ctx.fill();
-
-      // Line
-      ctx.beginPath();
-      ctx.moveTo(x(0), y(values[0]));
-      for (var i = 1; i < values.length; i++) {
-        var xc = (x(i - 1) + x(i)) / 2;
-        ctx.bezierCurveTo(xc, y(values[i - 1]), xc, y(values[i]), x(i), y(values[i]));
-      }
-      ctx.strokeStyle = '#C9A84C';
-      ctx.lineWidth = 2.5;
-      ctx.lineJoin = 'round';
-      ctx.lineCap = 'round';
-      ctx.stroke();
-
-      // Dots
-      for (var i = 0; i < values.length; i++) {
-        if (values[i] > 0) {
-          ctx.beginPath();
-          ctx.arc(x(i), y(values[i]), 4, 0, Math.PI * 2);
-          ctx.fillStyle = '#C9A84C';
-          ctx.fill();
-          ctx.beginPath();
-          ctx.arc(x(i), y(values[i]), 2, 0, Math.PI * 2);
-          ctx.fillStyle = '#FAFAF8';
-          ctx.fill();
+      function drawLine(vals, color, gradFill, lineW, dotR) {
+        // Fill
+        ctx.beginPath();
+        ctx.moveTo(x(0), y(0));
+        for (var i = 0; i < vals.length; i++) ctx.lineTo(x(i), y(vals[i]));
+        ctx.lineTo(x(vals.length - 1), pad.top + cH);
+        ctx.lineTo(x(0), pad.top + cH);
+        ctx.closePath();
+        ctx.fillStyle = gradFill;
+        ctx.fill();
+        // Bezier line
+        ctx.beginPath();
+        ctx.moveTo(x(0), y(vals[0]));
+        for (var i = 1; i < vals.length; i++) {
+          var xc = (x(i - 1) + x(i)) / 2;
+          ctx.bezierCurveTo(xc, y(vals[i - 1]), xc, y(vals[i]), x(i), y(vals[i]));
+        }
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lineW;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        // Dots
+        for (var i = 0; i < vals.length; i++) {
+          if (vals[i] > 0) {
+            ctx.beginPath();
+            ctx.arc(x(i), y(vals[i]), dotR + 1, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x(i), y(vals[i]), dotR - 1, 0, Math.PI * 2);
+            ctx.fillStyle = '#FAFAF8';
+            ctx.fill();
+          }
         }
       }
+
+      // Draw both lines (potential first = behind, actual on top)
+      drawLine(valPotential, 'rgba(201,168,76,0.5)', gradPotential, 1.5, 3);
+      drawLine(valActual, '#4CC978', gradActual, 2.5, 4);
 
       // X-axis labels
       ctx.fillStyle = '#6B6560';
@@ -226,11 +246,18 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
       for (var i = 0; i < labels.length; i++) {
-        // Show every label if <= 6 months, otherwise every 2nd
         if (labels.length <= 6 || i % 2 === 0 || i === labels.length - 1) {
           ctx.fillText(labels[i], x(i), pad.top + cH + 12);
         }
       }
+
+      // Legend
+      ctx.fillStyle = '#4CC978'; ctx.fillRect(pad.left, pad.top + cH + 30, 10, 3);
+      ctx.fillStyle = '#6B6560'; ctx.font = '9px DM Sans, sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText('Bezahlt', pad.left + 14, pad.top + cH + 34);
+      ctx.fillStyle = 'rgba(201,168,76,0.5)'; ctx.fillRect(pad.left + 70, pad.top + cH + 30, 10, 3);
+      ctx.fillStyle = '#6B6560';
+      ctx.fillText('Potenziell', pad.left + 84, pad.top + cH + 34);
 
       // Hover tooltip
       var tooltip = null;
@@ -272,23 +299,37 @@
           ctx.fillStyle = '#C9A84C';
           ctx.fill();
 
-          // Tooltip box
-          var text = labels[closest] + ': ' + values[closest].toLocaleString('de-DE') + ' EUR';
-          ctx.font = '600 11px DM Sans, sans-serif';
-          var tw = ctx.measureText(text).width + 16;
+          // Highlight actual dot
+          var tyA = y(valActual[closest]);
+          ctx.beginPath();
+          ctx.arc(tx, tyA, 6, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(76,201,120,0.2)';
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(tx, tyA, 4, 0, Math.PI * 2);
+          ctx.fillStyle = '#4CC978';
+          ctx.fill();
+
+          // Tooltip box (both values)
+          var t1 = 'Bezahlt: ' + valActual[closest].toLocaleString('de-DE') + ' EUR';
+          var t2 = 'Potenziell: ' + valPotential[closest].toLocaleString('de-DE') + ' EUR';
+          ctx.font = '600 10px DM Sans, sans-serif';
+          var tw = Math.max(ctx.measureText(t1).width, ctx.measureText(t2).width) + 20;
           var bx = Math.min(Math.max(tx - tw / 2, 0), W - tw);
-          var by = ty - 32;
-          if (by < 4) by = ty + 12;
+          var by = Math.min(ty, tyA) - 48;
+          if (by < 4) by = Math.max(ty, tyA) + 12;
 
           ctx.fillStyle = '#1A1A1A';
           ctx.beginPath();
-          if (ctx.roundRect) { ctx.roundRect(bx, by, tw, 22, 2); } else { ctx.rect(bx, by, tw, 22); }
+          if (ctx.roundRect) { ctx.roundRect(bx, by, tw, 38, 3); } else { ctx.rect(bx, by, tw, 38); }
           ctx.fill();
-          ctx.fillStyle = '#FAFAF8';
           ctx.font = '600 10px DM Sans, sans-serif';
-          ctx.textAlign = 'center';
+          ctx.textAlign = 'left';
           ctx.textBaseline = 'middle';
-          ctx.fillText(text, bx + tw / 2, by + 11);
+          ctx.fillStyle = '#4CC978';
+          ctx.fillText(t1, bx + 10, by + 12);
+          ctx.fillStyle = 'rgba(201,168,76,.7)';
+          ctx.fillText(t2, bx + 10, by + 27);
         }
       });
 
@@ -314,40 +355,8 @@
           ctx.textBaseline = 'middle';
           ctx.fillText(gridVal >= 1000 ? (gridVal / 1000).toFixed(0) + 'k' : gridVal.toFixed(0), pad.left - 10, gy);
         }
-        // Fill
-        ctx.beginPath();
-        ctx.moveTo(x(0), y(0));
-        for (var i = 0; i < values.length; i++) ctx.lineTo(x(i), y(values[i]));
-        ctx.lineTo(x(values.length - 1), pad.top + cH);
-        ctx.lineTo(x(0), pad.top + cH);
-        ctx.closePath();
-        ctx.fillStyle = grad;
-        ctx.fill();
-        // Line
-        ctx.beginPath();
-        ctx.moveTo(x(0), y(values[0]));
-        for (var i = 1; i < values.length; i++) {
-          var xc = (x(i - 1) + x(i)) / 2;
-          ctx.bezierCurveTo(xc, y(values[i - 1]), xc, y(values[i]), x(i), y(values[i]));
-        }
-        ctx.strokeStyle = '#C9A84C';
-        ctx.lineWidth = 2.5;
-        ctx.lineJoin = 'round';
-        ctx.lineCap = 'round';
-        ctx.stroke();
-        // Dots
-        for (var i = 0; i < values.length; i++) {
-          if (values[i] > 0) {
-            ctx.beginPath();
-            ctx.arc(x(i), y(values[i]), 4, 0, Math.PI * 2);
-            ctx.fillStyle = '#C9A84C';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(x(i), y(values[i]), 2, 0, Math.PI * 2);
-            ctx.fillStyle = '#FAFAF8';
-            ctx.fill();
-          }
-        }
+        drawLine(valPotential, 'rgba(201,168,76,0.5)', gradPotential, 1.5, 3);
+        drawLine(valActual, '#4CC978', gradActual, 2.5, 4);
         // X labels
         ctx.fillStyle = '#6B6560';
         ctx.font = '10px DM Sans, sans-serif';
@@ -358,6 +367,13 @@
             ctx.fillText(labels[i], x(i), pad.top + cH + 12);
           }
         }
+        // Legend
+        ctx.fillStyle = '#4CC978'; ctx.fillRect(pad.left, pad.top + cH + 30, 10, 3);
+        ctx.fillStyle = '#6B6560'; ctx.font = '9px DM Sans, sans-serif'; ctx.textAlign = 'left';
+        ctx.fillText('Bezahlt', pad.left + 14, pad.top + cH + 34);
+        ctx.fillStyle = 'rgba(201,168,76,0.5)'; ctx.fillRect(pad.left + 70, pad.top + cH + 30, 10, 3);
+        ctx.fillStyle = '#6B6560';
+        ctx.fillText('Potenziell', pad.left + 84, pad.top + cH + 34);
       }
     })();
     /*]]>*/

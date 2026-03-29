@@ -1,5 +1,6 @@
 package de.elyseeevents.portal.controller;
 
+import de.elyseeevents.portal.repository.InvoiceRepository;
 import de.elyseeevents.portal.service.BookingService;
 import de.elyseeevents.portal.service.CustomerService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,10 +16,13 @@ public class AdminController {
 
     private final BookingService bookingService;
     private final CustomerService customerService;
+    private final InvoiceRepository invoiceRepository;
 
-    public AdminController(BookingService bookingService, CustomerService customerService) {
+    public AdminController(BookingService bookingService, CustomerService customerService,
+                           InvoiceRepository invoiceRepository) {
         this.bookingService = bookingService;
         this.customerService = customerService;
+        this.invoiceRepository = invoiceRepository;
     }
 
     @GetMapping
@@ -32,6 +36,8 @@ public class AdminController {
         model.addAttribute("totalCustomers", customerService.count());
         model.addAttribute("recentBookings", bookingService.findRecent(5));
         model.addAttribute("monthlyRevenue", bookingService.monthlyRevenue(12));
+        model.addAttribute("monthlyActualRevenue", invoiceRepository.monthlyActualRevenue(12));
+        model.addAttribute("monthlyPotentialRevenue", invoiceRepository.monthlyPotentialRevenue(12));
         return "admin/dashboard";
     }
 }
