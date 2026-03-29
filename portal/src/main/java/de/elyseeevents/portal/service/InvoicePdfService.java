@@ -53,21 +53,23 @@ public class InvoicePdfService {
         doc.setMargins(50, 50, 60, 50);
 
         // ── Wasserzeichen (ÉE Monogramm) ───────────────────
-        com.itextpdf.kernel.pdf.canvas.PdfCanvas canvas = new com.itextpdf.kernel.pdf.canvas.PdfCanvas(pdf.addNewPage());
-        canvas.saveState();
-        canvas.setFillColor(new DeviceRgb(201, 168, 76));
-        com.itextpdf.kernel.pdf.extgstate.PdfExtGState gs = new com.itextpdf.kernel.pdf.extgstate.PdfExtGState();
-        gs.setFillOpacity(0.06f);
-        canvas.setExtGState(gs);
-        canvas.beginText();
-        canvas.setFontAndSize(com.itextpdf.kernel.font.PdfFontFactory.createFont(
-                com.itextpdf.io.font.constants.StandardFonts.TIMES_ROMAN), 220);
-        float pageW = PageSize.A4.getWidth();
-        float pageH = PageSize.A4.getHeight();
-        canvas.setTextMatrix(pageW / 2 - 120, pageH / 2 - 40);
-        canvas.showText("\u00C9E");
-        canvas.endText();
-        canvas.restoreState();
+        try {
+            com.itextpdf.kernel.pdf.canvas.PdfCanvas canvas = new com.itextpdf.kernel.pdf.canvas.PdfCanvas(pdf.addNewPage());
+            canvas.saveState();
+            canvas.setFillColor(new DeviceRgb(201, 168, 76));
+            com.itextpdf.kernel.pdf.extgstate.PdfExtGState gs = new com.itextpdf.kernel.pdf.extgstate.PdfExtGState();
+            gs.setFillOpacity(0.06f);
+            canvas.setExtGState(gs);
+            canvas.beginText();
+            canvas.setFontAndSize(com.itextpdf.kernel.font.PdfFontFactory.createFont(
+                    com.itextpdf.io.font.constants.StandardFonts.TIMES_ROMAN), 220);
+            float pageW = PageSize.A4.getWidth();
+            float pageH = PageSize.A4.getHeight();
+            canvas.setTextMatrix(pageW / 2 - 120, pageH / 2 - 40);
+            canvas.showText("\u00C9E");
+            canvas.endText();
+            canvas.restoreState();
+        } catch (Exception ignored) {}
 
         // ── Absender-Block oben rechts + Marke links ────────
         Table top = new Table(UnitValue.createPercentArray(new float[]{55, 45}))
