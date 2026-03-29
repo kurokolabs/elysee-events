@@ -12,6 +12,7 @@
       </div>
     </a>
     <div class="portal-nav__user">
+      <a href="/" class="portal-nav__website-link" title="Zur Website">Zur Website</a>
       <div class="portal-nav__avatar" sec:authentication="name">A</div>
       <form th:action="@{/portal/logout}" method="post" style="display:inline">
         <button type="submit" class="portal-nav__logout">Abmelden</button>
@@ -42,6 +43,7 @@
     <div class="admin-sidebar__label">Konto</div>
     <ul class="admin-sidebar__nav">
       <li><a th:href="@{/portal/passwort-aendern}">Passwort ändern</a></li>
+      <li><a href="/">Zur Website</a></li>
     </ul>
   </div>
 </aside>
@@ -65,6 +67,7 @@
       <li><a th:href="@{/portal/profil}" th:classappend="${activeNav == 'profil'} ? 'active'">Profil</a></li>
     </ul>
     <div class="portal-nav__user">
+      <a href="/" class="portal-nav__website-link" title="Zur Website">Zur Website</a>
       <div class="portal-nav__avatar" sec:authentication="name">U</div>
       <form th:action="@{/portal/logout}" method="post" style="display:inline">
         <button type="submit" class="portal-nav__logout">Abmelden</button>
@@ -82,6 +85,7 @@
   <a th:href="@{/portal/angebote}" th:classappend="${activeNav == 'angebote'} ? 'active'">Angebote</a>
   <a th:href="@{/portal/dokumente}" th:classappend="${activeNav == 'dokumente'} ? 'active'">Dokumente</a>
   <a th:href="@{/portal/profil}" th:classappend="${activeNav == 'profil'} ? 'active'">Profil</a>
+  <a href="/" style="color:var(--gold);">Zur Website</a>
 </div>
 </body>
 </html>
