@@ -109,51 +109,9 @@
         grid-template-columns: repeat(4, 1fr);
       }
     }
-    /* ── Preloader ── */
-    #preloader{position:fixed;inset:0;z-index:9999;background:#0a0804;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:all}
-    #preloader .pre__bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 48%,rgba(201,168,76,.07) 0%,transparent 60%);pointer-events:none}
-    .pre__monogram{position:relative;z-index:1;width:80px;height:80px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(201,168,76,.3);border-radius:14px;margin-bottom:20px;opacity:0;animation:preScaleIn .6s cubic-bezier(.34,1.56,.64,1) .2s both}
-    .pre__monogram span{font-family:'Cormorant Garamond',Georgia,serif;font-size:28px;font-weight:600;font-style:italic;color:#C9A84C;letter-spacing:2px}
-    .pre__wordmark{font-family:'Cormorant Garamond',serif;font-size:clamp(1.4rem,3.8vw,2rem);font-weight:300;letter-spacing:.28em;color:rgba(255,255,255,.92);text-transform:uppercase;opacity:0;animation:preFadeIn .7s ease both .6s;position:relative;z-index:1;margin-bottom:6px}
-    .pre__wordmark em{font-style:italic;color:#C9A84C}
-    .pre__sub{font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(201,168,76,.4);opacity:0;animation:preFadeIn .5s ease both .9s;position:relative;z-index:1;margin-bottom:16px}
-    .pre__counter{font-size:10px;letter-spacing:.22em;font-weight:400;color:rgba(201,168,76,.55);font-family:'DM Sans',sans-serif;position:relative;z-index:1;opacity:0;animation:preFadeIn .4s ease both 1s}
-    .pre__counter::after{content:'%';opacity:.7;font-size:8px;margin-left:1px}
-    .pre__line{position:absolute;bottom:0;left:0;height:1px;background:#C9A84C;width:0;transition:width 2.4s cubic-bezier(.77,0,.18,1);opacity:.5}
-    .pre__line.running{width:100%}
-    #preloader.is-done{transition:transform .8s cubic-bezier(.77,0,.18,1) .1s;transform:translateY(-100%)}
-    .preloading body,html.preloading{overflow:hidden}
-    @keyframes preScaleIn{0%{opacity:0;transform:scale(.7)}100%{opacity:1;transform:scale(1)}}
-    @keyframes preFadeIn{to{opacity:1}}
-    @media(prefers-reduced-motion:reduce){#preloader.is-done,.pre__monogram,.pre__wordmark,.pre__sub,.pre__counter,.pre__line{animation:none!important;transition:none!important;opacity:1;transform:none;width:100%}}
   </style>
 </head>
 <body>
-
-<div id="preloader" aria-hidden="true">
-  <div class="pre__bg"></div>
-  <div class="pre__monogram"><span>&#201;E</span></div>
-  <div class="pre__wordmark"><em>&#201;lys&#233;e</em> Events</div>
-  <div class="pre__sub">Kundenportal</div>
-  <div class="pre__counter" id="preCounter">0</div>
-  <div class="pre__line" id="preLine"></div>
-</div>
-<script>
-(function(){
-  var pre=document.getElementById('preloader');
-  document.documentElement.classList.add('preloading');
-  var counter=document.getElementById('preCounter');
-  var line=document.getElementById('preLine');
-  requestAnimationFrame(function(){line.classList.add('running')});
-  var n=0;
-  var iv=setInterval(function(){n=Math.min(n+Math.floor(Math.random()*4)+1,100);counter.textContent=n;if(n>=100)clearInterval(iv)},50);
-  window.addEventListener('load',function(){
-    clearInterval(iv);counter.textContent='100';
-    setTimeout(function(){pre.classList.add('is-done');document.documentElement.classList.remove('preloading')},1800);
-  });
-  setTimeout(function(){pre.classList.add('is-done');document.documentElement.classList.remove('preloading')},5000);
-})();
-</script>
 
   <div th:replace="~{fragments/admin-nav :: customer-topnav}"></div>
   <main class="portal-main">
