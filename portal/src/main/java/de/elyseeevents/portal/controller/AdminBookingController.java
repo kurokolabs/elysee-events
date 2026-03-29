@@ -19,10 +19,13 @@ public class AdminBookingController {
 
     private final BookingService bookingService;
     private final CustomerService customerService;
+    private final de.elyseeevents.portal.service.EmailService emailService;
 
-    public AdminBookingController(BookingService bookingService, CustomerService customerService) {
+    public AdminBookingController(BookingService bookingService, CustomerService customerService,
+                                  de.elyseeevents.portal.service.EmailService emailService) {
         this.bookingService = bookingService;
         this.customerService = customerService;
+        this.emailService = emailService;
     }
 
     @GetMapping("/buchungen")
@@ -165,6 +168,43 @@ public class AdminBookingController {
             return "redirect:/portal/admin/buchung/" + id;
         }
         bookingService.updateStatus(id, status);
+
+        // Email bei relevanten Status-Änderungen
+        try {
+            var booking = bookingService.findById(id).orElse(null);
+            if (booking != null && booking.getCustomerId() != null) {
+                var customer = customerService.findById(booking.getCustomerId()).orElse(null);
+                if (customer != null && customer.getEmail() != null && !customer.getEmail().isBlank()) {
+                    String subject = null;
+                    String statusColor = "#C9A84C";
+                    String statusLabel = status;
+                    if ("BESTAETIGT".equals(status)) {
+                        subject = "Ihre Buchung #" + id + " wurde bestätigt";
+                        statusColor = "#2E7D32"; statusLabel = "Bestätigt";
+                    } else if ("STORNIERT".equals(status)) {
+                        subject = "Ihre Buchung #" + id + " wurde storniert";
+                        statusColor = "#C62828"; statusLabel = "Storniert";
+                    } else if ("ABGESCHLOSSEN".equals(status)) {
+                        subject = "Ihre Buchung #" + id + " ist abgeschlossen";
+                        statusColor = "#6B6560"; statusLabel = "Abgeschlossen";
+                    }
+                    if (subject != null) {
+                        emailService.sendHtmlEmail(customer.getEmail(), "Élysée Events - " + subject,
+                            "email/booking-status-update",
+                            java.util.Map.of("bookingId", String.valueOf(id), "statusLabel", statusLabel,
+                                "statusColor", statusColor,
+                                "bookingType", booking.getBookingType() != null ? booking.getBookingType() : "-",
+                                "eventDate", booking.getEventDate() != null ? booking.getEventDate() : "-",
+                                "timeSlot", booking.getEventTimeSlot() != null ? booking.getEventTimeSlot() : "-",
+                                "guestCount", booking.getGuestCount() != null ? String.valueOf(booking.getGuestCount()) : "-",
+                                "portalUrl", "https://www.elysee-events.de/portal/dashboard"));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            org.slf4j.LoggerFactory.getLogger(getClass()).error("Buchungs-Status-Email Fehler: {}", e.getMessage());
+        }
+
         redirectAttributes.addFlashAttribute("message", "Status erfolgreich geändert.");
         return "redirect:/portal/admin/buchungen";
     }

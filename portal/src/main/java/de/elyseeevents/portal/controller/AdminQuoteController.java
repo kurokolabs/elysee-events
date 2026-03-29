@@ -31,6 +31,7 @@ public class AdminQuoteController {
     private final BookingService bookingService;
     private final CustomerService customerService;
     private final QuotePdfService pdfService;
+    private final de.elyseeevents.portal.service.EmailService emailService;
 
     @org.springframework.beans.factory.annotation.Value("${app.company.name}") private String companyName;
     @org.springframework.beans.factory.annotation.Value("${app.company.street}") private String companyStreet;
@@ -45,12 +46,13 @@ public class AdminQuoteController {
 
     public AdminQuoteController(QuoteRepository quoteRepository, QuoteItemRepository itemRepository,
                                 BookingService bookingService, CustomerService customerService,
-                                QuotePdfService pdfService) {
+                                QuotePdfService pdfService, de.elyseeevents.portal.service.EmailService emailService) {
         this.quoteRepository = quoteRepository;
         this.itemRepository = itemRepository;
         this.bookingService = bookingService;
         this.customerService = customerService;
         this.pdfService = pdfService;
+        this.emailService = emailService;
     }
 
     // Steuerberechnung: Eingegebene Preise sind BRUTTO, USt wird herausgerechnet
@@ -312,8 +314,41 @@ public class AdminQuoteController {
             redirectAttributes.addFlashAttribute("error", "Ungültiger Status.");
             return "redirect:/portal/admin/angebot/" + id;
         }
+        String oldStatus = quote.getStatus();
         quote.setStatus(status);
         quoteRepository.save(quote);
+
+        // Email bei relevanten Status-Änderungen
+        if (!status.equals(oldStatus)) {
+            try {
+                de.elyseeevents.portal.model.Customer customer = quote.getCustomerId() != null ? customerService.findById(quote.getCustomerId()).orElse(null) : null;
+                String email = customer != null && customer.getEmail() != null ? customer.getEmail() : quote.getRecipientEmail();
+                String name = customer != null ? customer.getFullName() : quote.getRecipientName();
+                if (email != null && !email.isBlank()) {
+                    String subject = null;
+                    if ("ANGENOMMEN".equals(status)) {
+                        subject = "Ihr Angebot " + quote.getQuoteNumber() + " wurde bestätigt";
+                    } else if ("ABGELEHNT".equals(status)) {
+                        subject = "Angebot " + quote.getQuoteNumber() + " - Rückmeldung";
+                    }
+                    if (subject != null) {
+                        String statusText = "ANGENOMMEN".equals(status) ? "angenommen" : "leider abgelehnt";
+                        emailService.sendHtmlEmail(email, "Élysée Events - " + subject, "email/invoice-notification",
+                            java.util.Map.of("customerName", name != null ? name : "",
+                                "invoiceNumber", quote.getQuoteNumber(),
+                                "netAmount", String.format("%,.2f EUR", quote.getAmount()),
+                                "taxRate", "7/19",
+                                "taxAmount", String.format("%,.2f EUR", quote.getTaxAmount()),
+                                "totalAmount", String.format("%,.2f EUR", quote.getTotal()),
+                                "dueDate", "Status: " + statusText,
+                                "portalUrl", "https://www.elysee-events.de/portal/dashboard"));
+                    }
+                }
+            } catch (Exception e) {
+                org.slf4j.LoggerFactory.getLogger(getClass()).error("Status-Email konnte nicht gesendet werden: {}", e.getMessage());
+            }
+        }
+
         redirectAttributes.addFlashAttribute("message", "Status geändert.");
         return "redirect:/portal/admin/angebote";
     }

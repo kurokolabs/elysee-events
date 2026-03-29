@@ -372,11 +372,44 @@ public class AdminInvoiceController {
             return "redirect:/portal/admin/rechnung/" + id;
         }
 
+        String oldStatus = inv.getStatus();
         inv.setStatus(status);
         if ("BEZAHLT".equals(status)) {
             inv.setPaidDate(java.time.LocalDate.now().toString());
         }
         invoiceRepository.save(inv);
+
+        // Email-Benachrichtigung bei relevanten Status-Änderungen
+        if (!status.equals(oldStatus)) {
+            try {
+                Customer customer = inv.getCustomerId() != null ? customerService.findById(inv.getCustomerId()).orElse(null) : null;
+                String email = customer != null && customer.getEmail() != null ? customer.getEmail() : inv.getRecipientEmail();
+                String name = customer != null ? customer.getFullName() : inv.getRecipientName();
+                if (email != null && !email.isBlank()) {
+                    String subject = null;
+                    String body = null;
+                    if ("BEZAHLT".equals(status)) {
+                        subject = "Zahlungseingang bestätigt - " + inv.getInvoiceNumber();
+                        body = "Ihre Zahlung für Rechnung " + inv.getInvoiceNumber() + " ist eingegangen. Vielen Dank.";
+                    } else if ("MAHNUNG".equals(status)) {
+                        subject = "Zahlungserinnerung - " + inv.getInvoiceNumber();
+                        body = "Die Rechnung " + inv.getInvoiceNumber() + " über " + String.format("%,.2f EUR", inv.getTotal()) + " ist noch offen. Bitte überweisen Sie den Betrag zeitnah.";
+                    }
+                    if (subject != null) {
+                        emailService.sendHtmlEmail(email, "Élysée Events - " + subject, "email/invoice-notification",
+                            java.util.Map.of("customerName", name != null ? name : "", "invoiceNumber", inv.getInvoiceNumber(),
+                                "netAmount", String.format("%,.2f EUR", inv.getAmount()), "taxRate", "7/19",
+                                "taxAmount", String.format("%,.2f EUR", inv.getTaxAmount()),
+                                "totalAmount", String.format("%,.2f EUR", inv.getTotal()),
+                                "dueDate", inv.getDueDate() != null ? inv.getDueDate() : "",
+                                "portalUrl", "https://www.elysee-events.de/portal/dashboard"));
+                    }
+                }
+            } catch (Exception e) {
+                org.slf4j.LoggerFactory.getLogger(getClass()).error("Status-Email konnte nicht gesendet werden: {}", e.getMessage());
+            }
+        }
+
         redirectAttributes.addFlashAttribute("message", "Status geändert.");
         return "redirect:/portal/admin/rechnungen";
     }
