@@ -35,7 +35,7 @@ class AuthControllerTest {
     @WithMockUser(username = "admin@test.de", roles = "ADMIN")
     void passwordChangeRejectsShortPassword() throws Exception {
         mockMvc.perform(post("/portal/passwort-aendern")
-                        .param("currentPassword", "TestAdmin2024!")
+                        .param("currentPassword", "Test-0nly-N0t-Pr0d!")
                         .param("newPassword", "short")
                         .param("confirmPassword", "short")
                         .with(csrf()))
@@ -47,7 +47,7 @@ class AuthControllerTest {
     @WithMockUser(username = "admin@test.de", roles = "ADMIN")
     void passwordChangeRejectsMismatch() throws Exception {
         mockMvc.perform(post("/portal/passwort-aendern")
-                        .param("currentPassword", "TestAdmin2024!")
+                        .param("currentPassword", "Test-0nly-N0t-Pr0d!")
                         .param("newPassword", "NewValidPassword1!")
                         .param("confirmPassword", "DifferentPassword1!")
                         .with(csrf()))

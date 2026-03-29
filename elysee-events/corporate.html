@@ -985,71 +985,19 @@
     }
 
     /* ─── Footer ────────────────────────────────────────────────────────────── */
-    .footer {
-      background: var(--dark);
-      padding: 72px 48px 40px;
-    }
-    .footer__inner {
-      max-width: 1200px; margin: 0 auto;
-    }
-    .footer__top {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr 1fr;
-      gap: 64px;
-      padding-bottom: 56px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      margin-bottom: 36px;
-    }
-    .footer__logo-wrap { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-    .footer__monogram {
-      width: 40px; height: 40px;
-      border: 1.5px solid rgba(201,168,76,.5);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 13px; font-weight: 600;
-      color: rgba(201,168,76,.8);
-    }
-    .footer__brand {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 17px; font-weight: 500;
-      letter-spacing: .14em; text-transform: uppercase;
-      color: rgba(255,255,255,.6);
-    }
-    .footer__tagline {
-      font-size: 13px; font-weight: 300;
-      color: rgba(255,255,255,.32); line-height: 1.75;
-      letter-spacing: .02em;
-    }
-    .footer__col-title {
-      font-size: 9px; font-weight: 600;
-      letter-spacing: .3em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 20px;
-    }
-    .footer__col-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-    .footer__col-links li a {
-      font-size: 13px; font-weight: 300;
-      color: rgba(255,255,255,.45);
-      letter-spacing: .03em;
-      transition: color .2s ease;
-    }
-    .footer__col-links li a:hover { color: rgba(255,255,255,.8); }
-
-    .footer__bottom {
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 16px;
-    }
-    .footer__copy {
-      font-size: 12px; font-weight: 300;
-      color: rgba(255,255,255,.25); letter-spacing: .04em;
-    }
-    .footer__legal { display: flex; gap: 24px; }
-    .footer__legal a {
-      font-size: 12px; font-weight: 300;
-      color: rgba(255,255,255,.3);
-      transition: color .2s ease;
-    }
-    .footer__legal a:hover { color: rgba(255,255,255,.65); }
+    .footer { background: var(--dark); padding: 88px 48px 44px; border-top: 1px solid rgba(255,255,255,.06); }
+    .footer__grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 56px; padding-bottom: 64px; border-bottom: 1px solid rgba(255,255,255,.08); margin-bottom: 40px; }
+    .footer__brand { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; letter-spacing: .14em; color: var(--white); text-transform: uppercase; margin-bottom: 16px; }
+    .footer__desc { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.45); line-height: 1.8; max-width: 320px; margin-bottom: 28px; }
+    .footer__address { font-size: 13px; font-weight: 300; color: rgba(255,255,255,.3); letter-spacing: .03em; }
+    .footer__col-title { font-size: 10px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 22px; }
+    .footer__links { display: flex; flex-direction: column; gap: 12px; }
+    .footer__links a { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.5); transition: color .2s ease; overflow-wrap: break-word; word-break: break-word; }
+    .footer__links a:hover { color: var(--gold); }
+    .footer__bottom { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 300; color: rgba(255,255,255,.25); letter-spacing: .04em; }
+    .footer__bottom a { color: rgba(255,255,255,.35); transition: color .2s ease; }
+    .footer__bottom a:hover { color: var(--gold); }
+    .footer__gold-bar { height: 2px; background: linear-gradient(90deg, var(--gold) 0%, transparent 100%); margin-bottom: 0; width: 72px; margin-top: 4px; }
 
     /* ─── Responsive ────────────────────────────────────────────────────────── */
     @media (max-width: 768px) {
@@ -1072,8 +1020,22 @@
       .process__steps::before { display: none; }
       .process__step { padding: 0; }
 
-      .footer__top { grid-template-columns: 1fr 1fr; gap: 28px; }
-      .footer { padding: 60px 24px 32px; }
+      /* Footer mobile */
+      .footer { padding: 56px 24px 28px; }
+      .footer__grid { grid-template-columns: 1fr 1fr; gap: 0; padding-bottom: 32px; margin-bottom: 24px; text-align: center; }
+      .footer__grid > div:first-child { grid-column: 1 / -1; text-align: center; padding-bottom: 28px; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,.08); }
+      .footer__grid > div:first-child .footer__gold-bar { margin: 0 auto; }
+      .footer__grid > div:first-child .footer__desc { max-width: 280px; margin: 0 auto 16px; font-size: 13px; }
+      .footer__grid > div:first-child .footer__address { font-size: 12px; }
+      .footer__grid > div:nth-child(2), .footer__grid > div:nth-child(3) { text-align: center; padding-top: 4px; }
+      .footer__col-title { margin-bottom: 14px !important; font-size: 9px !important; letter-spacing: .2em !important; }
+      .footer__links { align-items: center; gap: 10px !important; }
+      .footer__links a { font-size: 13px !important; }
+      .footer__contact { grid-column: 1 / -1; margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.08); text-align: center; }
+      .footer__contact .footer__links { flex-direction: row !important; justify-content: center; flex-wrap: wrap; gap: 0 !important; }
+      .footer__contact .footer__links a { color: var(--gold) !important; font-size: 12px !important; padding: 8px 16px; border: 1px solid rgba(201,168,76,.25); border-radius: 2px; letter-spacing: .02em; transition: background .3s ease, color .3s ease; }
+      .footer__bottom { flex-direction: column; gap: 8px; text-align: center; font-size: 10px; }
+      .footer__bottom span:last-child { display: none; }
 
       .referenzen__logos { gap: 32px; }
     }
@@ -1082,9 +1044,6 @@
       .hero__title { font-size: 44px; }
       .section-heading { font-size: 30px; }
       .kapazitaeten__grid { grid-template-columns: 1fr; }
-      .footer__top { grid-template-columns: 1fr; gap: 24px; }
-      .footer { padding: 48px 20px 24px; }
-      .footer__bottom { flex-direction: column; align-items: flex-start; }
       .cap-card__num { font-size: 52px; }
       .process__step { padding: 0; }
     }
@@ -1673,10 +1632,6 @@ section:not(.hero):not(:first-of-type) {
   .mobile-cta { display: block; }
 }
 
-/* Social links */
-.footer__social { display: flex; gap: 16px; margin-top: 12px; justify-content: center; }
-.footer__social a { color: rgba(255,255,255,.45); transition: color .3s ease; }
-.footer__social a:hover { color: var(--gold, #C9A84C); }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -2253,61 +2208,47 @@ section:not(.hero):not(:first-of-type) {
   </section>
 
   <!-- ─── Footer ───────────────────────────────────────────────────────────── -->
-  <footer class="footer" role="contentinfo">
-    <div class="footer__inner">
-      <div class="footer__top">
-        <div>
-          <div class="footer__logo-wrap">
-            <div class="footer__monogram" aria-hidden="true">ÉE</div>
-            <span class="footer__brand">Élysée Events</span>
-          </div>
-          <p class="footer__tagline">
-            Wo gutes Essen auf unvergessliche Momente trifft. Augsburg.
-          </p>
-        </div>
-
-        <div>
-          <p class="footer__col-title">Angebote</p>
-          <ul class="footer__col-links" role="list">
-            <li><a href="/eventlocation">Eventlocation</a></li>
-            <li><a href="/kantine">Die Kantine</a></li>
-            <li><a href="/hochzeit">Hochzeiten</a></li>
-            <li><a href="/corporate" aria-current="page">Corporate Events</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <p class="footer__col-title">Navigation</p>
-          <ul class="footer__col-links" role="list">
-            <li><a href="/">Startseite</a></li>
-            <li><a href="javascript:void(0)" data-anfrage-open>Anfrage stellen</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <p class="footer__col-title">Rechtliches</p>
-          <ul class="footer__col-links" role="list">
-            <li><a href="/impressum">Impressum</a></li>
-            <li><a href="/datenschutz">Datenschutz</a></li>
-            <li><a href="/agb">AGB</a></li>
-          </ul>
-          <br>
-          <p class="footer__col-title">Kontakt</p>
-          <ul class="footer__col-links" role="list">
-            <li><a href="mailto:verwaltung@elysee-events.de">verwaltung@elysee-events.de</a></li>
-            <li><a href="tel:+4917630472811">+49 176 30472811</a></li>
-          </ul>
-        </div>
+  <footer class="footer">
+    <div class="footer__grid">
+      <div>
+        <p class="footer__brand">Élysée Events</p>
+        <div class="footer__gold-bar"></div>
+        <br>
+        <p class="footer__desc">Mittagskantine, Hochzeits-Location und Corporate Events — vereint an einem eleganten Ort im Herzen von Augsburg.</p>
+        <p class="footer__address">Werner-von-Siemensstr. 6 · 86159 Augsburg</p>
       </div>
-
-      <div class="footer__bottom">
-        <p class="footer__copy">&copy; 2026 Élysée Events. Alle Rechte vorbehalten.</p>
-        <nav class="footer__legal" aria-label="Rechtliche Links">
+      <div>
+        <p class="footer__col-title">Navigation</p>
+        <nav class="footer__links">
+          <a href="/eventlocation">Eventlocation</a>
+          <a href="/kantine">Die Kantine</a>
+          <a href="/hochzeit">Hochzeiten</a>
+          <a href="/corporate">Corporate Events</a>
+        </nav>
+      </div>
+      <div>
+        <p class="footer__col-title">Rechtliches</p>
+        <nav class="footer__links">
           <a href="/impressum">Impressum</a>
           <a href="/datenschutz">Datenschutz</a>
           <a href="/agb">AGB</a>
         </nav>
       </div>
+      <div class="footer__contact">
+        <p class="footer__col-title">Kontakt</p>
+        <nav class="footer__links">
+          <a href="mailto:verwaltung@elysee-events.de">verwaltung@elysee-events.de</a>
+          <a href="tel:+4917630472811">+49 176 30472811</a>
+        </nav>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>&copy; 2026 Élysée Events. Alle Rechte vorbehalten.</span>
+      <span>
+        <a href="/impressum">Impressum</a> &nbsp;&middot;&nbsp;
+        <a href="/datenschutz">Datenschutz</a> &nbsp;&middot;&nbsp;
+        <a href="/agb">AGB</a>
+      </span>
     </div>
   </footer>
 

@@ -33,7 +33,7 @@ public class TwoFactorService {
     private final String hmacSecret;
 
     public TwoFactorService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                            @org.springframework.beans.factory.annotation.Value("${app.2fa.hmac-secret:${random.uuid}}") String hmacSecret) {
+                            @org.springframework.beans.factory.annotation.Value("${app.2fa.hmac-secret}") String hmacSecret) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.hmacSecret = hmacSecret;
