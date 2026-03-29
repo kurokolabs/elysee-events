@@ -152,58 +152,115 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
 
 /* ── Preloader ─────────────────────────── */
 #preloader{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:all}
-#preloader .pre__bg{position:absolute;inset:0;background:var(--bg,#090807)}
-.pre__map{position:relative;z-index:1;width:200px;height:200px}
-.pre__draw{stroke-dasharray:1000;stroke-dashoffset:1000;animation:preDraw 2s ease forwards}
-.pre__pin-drop{opacity:0;animation:prePin .6s ease forwards}
-.pre__pulse{opacity:0;animation:prePulse 1.2s ease-out infinite}
-.pre__wordmark{position:relative;z-index:1;margin-top:24px;font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:rgba(255,255,255,.7);letter-spacing:.2em;opacity:0;animation:preFadeIn .6s ease .4s forwards}
-.pre__wordmark em{font-weight:600;color:var(--white,#fff);font-style:normal}
-.pre__counter{position:relative;z-index:1;margin-top:12px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.3em;color:rgba(201,168,76,.5);opacity:0;animation:preFadeIn .5s ease .6s forwards}
-.pre__line{position:relative;z-index:1;width:48px;height:1px;margin-top:16px;background:rgba(201,168,76,.15);overflow:hidden;opacity:0;animation:preFadeIn .4s ease .7s forwards}
-.pre__line::after{content:'';position:absolute;left:-100%;width:100%;height:100%;background:rgba(201,168,76,.6);animation:preLineSlide 1.5s ease-in-out infinite}
-#preloader.is-done{opacity:0;pointer-events:none;transition:opacity .6s ease}
+#preloader .pre__bg{position:absolute;inset:0;background:#0c0f0a}
+.pre__map-wrap{position:relative;z-index:1;width:320px;height:320px;animation:preZoom 4s cubic-bezier(.25,.1,.25,1) forwards}
+.pre__map{width:100%;height:100%}
+/* Terrain-Blöcke */
+.pre__block{opacity:0;animation:preBlockIn .8s ease forwards}
+/* Straßen */
+.pre__road{stroke-dasharray:800;stroke-dashoffset:800;animation:preRoadDraw 3s cubic-bezier(.4,0,.2,1) forwards}
+/* Route */
+.pre__route{stroke-dasharray:600;stroke-dashoffset:600;animation:preRouteDraw 2.5s cubic-bezier(.4,0,.2,1) forwards}
+.pre__route-glow{stroke-dasharray:600;stroke-dashoffset:600;animation:preRouteDraw 2.5s cubic-bezier(.4,0,.2,1) forwards;filter:blur(4px)}
+/* Pin */
+.pre__pin{opacity:0;animation:prePin 1s cubic-bezier(.34,1.56,.64,1) forwards}
+.pre__pulse-ring{opacity:0;animation:prePulse 2s ease-out infinite}
+/* Labels */
+.pre__label{opacity:0;animation:preLabelIn .6s ease forwards}
+/* Bottom UI */
+.pre__wordmark{position:relative;z-index:1;margin-top:32px;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:rgba(255,255,255,.7);letter-spacing:.22em;opacity:0;animation:preFadeIn .8s ease .5s forwards}
+.pre__wordmark em{font-weight:600;color:#fff;font-style:normal}
+.pre__subtitle{position:relative;z-index:1;margin-top:8px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,168,76,.45);opacity:0;animation:preFadeIn .6s ease .8s forwards}
+.pre__counter{position:relative;z-index:1;margin-top:16px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.3em;color:rgba(201,168,76,.5);opacity:0;animation:preFadeIn .5s ease 1s forwards}
+.pre__line{position:relative;z-index:1;width:60px;height:1px;margin-top:12px;background:rgba(201,168,76,.12);overflow:hidden;opacity:0;animation:preFadeIn .4s ease 1s forwards}
+.pre__line::after{content:'';position:absolute;left:-100%;width:100%;height:100%;background:rgba(201,168,76,.5);animation:preLineSlide 2s ease-in-out infinite}
+#preloader.is-done{opacity:0;pointer-events:none;transition:opacity .8s cubic-bezier(.4,0,.2,1)}
 .preloading body,.preloading html{overflow:hidden}
-@keyframes preDraw{to{stroke-dashoffset:0}}
-@keyframes prePin{0%{opacity:0;transform:translateY(-20px) scale(.5)}60%{opacity:1;transform:translateY(4px) scale(1.1)}100%{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes prePulse{0%{opacity:.5;r:3}50%{opacity:.2;r:12}100%{opacity:0;r:20}}
+@keyframes preZoom{0%{transform:scale(.85);opacity:0}15%{opacity:1}100%{transform:scale(1)}}
+@keyframes preBlockIn{to{opacity:1}}
+@keyframes preRoadDraw{to{stroke-dashoffset:0}}
+@keyframes preRouteDraw{to{stroke-dashoffset:0}}
+@keyframes prePin{0%{opacity:0;transform:translateY(-30px) scale(.3)}50%{opacity:1;transform:translateY(6px) scale(1.15)}70%{transform:translateY(-2px) scale(.95)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes prePulse{0%{opacity:.6;transform:scale(1)}100%{opacity:0;transform:scale(4)}}
+@keyframes preLabelIn{to{opacity:1}}
 @keyframes preFadeIn{to{opacity:1}}
 @keyframes preLineSlide{0%{left:-100%}100%{left:100%}}
-@media(prefers-reduced-motion:reduce){.pre__draw,.pre__pin-drop,.pre__pulse,.pre__wordmark,.pre__counter,.pre__line,.pre__line::after,#preloader.is-done{animation:none!important;transition:none!important;opacity:1;stroke-dashoffset:0}}
+@media(max-width:480px){.pre__map-wrap{width:260px;height:260px}}
+@media(prefers-reduced-motion:reduce){.pre__map-wrap,.pre__block,.pre__road,.pre__route,.pre__route-glow,.pre__pin,.pre__pulse-ring,.pre__label,.pre__wordmark,.pre__subtitle,.pre__counter,.pre__line,.pre__line::after,#preloader.is-done{animation:none!important;transition:none!important;opacity:1;stroke-dashoffset:0;transform:none}}
   </style>
 </head>
 <body>
 
 <div id="preloader" aria-hidden="true">
   <div class="pre__bg"></div>
-  <svg class="pre__map" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Straßennetz (zeichnet sich) -->
-    <path class="pre__draw" style="animation-delay:.0s;animation-duration:1.4s"
-          d="M 20,100 L 80,100 L 100,60 L 140,60 L 180,100"
-          stroke="rgba(201,168,76,.25)" stroke-width="1" stroke-linecap="round"/>
-    <path class="pre__draw" style="animation-delay:.2s;animation-duration:1.2s"
-          d="M 100,20 L 100,60 L 100,140 L 100,180"
-          stroke="rgba(201,168,76,.2)" stroke-width=".8" stroke-linecap="round"/>
-    <path class="pre__draw" style="animation-delay:.3s;animation-duration:1s"
-          d="M 40,40 L 80,80 L 80,140 L 40,180"
-          stroke="rgba(201,168,76,.15)" stroke-width=".7" stroke-linecap="round"/>
-    <path class="pre__draw" style="animation-delay:.4s;animation-duration:1s"
-          d="M 160,30 L 140,60 L 150,120 L 170,170"
-          stroke="rgba(201,168,76,.15)" stroke-width=".7" stroke-linecap="round"/>
-    <!-- Route (goldene Linie, zeichnet sich als letztes) -->
-    <path class="pre__draw" style="animation-delay:.6s;animation-duration:1.6s"
-          d="M 20,160 C 50,140 70,120 80,100 C 90,80 95,65 100,60"
-          stroke="rgba(201,168,76,.7)" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 4"/>
-    <!-- Pulsierender Kreis am Ziel -->
-    <circle class="pre__pulse" style="animation-delay:1.8s" cx="100" cy="60" r="3" fill="none" stroke="rgba(201,168,76,.4)" stroke-width=".5"/>
-    <!-- Location Pin (fällt rein) -->
-    <g class="pre__pin-drop" style="animation-delay:1.6s" transform="translate(100,60)">
-      <path d="M 0,-22 C -8,-22 -14,-16 -14,-9 C -14,0 0,14 0,14 C 0,14 14,0 14,-9 C 14,-16 8,-22 0,-22 Z"
-            fill="rgba(201,168,76,.85)" stroke="rgba(201,168,76,1)" stroke-width=".8"/>
-      <circle cx="0" cy="-9" r="4.5" fill="var(--bg,#090807)" stroke="rgba(201,168,76,.6)" stroke-width=".6"/>
-    </g>
-  </svg>
+  <div class="pre__map-wrap">
+    <svg class="pre__map" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Terrain / Gebäudeblöcke (Apple Maps Stil) -->
+      <rect class="pre__block" style="animation-delay:.2s" x="30" y="40" width="60" height="45" rx="3" fill="rgba(201,168,76,.04)" stroke="rgba(201,168,76,.08)" stroke-width=".5"/>
+      <rect class="pre__block" style="animation-delay:.35s" x="30" y="100" width="55" height="70" rx="3" fill="rgba(201,168,76,.05)" stroke="rgba(201,168,76,.1)" stroke-width=".5"/>
+      <rect class="pre__block" style="animation-delay:.3s" x="120" y="30" width="80" height="50" rx="3" fill="rgba(201,168,76,.04)" stroke="rgba(201,168,76,.08)" stroke-width=".5"/>
+      <rect class="pre__block" style="animation-delay:.5s" x="215" y="45" width="65" height="60" rx="3" fill="rgba(201,168,76,.04)" stroke="rgba(201,168,76,.07)" stroke-width=".5"/>
+      <rect class="pre__block" style="animation-delay:.45s" x="120" y="110" width="45" height="55" rx="3" fill="rgba(201,168,76,.06)" stroke="rgba(201,168,76,.12)" stroke-width=".5"/>
+      <rect class="pre__block" style="animation-delay:.55s" x="200" y="130" width="70" height="40" rx="3" fill="rgba(201,168,76,.04)" stroke="rgba(201,168,76,.08)" stroke-width=".5"/>
+      <rect class="pre__block" style="animation-delay:.6s" x="40" y="200" width="70" height="50" rx="3" fill="rgba(201,168,76,.04)" stroke="rgba(201,168,76,.07)" stroke-width=".5"/>
+      <rect class="pre__block" style="animation-delay:.65s" x="140" y="195" width="55" height="65" rx="3" fill="rgba(201,168,76,.05)" stroke="rgba(201,168,76,.09)" stroke-width=".5"/>
+      <rect class="pre__block" style="animation-delay:.7s" x="225" y="200" width="55" height="55" rx="3" fill="rgba(201,168,76,.04)" stroke="rgba(201,168,76,.07)" stroke-width=".5"/>
+      <!-- Grünfläche -->
+      <ellipse class="pre__block" style="animation-delay:.8s" cx="260" cy="290" rx="30" ry="18" fill="rgba(140,180,90,.06)" stroke="rgba(140,180,90,.1)" stroke-width=".5"/>
+      <!-- Hauptstraßen -->
+      <path class="pre__road" style="animation-delay:.3s;animation-duration:2.5s"
+            d="M 0,90 L 110,90 L 110,180 L 320,180"
+            stroke="rgba(255,255,255,.12)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="pre__road" style="animation-delay:.5s;animation-duration:2.5s"
+            d="M 100,0 L 100,90 L 100,320"
+            stroke="rgba(255,255,255,.1)" stroke-width="5" stroke-linecap="round"/>
+      <path class="pre__road" style="animation-delay:.7s;animation-duration:2s"
+            d="M 190,0 L 190,120 L 190,320"
+            stroke="rgba(255,255,255,.08)" stroke-width="4" stroke-linecap="round"/>
+      <path class="pre__road" style="animation-delay:.9s;animation-duration:2s"
+            d="M 0,275 L 130,275 L 320,275"
+            stroke="rgba(255,255,255,.07)" stroke-width="4" stroke-linecap="round"/>
+      <!-- Nebenstraßen -->
+      <path class="pre__road" style="animation-delay:1s;animation-duration:1.8s"
+            d="M 0,170 L 110,170"
+            stroke="rgba(255,255,255,.05)" stroke-width="3" stroke-linecap="round"/>
+      <path class="pre__road" style="animation-delay:1.1s;animation-duration:1.8s"
+            d="M 190,180 L 190,275"
+            stroke="rgba(255,255,255,.05)" stroke-width="3" stroke-linecap="round"/>
+      <!-- Straßenlinien (Mittelstreifen) -->
+      <path class="pre__road" style="animation-delay:1.5s;animation-duration:1.5s"
+            d="M 10,90 L 105,90" stroke="rgba(201,168,76,.08)" stroke-width=".5" stroke-dasharray="4 6"/>
+      <path class="pre__road" style="animation-delay:1.6s;animation-duration:1.5s"
+            d="M 115,180 L 310,180" stroke="rgba(201,168,76,.08)" stroke-width=".5" stroke-dasharray="4 6"/>
+      <!-- Route (Gold, leuchtet) -->
+      <path class="pre__route-glow" style="animation-delay:1.8s;animation-duration:2.5s"
+            d="M 20,310 L 20,275 L 100,275 L 100,180 L 110,180 L 110,90 L 145,90 L 145,130"
+            stroke="rgba(201,168,76,.25)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path class="pre__route" style="animation-delay:1.8s;animation-duration:2.5s"
+            d="M 20,310 L 20,275 L 100,275 L 100,180 L 110,180 L 110,90 L 145,90 L 145,130"
+            stroke="rgba(201,168,76,.8)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <!-- Startpunkt -->
+      <circle class="pre__block" style="animation-delay:2s" cx="20" cy="310" r="4" fill="rgba(100,160,255,.6)" stroke="rgba(100,160,255,.3)" stroke-width="6"/>
+      <!-- Pulsierende Ringe am Ziel -->
+      <circle class="pre__pulse-ring" style="animation-delay:3.5s" cx="145" cy="130" r="4" fill="none" stroke="rgba(201,168,76,.5)" stroke-width="1.5"/>
+      <circle class="pre__pulse-ring" style="animation-delay:3.8s" cx="145" cy="130" r="4" fill="none" stroke="rgba(201,168,76,.3)" stroke-width="1"/>
+      <!-- Location Pin -->
+      <g class="pre__pin" style="animation-delay:3.2s">
+        <g transform="translate(145,130)">
+          <ellipse cx="0" cy="2" rx="6" ry="2" fill="rgba(0,0,0,.3)" opacity=".5"/>
+          <path d="M 0,-28 C -10,-28 -18,-20 -18,-11 C -18,2 0,18 0,18 C 0,18 18,2 18,-11 C 18,-20 10,-28 0,-28 Z"
+                fill="rgba(201,168,76,.9)" stroke="rgba(201,168,76,1)" stroke-width="1"/>
+          <circle cx="0" cy="-11" r="6" fill="#0c0f0a" stroke="rgba(201,168,76,.5)" stroke-width=".8"/>
+          <text x="0" y="-8" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="7" font-weight="600" font-style="italic" fill="#C9A84C">EE</text>
+        </g>
+      </g>
+      <!-- Straßenlabels -->
+      <text class="pre__label" style="animation-delay:2.5s" x="55" y="86" font-family="'DM Sans',sans-serif" font-size="5" fill="rgba(255,255,255,.15)" letter-spacing=".5">SIEMENSSTR.</text>
+      <text class="pre__label" style="animation-delay:2.7s" x="215" y="176" font-family="'DM Sans',sans-serif" font-size="5" fill="rgba(255,255,255,.12)" letter-spacing=".5">SIGMA-TECHNO PARK</text>
+    </svg>
+  </div>
   <div class="pre__wordmark"><em>Élysée</em> Events</div>
+  <div class="pre__subtitle">Ihre Eventlocation finden</div>
   <div class="pre__counter" aria-live="off">0</div>
   <div class="pre__line"></div>
 </div>
@@ -213,12 +270,12 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
   document.documentElement.classList.add('preloading');
   var counter = pre.querySelector('.pre__counter');
   var n = 0;
-  var iv = setInterval(function(){ n = Math.min(n + Math.floor(Math.random()*8)+2, 100); counter.textContent = n; if(n>=100) clearInterval(iv); }, 40);
+  var iv = setInterval(function(){ n = Math.min(n + Math.floor(Math.random()*3)+1, 100); counter.textContent = n; if(n>=100) clearInterval(iv); }, 60);
   window.addEventListener('load', function(){
     clearInterval(iv); counter.textContent = '100';
-    setTimeout(function(){ pre.classList.add('is-done'); document.documentElement.classList.remove('preloading'); }, 600);
+    setTimeout(function(){ pre.classList.add('is-done'); document.documentElement.classList.remove('preloading'); }, 1200);
   });
-  setTimeout(function(){ pre.classList.add('is-done'); document.documentElement.classList.remove('preloading'); }, 5000);
+  setTimeout(function(){ pre.classList.add('is-done'); document.documentElement.classList.remove('preloading'); }, 7000);
 })();
 </script>
 
