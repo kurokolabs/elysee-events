@@ -156,12 +156,13 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
 .pre__map{width:min(300px,65vw);height:auto;overflow:visible;position:relative;z-index:1;margin-bottom:12px}
 .pre__draw{stroke-dasharray:700;stroke-dashoffset:700;animation:preDraw .65s cubic-bezier(.45,0,.55,1) both;animation-delay:var(--d,0s)}
 .pre__block{transform-box:fill-box;transform-origin:50% 50%;transform:scale(0);animation:preScale .4s cubic-bezier(.34,1.4,.64,1) both;animation-delay:var(--d,0s)}
-.pre__pin{transform-box:fill-box;transform-origin:50% 100%;transform:scale(0);animation:preScale .5s cubic-bezier(.34,1.56,.64,1) both;animation-delay:var(--d,0s)}
-.pre__pulse{opacity:0;animation:prePulse 1.8s ease-out infinite;animation-delay:var(--d,0s)}
+.pre__pin{opacity:0;animation:prePinDrop .7s cubic-bezier(.34,1.56,.64,1) both;animation-delay:var(--d,0s)}
+.pre__pulse{opacity:0;animation:prePulse 2s ease-out infinite;animation-delay:var(--d,0s)}
 .pre__route{stroke-dasharray:900;stroke-dashoffset:900;animation:preDraw 1.2s cubic-bezier(.45,0,.55,1) both;animation-delay:var(--d,0s)}
 @keyframes preDraw{to{stroke-dashoffset:0}}
 @keyframes preScale{to{transform:scale(1)}}
-@keyframes prePulse{0%{opacity:.5;transform:scale(1)}100%{opacity:0;transform:scale(3.5)}}
+@keyframes prePinDrop{0%{opacity:0;transform:translateY(-18px)}60%{opacity:1;transform:translateY(3px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes prePulse{0%{opacity:.5}100%{opacity:0}}
 .pre__wordmark{font-family:'Cormorant Garamond',serif;font-size:clamp(1.4rem,3.8vw,2rem);font-weight:300;letter-spacing:.28em;color:rgba(255,255,255,.92);text-transform:uppercase;opacity:0;animation:preWmIn .7s ease both 1.8s;position:relative;z-index:1;margin-bottom:10px}
 .pre__wordmark em{font-style:italic;color:var(--gold,#C9A84C)}
 @keyframes preWmIn{to{opacity:1}}
@@ -199,7 +200,9 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
     <!-- Startpunkt -->
     <circle class="pre__block" style="--d:1.1s" cx="30" cy="230" r="3.5" fill="rgba(80,140,240,.6)"/>
     <!-- Puls am Ziel -->
-    <circle class="pre__pulse" style="--d:1.7s" cx="119" cy="92" r="4" fill="none" stroke="rgba(201,168,76,.45)" stroke-width="1.2"/>
+    <circle class="pre__pulse" style="--d:1.7s" cx="119" cy="92" r="8" fill="none" stroke="rgba(201,168,76,.3)" stroke-width="1"/>
+    <circle class="pre__pulse" style="--d:2.0s" cx="119" cy="92" r="14" fill="none" stroke="rgba(201,168,76,.15)" stroke-width=".6"/>
+    <circle class="pre__pulse" style="--d:2.3s" cx="119" cy="92" r="20" fill="none" stroke="rgba(201,168,76,.08)" stroke-width=".4"/>
     <!-- Location Pin -->
     <g class="pre__pin" style="--d:1.5s" transform="translate(119,79)">
       <path d="M 0,-20 C -7,-20 -13,-14.5 -13,-8 C -13,1.5 0,13 0,13 C 0,13 13,1.5 13,-8 C 13,-14.5 7,-20 0,-20 Z" fill="rgba(201,168,76,.85)" stroke="rgba(201,168,76,1)" stroke-width=".8"/>
