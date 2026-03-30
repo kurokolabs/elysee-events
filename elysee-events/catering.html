@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests">
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; base-uri 'self'; upgrade-insecure-requests">
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
@@ -64,6 +64,7 @@
     a { text-decoration: none; color: inherit; }
     ul { list-style: none; }
     button { font-family: inherit; border: none; background: none; }
+    :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
     @media (hover: hover) and (pointer: fine) { body, a, button { cursor: none; } }
     /* Cursor */
     .cursor-dot { position: fixed; left: 0; top: 0; width: 8px; height: 8px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 10001; mix-blend-mode: difference; transform: translate(-50%, -50%); transition: width .25s ease, height .25s ease; will-change: transform; }
@@ -101,11 +102,11 @@
     .nav__brandname { font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:400; font-style:italic; letter-spacing:.06em; color:rgba(255,255,255,.88); line-height:1; }
     .nav__brandtag { font-size:8px; font-weight:600; letter-spacing:.24em; text-transform:uppercase; color:rgba(201,168,76,.55); line-height:1; margin-top:3px; }
     .nav__links { display:flex; align-items:center; gap:6px; list-style:none; position:absolute; left:50%; transform:translateX(-50%); }
-    .nav__links a { font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.45); padding:7px 16px; border-radius:100px; transition: color .3s ease, background .3s ease; text-decoration:none; }
+    .nav__links a { font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.6); padding:7px 16px; border-radius:100px; transition: color .3s ease, background .3s ease; text-decoration:none; }
     .nav__links a:hover { color:rgba(255,255,255,.9); background:rgba(255,255,255,.06); }
     .nav__links a[aria-current="page"] { color:#C9A84C; background:rgba(201,168,76,.1); }
     .nav__actions { display:flex; align-items:center; gap:10px; }
-    .nav__portal-btn { font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.4); border:1px solid rgba(255,255,255,.08); padding:8px 20px; border-radius:100px; text-decoration:none; transition: all .35s var(--ease-out); }
+    .nav__portal-btn { font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.08); padding:8px 20px; border-radius:100px; text-decoration:none; transition: all .35s var(--ease-out); }
     .nav__portal-btn:hover { border-color:rgba(201,168,76,.4); color:#C9A84C; background:rgba(201,168,76,.06); }
     .nav__cta { font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:#0a0a0a; background: linear-gradient(135deg, #C9A84C 0%, #e0c56a 100%); padding:9px 22px; border-radius:100px; border:none; text-decoration:none; transition: all .35s var(--ease-out); box-shadow: 0 2px 12px rgba(201,168,76,.2); }
     .nav__cta:hover { background: linear-gradient(135deg, #d4b558 0%, #ebd37a 100%); transform:translateY(-1px); box-shadow: 0 4px 20px rgba(201,168,76,.3); color:#0a0a0a; }
@@ -180,7 +181,7 @@
     .footer__top { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 48px; margin-bottom: 64px; }
     .footer__brand-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 500; color: var(--white); letter-spacing: 0.06em; margin-bottom: 16px; }
     .footer__brand-logo span { color: var(--gold); }
-    .footer__brand-desc { font-family: 'DM Sans', sans-serif; font-size: 0.8125rem; font-weight: 300; color: rgba(255,255,255,0.45); line-height: 1.7; }
+    .footer__brand-desc { font-family: 'DM Sans', sans-serif; font-size: 0.8125rem; font-weight: 300; color: rgba(255,255,255,0.55); line-height: 1.7; }
     .footer__col-title { font-family: 'DM Sans', sans-serif; font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
     .footer__col ul { display: flex; flex-direction: column; gap: 12px; }
     .footer__col ul a { font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 300; color: rgba(255,255,255,0.55); transition: color 0.25s ease; }
@@ -229,7 +230,7 @@
     <a href="/corporate">Corporate</a>
     <a href="/catering" aria-current="page">Catering</a>
     <a href="/portal/login">Kundenportal</a>
-    <a href="javascript:void(0)" data-anfrage-open class="nav__drawer-cta">Kostenlos anfragen</a>
+    <a href="#" data-anfrage-open class="nav__drawer-cta">Kostenlos anfragen</a>
   </nav>
 
   <header class="nav" id="mainNav" role="banner">
@@ -250,7 +251,7 @@
       </nav>
       <div class="nav__actions">
         <a href="/portal/login" class="nav__portal-btn">Kundenportal</a>
-        <a href="javascript:void(0)" data-anfrage-open class="nav__cta">Kostenlos anfragen</a>
+        <a href="#" data-anfrage-open class="nav__cta">Kostenlos anfragen</a>
       </div>
       <button class="nav__hamburger" id="hamburgerBtn" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobileNav">
         <span></span><span></span><span></span>
@@ -405,7 +406,7 @@
             <li><a href="/catering">Catering</a></li>
             <li><a href="/hochzeit">Hochzeiten</a></li>
             <li><a href="/corporate">Corporate</a></li>
-            <li><a href="javascript:void(0)" data-anfrage-open>Buchung anfragen</a></li>
+            <li><a href="#" data-anfrage-open>Buchung anfragen</a></li>
           </ul>
         </div>
         <div class="footer__col">

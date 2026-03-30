@@ -17,7 +17,7 @@
 
       <div class="portal-header">
         <h1 class="portal-header__title" th:text="${isNew} ? 'Neue Speisekarte' : 'Speisekarte bearbeiten'">Neue Speisekarte</h1>
-        <p class="portal-header__subtitle">Wöchentliche Speisekarte für den Newsletter erstellen</p>
+        <p class="portal-header__subtitle">Woche auswählen, Gerichte eintragen, speichern und in der Vorschau prüfen</p>
       </div>
 
       <form th:action="${isNew} ? @{/portal/admin/newsletter/speisekarte/neu} : @{/portal/admin/newsletter/speisekarte/{id}(id=${menu.id})}" method="post" class="form-card">
@@ -32,34 +32,95 @@
           </div>
         </div>
 
+        <!-- Montag -->
         <div class="form-group">
-          <label class="form-label" for="monday">Montag</label>
-          <textarea id="monday" name="monday" class="form-textarea" rows="2" placeholder="z.B. Haehnchenbrust mit Kartoffelgratin, Beilagensalat" th:text="${menu.monday}"></textarea>
+          <label class="form-label">Montag</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label class="form-label" for="mondayMeat" style="font-size:11px; color:var(--muted);">Fleisch / Fisch</label>
+              <input type="text" id="mondayMeat" name="mondayMeat" class="form-input dish-autocomplete" spellcheck="true"
+                     th:value="${menu.mondayMeat}" placeholder="z.B. Schnitzel mit Pommes" autocomplete="off">
+            </div>
+            <div>
+              <label class="form-label" for="mondayVeg" style="font-size:11px; color:#6B8E23;">Vegetarisch</label>
+              <input type="text" id="mondayVeg" name="mondayVeg" class="form-input dish-autocomplete" spellcheck="true"
+                     th:value="${menu.mondayVeg}" placeholder="z.B. Gemüselasagne" autocomplete="off">
+            </div>
+          </div>
         </div>
 
+        <!-- Dienstag -->
         <div class="form-group">
-          <label class="form-label" for="tuesday">Dienstag</label>
-          <textarea id="tuesday" name="tuesday" class="form-textarea" rows="2" placeholder="z.B. Haehnchenbrust mit Kartoffelgratin, Beilagensalat" th:text="${menu.tuesday}"></textarea>
+          <label class="form-label">Dienstag</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label class="form-label" for="tuesdayMeat" style="font-size:11px; color:var(--muted);">Fleisch / Fisch</label>
+              <input type="text" id="tuesdayMeat" name="tuesdayMeat" class="form-input dish-autocomplete" spellcheck="true"
+                     th:value="${menu.tuesdayMeat}" placeholder="z.B. Rindergulasch mit Spätzle" autocomplete="off">
+            </div>
+            <div>
+              <label class="form-label" for="tuesdayVeg" style="font-size:11px; color:#6B8E23;">Vegetarisch</label>
+              <input type="text" id="tuesdayVeg" name="tuesdayVeg" class="form-input dish-autocomplete" spellcheck="true"
+                     th:value="${menu.tuesdayVeg}" placeholder="z.B. Käsespätzle" autocomplete="off">
+            </div>
+          </div>
         </div>
 
+        <!-- Mittwoch -->
         <div class="form-group">
-          <label class="form-label" for="wednesday">Mittwoch</label>
-          <textarea id="wednesday" name="wednesday" class="form-textarea" rows="2" placeholder="z.B. Haehnchenbrust mit Kartoffelgratin, Beilagensalat" th:text="${menu.wednesday}"></textarea>
+          <label class="form-label">Mittwoch</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label class="form-label" for="wednesdayMeat" style="font-size:11px; color:var(--muted);">Fleisch / Fisch</label>
+              <input type="text" id="wednesdayMeat" name="wednesdayMeat" class="form-input dish-autocomplete" spellcheck="true"
+                     th:value="${menu.wednesdayMeat}" placeholder="z.B. Hähnchen-Curry mit Reis" autocomplete="off">
+            </div>
+            <div>
+              <label class="form-label" for="wednesdayVeg" style="font-size:11px; color:#6B8E23;">Vegetarisch</label>
+              <input type="text" id="wednesdayVeg" name="wednesdayVeg" class="form-input dish-autocomplete" spellcheck="true"
+                     th:value="${menu.wednesdayVeg}" placeholder="z.B. Pilzrisotto" autocomplete="off">
+            </div>
+          </div>
         </div>
 
+        <!-- Donnerstag -->
         <div class="form-group">
-          <label class="form-label" for="thursday">Donnerstag</label>
-          <textarea id="thursday" name="thursday" class="form-textarea" rows="2" placeholder="z.B. Haehnchenbrust mit Kartoffelgratin, Beilagensalat" th:text="${menu.thursday}"></textarea>
+          <label class="form-label">Donnerstag</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label class="form-label" for="thursdayMeat" style="font-size:11px; color:var(--muted);">Fleisch / Fisch</label>
+              <input type="text" id="thursdayMeat" name="thursdayMeat" class="form-input dish-autocomplete" spellcheck="true"
+                     th:value="${menu.thursdayMeat}" placeholder="z.B. Putengeschnetzeltes" autocomplete="off">
+            </div>
+            <div>
+              <label class="form-label" for="thursdayVeg" style="font-size:11px; color:#6B8E23;">Vegetarisch</label>
+              <input type="text" id="thursdayVeg" name="thursdayVeg" class="form-input dish-autocomplete" spellcheck="true"
+                     th:value="${menu.thursdayVeg}" placeholder="z.B. Spinat-Cannelloni" autocomplete="off">
+            </div>
+          </div>
         </div>
 
+        <!-- Freitag -->
         <div class="form-group">
-          <label class="form-label" for="friday">Freitag</label>
-          <textarea id="friday" name="friday" class="form-textarea" rows="2" placeholder="z.B. Haehnchenbrust mit Kartoffelgratin, Beilagensalat" th:text="${menu.friday}"></textarea>
+          <label class="form-label">Freitag</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label class="form-label" for="fridayMeat" style="font-size:11px; color:var(--muted);">Fleisch / Fisch</label>
+              <input type="text" id="fridayMeat" name="fridayMeat" class="form-input dish-autocomplete" spellcheck="true"
+                     th:value="${menu.fridayMeat}" placeholder="z.B. Lachsfilet mit Kartoffeln" autocomplete="off">
+            </div>
+            <div>
+              <label class="form-label" for="fridayVeg" style="font-size:11px; color:#6B8E23;">Vegetarisch</label>
+              <input type="text" id="fridayVeg" name="fridayVeg" class="form-input dish-autocomplete" spellcheck="true"
+                     th:value="${menu.fridayVeg}" placeholder="z.B. Gemüse-Quiche" autocomplete="off">
+            </div>
+          </div>
         </div>
 
         <div class="form-group">
           <label class="form-label" for="notes">Hinweise</label>
-          <textarea id="notes" name="notes" class="form-textarea" rows="2" placeholder="z.B. Vegetarische Alternative auf Anfrage" th:text="${menu.notes}"></textarea>
+          <textarea id="notes" name="notes" class="form-textarea" rows="2" spellcheck="true"
+                    placeholder="z.B. Vegetarische Alternative auf Anfrage" th:text="${menu.notes}"></textarea>
         </div>
 
         <div style="display:flex; gap:12px; margin-top:24px;">
@@ -71,5 +132,35 @@
   </div>
 
   <script th:src="@{/portal/js/portal.js}"></script>
+  <script th:inline="javascript">
+  (function() {
+    var dishes = [];
+    fetch(/*[[@{/portal/admin/newsletter/speisekarte/dishes}]]*/ '/portal/admin/newsletter/speisekarte/dishes')
+      .then(function(r) { return r.json(); })
+      .then(function(data) { dishes = data; });
+
+    document.querySelectorAll('.dish-autocomplete').forEach(function(input) {
+      var listId = input.id + '-suggestions';
+      var datalist = document.createElement('datalist');
+      datalist.id = listId;
+      input.setAttribute('list', listId);
+      input.parentNode.appendChild(datalist);
+
+      input.addEventListener('input', function() {
+        var val = this.value.toLowerCase();
+        datalist.innerHTML = '';
+        if (val.length < 1) return;
+        var matches = dishes.filter(function(d) {
+          return d.toLowerCase().indexOf(val) !== -1;
+        });
+        matches.slice(0, 10).forEach(function(m) {
+          var opt = document.createElement('option');
+          opt.value = m;
+          datalist.appendChild(opt);
+        });
+      });
+    });
+  })();
+  </script>
 </body>
 </html>

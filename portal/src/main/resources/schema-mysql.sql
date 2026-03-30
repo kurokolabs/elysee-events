@@ -210,3 +210,15 @@ ALTER TABLE bookings ADD COLUMN catering_package VARCHAR(20);
 ALTER TABLE bookings ADD COLUMN food_option VARCHAR(20);
 ALTER TABLE bookings ADD COLUMN food_sub_option VARCHAR(20);
 ALTER TABLE bookings ADD COLUMN cuisine_style VARCHAR(30);
+
+-- Speisekarte: Fleisch/Vegetarisch Aufteilung pro Tag
+ALTER TABLE weekly_menus ADD COLUMN monday_meat TEXT;
+ALTER TABLE weekly_menus ADD COLUMN monday_veg TEXT;
+ALTER TABLE weekly_menus ADD COLUMN tuesday_meat TEXT;
+ALTER TABLE weekly_menus ADD COLUMN tuesday_veg TEXT;
+ALTER TABLE weekly_menus ADD COLUMN wednesday_meat TEXT;
+ALTER TABLE weekly_menus ADD COLUMN wednesday_veg TEXT;
+ALTER TABLE weekly_menus ADD COLUMN thursday_meat TEXT;
+ALTER TABLE weekly_menus ADD COLUMN thursday_veg TEXT;
+ALTER TABLE weekly_menus ADD COLUMN friday_meat TEXT;
+ALTER TABLE weekly_menus ADD COLUMN friday_veg TEXT;

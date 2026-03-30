@@ -172,7 +172,10 @@ public class AuthController {
                     redirectAttributes.addFlashAttribute("error", "Der Verifizierungslink ist abgelaufen. Bitte registrieren Sie sich erneut.");
                     return "redirect:/portal/register";
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("error", "Ungueltige Anfrage.");
+                return "redirect:/portal/login";
+            }
         }
         userRepository.activateUser(user.getId());
         userRepository.updateLastLogin(user.getId());

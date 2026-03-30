@@ -2,7 +2,9 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; base-uri 'self'; upgrade-insecure-requests">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-site-verification" content="ofkC7lPrk_nZWmrvExHFGgzJfkxqi6bsh7TLckbX5MQ" />
   <meta name="theme-color" content="#C9A84C">
@@ -32,8 +34,9 @@
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="preload" as="font" href="css/fonts/dm-sans-latin.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="css/fonts/cormorant-garamond-latin.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="image" href="img/elysee-og-card.webp" type="image/webp" fetchpriority="high">
   <style>
-:root{--gold:#C9A84C;--gold-dark:#9A7A2E;--gold-subtle:rgba(201,168,76,.15);--bg:#0a0804;--surface:#F2EFE9;--dark:#1A1A1A;--muted:#6B6560;--white:#FFFFFF;--ease-out:cubic-bezier(0.22,1,0.36,1)}
+:root{--gold:#C9A84C;--gold-dark:#9A7A2E;--gold-subtle:rgba(201,168,76,.15);--bg:#0a0804;--surface:#F2EFE9;--dark:#1A1A1A;--muted:#5A554F;--white:#FFFFFF;--ease-out:cubic-bezier(0.22,1,0.36,1)}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;font-size:16px;-webkit-font-smoothing:antialiased;scrollbar-width:none;overflow:hidden;height:100%}
@@ -41,6 +44,7 @@ html::-webkit-scrollbar{display:none}
 body{margin:0;padding:0;font-family:'DM Sans',sans-serif;font-weight:400;background:var(--bg);color:var(--dark);overflow-y:scroll;overflow-x:hidden;height:100%;width:100%;scrollbar-width:none;-moz-osx-font-smoothing:grayscale}
 body::-webkit-scrollbar{display:none}
 img{display:block;max-width:100%}a{text-decoration:none;color:inherit}button{font-family:inherit}ul{list-style:none}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 @media(hover:hover)and (pointer:fine){body,a,button,input,select,textarea,label{cursor:none}}
 /* Cursor */
 .cursor-dot{position:fixed;left:0;top:0;width:8px;height:8px;background:#fff;border-radius:50%;pointer-events:none;z-index:10001;mix-blend-mode:difference;transform:translate(-50%,-50%);will-change:transform}
@@ -72,10 +76,10 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
 .nav__brandname{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400;font-style:italic;letter-spacing:.06em;color:rgba(255,255,255,.88);line-height:1}
 .nav__brandtag{font-size:8px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:rgba(201,168,76,.55);line-height:1;margin-top:3px}
 .nav-links{display:flex;align-items:center;gap:6px;list-style:none;position:absolute;left:50%;transform:translateX(-50%)}.nav-links li{list-style:none}
-.nav-links a{font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);padding:7px 16px;border-radius:100px;transition:color .3s ease,background .3s ease;text-decoration:none}
+.nav-links a{font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);padding:7px 16px;border-radius:100px;transition:color .3s ease,background .3s ease;text-decoration:none}
 .nav-links a:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.06)}.nav-links a[aria-current="page"]{color:#C9A84C;background:rgba(201,168,76,.1)}
 .nav__actions{display:flex;align-items:center;gap:10px}
-.nav__portal-btn{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.08);padding:8px 20px;border-radius:100px;text-decoration:none;transition:all .35s var(--ease-out)}
+.nav__portal-btn{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.08);padding:8px 20px;border-radius:100px;text-decoration:none;transition:all .35s var(--ease-out)}
 .nav__portal-btn:hover{border-color:rgba(201,168,76,.4);color:#C9A84C;background:rgba(201,168,76,.06)}
 .nav-cta{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#0a0a0a;background:linear-gradient(135deg,#C9A84C 0%,#e0c56a 100%);padding:9px 22px;border-radius:100px;border:none;text-decoration:none;transition:all .35s var(--ease-out);box-shadow:0 2px 12px rgba(201,168,76,.2)}
 .nav-cta:hover{background:linear-gradient(135deg,#d4b558 0%,#ebd37a 100%);transform:translateY(-1px);box-shadow:0 4px 20px rgba(201,168,76,.3)}
@@ -92,7 +96,7 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
 @media(max-width:900px){.nav-links{display:none}.nav-hamburger{display:flex;flex-direction:column}.nav__actions{display:none}.nav__inner{padding:0 20px}}
 /* Hero */
 .hero{position:relative;width:100%;height:100vh;min-height:640px;display:flex;align-items:center;overflow:hidden}
-.hero-bg{position:absolute;inset:0;background:url('img/elysee-og-card.jpg') center/cover;transform:scale(1.08);will-change:transform}
+.hero-bg{position:absolute;inset:0;background:url('img/elysee-og-card.webp') center/cover;transform:scale(1.08);contain:strict}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,26,26,.78) 0%,rgba(26,26,26,.5) 60%,rgba(26,26,26,.35) 100%)}
 .hero-grain{position:absolute;inset:0;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");background-repeat:repeat;pointer-events:none}
 .hero-content{position:relative;z-index:10;padding:0 48px;max-width:760px}
@@ -126,7 +130,7 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
 .kapa-card{text-align:center;padding:40px 24px;border:1px solid rgba(255,255,255,.08);border-radius:4px;background:rgba(255,255,255,.03)}
 .kapa-number{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,4vw,3.2rem);font-weight:500;color:var(--gold);line-height:1;margin-bottom:8px}
 .kapa-label{font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:10px}
-.kapa-desc{font-size:.875rem;line-height:1.6;color:rgba(255,255,255,.45)}
+.kapa-desc{font-size:.875rem;line-height:1.6;color:rgba(255,255,255,.55)}
 /* Ausstattung */
 .ausstattung-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
 .ausstattung-item{display:flex;align-items:flex-start;gap:20px;padding:28px 24px;background:#FAFAF8;border-left:3px solid var(--gold)}
@@ -140,11 +144,11 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
 .footer-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:48px;margin-bottom:64px}
 .footer-brand .footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.375rem;font-weight:600;color:var(--white);letter-spacing:.04em;margin-bottom:16px}
 .footer-brand .footer-logo span{color:var(--gold)}.footer-brand p{font-size:.875rem;line-height:1.7}
-.footer-col h4{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:20px}
+.footer-col h3{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:20px}
 .footer-col ul{display:flex;flex-direction:column;gap:10px}.footer-col ul li a{font-size:.875rem;color:rgba(255,255,255,.6);transition:color .2s ease}.footer-col ul li a:hover{color:var(--gold)}
 .footer-bottom{padding-top:32px;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.footer-copyright{font-size:12px;color:rgba(255,255,255,.3)}.footer-legal{display:flex;gap:24px}
-.footer-legal a{font-size:12px;color:rgba(255,255,255,.3);transition:color .2s ease}.footer-legal a:hover{color:rgba(255,255,255,.6)}
+.footer-copyright{font-size:12px;color:rgba(255,255,255,.55)}.footer-legal{display:flex;gap:24px}
+.footer-legal a{font-size:12px;color:rgba(255,255,255,.55);transition:color .2s ease}.footer-legal a:hover{color:rgba(255,255,255,.6)}
 /* Responsive */
 @media(max-width:1024px){.footer-top{grid-template-columns:1fr 1fr;gap:28px}}
 @media(max-width:768px){.section{padding:72px 24px}.cta-section{padding:72px 24px}.hero-content{padding:0 24px;max-width:100%}.hero h1{font-size:clamp(2rem,8vw,3rem)}.anlass-grid{grid-template-columns:1fr;gap:24px}.kapa-grid{grid-template-columns:1fr;gap:20px}.ausstattung-grid{grid-template-columns:1fr}.footer-top{grid-template-columns:1fr 1fr;gap:32px}.footer{padding:56px 24px 32px}.footer-bottom{flex-direction:column;align-items:flex-start;gap:12px}}
@@ -173,9 +177,12 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
 #preloader.is-done{transition:transform .8s cubic-bezier(.77,0,.18,1) .1s;transform:translateY(-100%)}
 .preloading body,html.preloading{overflow:hidden}
 @media(prefers-reduced-motion:reduce){#preloader.is-done,.pre__draw,.pre__block,.pre__pin,.pre__pulse,.pre__route,.pre__wordmark,.pre__line{animation:none!important;transition:none!important;opacity:1;stroke-dashoffset:0;transform:none;width:100%}}
+.skip-link{position:absolute;top:-100%;left:16px;z-index:99999;background:var(--gold);color:var(--dark);padding:12px 24px;font-size:14px;font-weight:500;border-radius:0 0 4px 4px;transition:top .2s ease}
+.skip-link:focus{top:0}
   </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Zum Inhalt springen</a>
 
 <div id="preloader" aria-hidden="true">
   <div class="pre__bg"></div>
@@ -225,10 +232,11 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
     clearInterval(iv); counter.textContent = '100';
     setTimeout(function(){
       pre.classList.add('is-done');
+      pre.addEventListener('transitionend',function(){pre.remove()});
       document.documentElement.classList.remove('preloading');
     }, 2400);
   });
-  setTimeout(function(){ pre.classList.add('is-done'); document.documentElement.classList.remove('preloading'); }, 6000);
+  setTimeout(function(){ pre.classList.add('is-done'); pre.addEventListener('transitionend',function(){pre.remove()}); document.documentElement.classList.remove('preloading'); }, 6000);
 })();
 </script>
 
@@ -409,7 +417,7 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
           <p>Exklusive Veranstaltungslocation in Augsburg &#8212; f&#252;r Hochzeiten, Corporate Events und private Feiern der besonderen Art.</p>
         </div>
         <div class="footer-col">
-          <h4>Navigation</h4>
+          <h3>Navigation</h3>
           <ul>
             <li><a href="/kantine">Die Kantine</a></li>
             <li><a href="/hochzeit">Hochzeiten</a></li>
@@ -418,7 +426,7 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Rechtliches</h4>
+          <h3>Rechtliches</h3>
           <ul>
             <li><a href="/impressum">Impressum</a></li>
             <li><a href="/datenschutz">Datenschutz</a></li>
@@ -426,7 +434,7 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Kontakt</h4>
+          <h3>Kontakt</h3>
           <ul>
             <li><a href="mailto:verwaltung@elysee-events.de">verwaltung@elysee-events.de</a></li>
             <li><a href="tel:+4917630472811">+49 176 30472811</a></li>
@@ -448,7 +456,7 @@ h1{font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:500}h2{font-size:clamp(2rem,
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Startseite","item":"https://www.elysee-events.de/"},{"@type":"ListItem","position":2,"name":"Eventlocation Augsburg","item":"https://www.elysee-events.de/eventlocation"}]}</script>
 
   <script>
-(function(){var d=document.querySelector('.cursor-dot'),r=document.querySelector('.cursor-ring');if(!d||!r)return;var mx=-100,my=-100,rx=-100,ry=-100;document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY});(function f(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;d.style.transform='translate('+mx+'px,'+my+'px) translate(-50%,-50%)';r.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';requestAnimationFrame(f)})();document.querySelectorAll('a,button,.anlass-card,.kapa-card,.ausstattung-item').forEach(function(el){el.addEventListener('mouseenter',function(){r.classList.add('is-hovered')});el.addEventListener('mouseleave',function(){r.classList.remove('is-hovered')})})})();
+(function(){var d=document.querySelector('.cursor-dot'),r=document.querySelector('.cursor-ring');if(!d||!r)return;if(matchMedia('(pointer:coarse)').matches)return;var mx=-100,my=-100,rx=-100,ry=-100;document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY});(function f(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;d.style.transform='translate('+mx+'px,'+my+'px) translate(-50%,-50%)';r.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';requestAnimationFrame(f)})();document.querySelectorAll('a,button,.anlass-card,.kapa-card,.ausstattung-item').forEach(function(el){el.addEventListener('mouseenter',function(){r.classList.add('is-hovered')});el.addEventListener('mouseleave',function(){r.classList.remove('is-hovered')})})})();
 (function(){var n=document.getElementById('mainNav');function s(){n.classList.toggle('scrolled',window.scrollY>40)}window.addEventListener('scroll',s,{passive:true});s()})();
 (function(){var b=document.getElementById('hamburgerBtn'),d=document.getElementById('navDrawer'),o=document.getElementById('navOverlay');function open(){b.classList.add('is-open');d.classList.add('is-open');o.classList.add('is-open');b.setAttribute('aria-expanded','true');d.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}function close(){b.classList.remove('is-open');d.classList.remove('is-open');o.classList.remove('is-open');b.setAttribute('aria-expanded','false');d.setAttribute('aria-hidden','true');document.body.style.overflow=''}b.addEventListener('click',function(){b.classList.contains('is-open')?close():open()});o.addEventListener('click',close);document.addEventListener('keydown',function(e){if(e.key==='Escape')close()})})();
 (function(){var h=document.querySelector('.hero');if(h)setTimeout(function(){h.classList.add('hero-words-visible')},200)})();

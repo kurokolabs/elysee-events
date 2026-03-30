@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests">
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; base-uri 'self'; upgrade-insecure-requests">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-site-verification" content="ofkC7lPrk_nZWmrvExHFGgzJfkxqi6bsh7TLckbX5MQ" />
   <meta name="theme-color" content="#C9A84C">
@@ -79,6 +81,7 @@
     img { display: block; max-width: 100%; }
     a { text-decoration: none; color: inherit; }
     button { font-family: inherit; }
+    :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
     @media (hover: hover) and (pointer: fine) {
       body { cursor: none; }
       a { cursor: none; }
@@ -289,7 +292,7 @@
       font-size:11px; font-weight:500;
       letter-spacing:.14em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.45);
+      color:rgba(255,255,255,.6);
       padding:7px 16px;
       border-radius:100px;
       transition: color .3s ease, background .3s ease;
@@ -433,7 +436,7 @@
     .hero {
       position: relative;
       width: 100%;
-      height: 100vh;
+      height: 100vh;height:100dvh;
       min-height: 640px;
       display: flex;
       align-items: center;
@@ -454,6 +457,7 @@
       background-position: center;
       transform: scale(1.08);
       will-change: transform;
+      contain: strict;
     }
     .hero-overlay {
       position: absolute;
@@ -812,7 +816,7 @@
     }
     .menucard__item-desc {
       font-size: .8rem;
-      color: rgba(255,255,255,.4);
+      color: rgba(255,255,255,.55);
       line-height: 1.6;
       max-width: 260px;
       margin: 0 auto;
@@ -871,7 +875,7 @@
     }
     .menucard__footer-text {
       font-size: .82rem;
-      color: rgba(255,255,255,.35);
+      color: rgba(255,255,255,.55);
       line-height: 1.7;
       font-style: italic;
       max-width: 440px;
@@ -1040,13 +1044,13 @@
     .footer { background: var(--dark); padding: 88px 48px 44px; border-top: 1px solid rgba(255,255,255,.06); }
     .footer__grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 56px; padding-bottom: 64px; border-bottom: 1px solid rgba(255,255,255,.08); margin-bottom: 40px; }
     .footer__brand { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; letter-spacing: .14em; color: var(--white); text-transform: uppercase; margin-bottom: 16px; }
-    .footer__desc { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.45); line-height: 1.8; max-width: 320px; margin-bottom: 28px; }
-    .footer__address { font-size: 13px; font-weight: 300; color: rgba(255,255,255,.3); letter-spacing: .03em; }
+    .footer__desc { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.55); line-height: 1.8; max-width: 320px; margin-bottom: 28px; }
+    .footer__address { font-size: 13px; font-weight: 300; color: rgba(255,255,255,.55); letter-spacing: .03em; }
     .footer__col-title { font-size: 10px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 22px; }
     .footer__links { display: flex; flex-direction: column; gap: 12px; }
-    .footer__links a { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.5); transition: color .2s ease; overflow-wrap: break-word; word-break: break-word; }
+    .footer__links a { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.6); transition: color .2s ease; overflow-wrap: break-word; word-break: break-word; }
     .footer__links a:hover { color: var(--gold); }
-    .footer__bottom { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 300; color: rgba(255,255,255,.25); letter-spacing: .04em; }
+    .footer__bottom { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 300; color: rgba(255,255,255,.55); letter-spacing: .04em; }
     .footer__bottom a { color: rgba(255,255,255,.35); transition: color .2s ease; }
     .footer__bottom a:hover { color: var(--gold); }
     .footer__gold-bar { height: 2px; background: linear-gradient(90deg, var(--gold) 0%, transparent 100%); margin-bottom: 0; width: 72px; margin-top: 4px; }
@@ -1442,7 +1446,7 @@
     font-family: 'Cormorant Garamond', serif;
     font-size: clamp(.92rem, 1.8vw, 1.08rem);
     font-weight: 300; letter-spacing: .1em;
-    color: rgba(255,255,255,.38);
+    color: rgba(255,255,255,.55);
     transition: color .28s ease, padding-left .28s ease;
     position: relative;
   }
@@ -1687,9 +1691,9 @@ section:not(.hero):not(:first-of-type) {
     padding: 0 20px;
     max-width: 100%;
   }
-  h1, h2 { font-size: clamp(18px, 4vw, 28px); }
-  h3 { font-size: clamp(16px, 3.5vw, 22px); }
-  p, li { font-size: clamp(14px, 3vw, 16px); line-height: 1.7; }
+  .legal-content h1, .legal-content h2 { font-size: clamp(18px, 4vw, 28px); }
+  .legal-content h3 { font-size: clamp(16px, 3.5vw, 22px); }
+  .legal-content p, .legal-content li { font-size: clamp(14px, 3vw, 16px); line-height: 1.7; }
 }
 
 .cross-links {
@@ -1784,7 +1788,7 @@ section:not(.hero):not(:first-of-type) {
 
 /* Social links */
 .footer__social { display: flex; gap: 16px; margin-top: 12px; justify-content: center; }
-.footer__social a { color: rgba(255,255,255,.45); transition: color .3s ease; }
+.footer__social a { color: rgba(255,255,255,.55); transition: color .3s ease; }
 .footer__social a:hover { color: var(--gold, #C9A84C); }
 
 /* Reduced motion */
@@ -1808,15 +1812,15 @@ section:not(.hero):not(:first-of-type) {
   .bk__nav { flex-direction: column; gap: 8px; width: 100%; }
   .bk__btn { width: 100%; padding: 13px 16px; text-align: center; }
   .bk__cal-grid { gap: 1px; }
-  .bk__cal-day { min-height: 32px; padding: 2px; font-size: 9px; }
+  .bk__cal-day { min-height: 38px; padding: 2px; font-size: 9px; }
   .bk__cal-day__num { font-size: 10px; }
-  .bk__cal-header { padding: 3px; font-size: 7px; letter-spacing: .06em; }
+  .bk__cal-header { padding: 3px; font-size: 9px; letter-spacing: .06em; }
   .bk__calendar { margin-bottom: .8rem; }
   .bk__progress { padding-top: 56px; margin-bottom: 16px; min-height: auto; }
   .bk__progress.is-morphed { min-height: auto; }
   .bk__progress-svg { max-height: 50px; }
   .bk__wm { font-size: .7rem; }
-  .bk__close { top: max(12px, env(safe-area-inset-top, 12px)); right: max(12px, env(safe-area-inset-right, 12px)); width: 38px; height: 38px; z-index: 20; }
+  .bk__close { top: max(12px, env(safe-area-inset-top, 12px)); right: max(12px, env(safe-area-inset-right, 12px)); width: 44px; height: 44px; z-index: 20; }
   .bk__close svg { width: 14px; height: 14px; }
   .bk__textarea { height: 88px; }
   .bk__card { padding: 16px 12px; }
@@ -1833,10 +1837,13 @@ section:not(.hero):not(:first-of-type) {
   .bk__grain { position: fixed; inset: 0; z-index: 1; }
 }
 
+.skip-link{position:absolute;top:-100%;left:16px;z-index:99999;background:var(--gold);color:var(--dark);padding:12px 24px;font-size:14px;font-weight:500;border-radius:0 0 4px 4px;transition:top .2s ease}
+.skip-link:focus{top:0}
+
   </style>
 </head>
 <body>
-<a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:99999;padding:8px 16px;background:var(--gold);color:var(--dark);font-weight:600;text-decoration:none;border-radius:0 0 8px 0;&:focus{left:0;width:auto;height:auto;}">Zum Inhalt</a>
+<a href="#main-content" class="skip-link">Zum Inhalt springen</a>
 
 <div id="preloader" aria-hidden="true">
   <div class="pre__bg"></div>
@@ -1953,7 +1960,7 @@ section:not(.hero):not(:first-of-type) {
     <a href="/hochzeit" aria-current="page">Hochzeiten</a>
     <a href="/corporate">Corporate</a>
     <a href="/portal/login">Kundenportal</a>
-    <a href="javascript:void(0)" data-anfrage-open class="drawer-cta">Kostenlos anfragen</a>
+    <a href="#" data-anfrage-open class="drawer-cta">Kostenlos anfragen</a>
   </nav>
 
   <nav class="nav" id="mainNav" role="navigation" aria-label="Hauptnavigation">
@@ -1973,7 +1980,7 @@ section:not(.hero):not(:first-of-type) {
       </ul>
       <div class="nav__actions">
         <a href="/portal/login" class="nav__portal-btn">Kundenportal</a>
-        <a href="javascript:void(0)" data-anfrage-open class="nav-cta">Kostenlos anfragen</a>
+        <a href="#" data-anfrage-open class="nav-cta">Kostenlos anfragen</a>
       </div>
       <button class="nav-hamburger" id="hamburgerBtn" aria-label="Menü öffnen" aria-expanded="false" aria-controls="navDrawer">
         <span></span><span></span><span></span>
@@ -2003,7 +2010,7 @@ section:not(.hero):not(:first-of-type) {
         </p>
         <div class="hero-actions">
           <a href="#pakete" class="btn btn-gold">Pakete entdecken</a>
-          <a href="javascript:void(0)" data-anfrage-open class="btn btn-outline">Jetzt anfragen</a>
+          <a href="#" data-anfrage-open class="btn btn-outline">Jetzt anfragen</a>
         </div>
       </div>
 
@@ -2346,7 +2353,7 @@ section:not(.hero):not(:first-of-type) {
           Lassen Sie uns gemeinsam den Tag planen, über den Ihre Gäste noch Jahre später sprechen werden. Wir freuen uns auf Ihre Nachricht.
         </p>
         <div data-reveal data-reveal-delay="3">
-          <a href="javascript:void(0)" data-anfrage-open class="btn btn-gold btn-lg">
+          <a href="#" data-anfrage-open class="btn btn-gold btn-lg">
             Jetzt anfragen
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <line x1="5" y1="12" x2="19" y2="12"/>
@@ -2430,6 +2437,7 @@ section:not(.hero):not(:first-of-type) {
       const dot = document.querySelector('.cursor-dot');
       const ring = document.querySelector('.cursor-ring');
       if (!dot || !ring) return;
+      if(matchMedia('(pointer:coarse)').matches)return;
 
       let mx = -100, my = -100, rx = -100, ry = -100;
 
@@ -2632,8 +2640,14 @@ section:not(.hero):not(:first-of-type) {
         });
       }
 
-      (function draw(){
-        if(window.scrollY > window.innerHeight) { requestAnimationFrame(draw); return; }
+      var heroVisible = true;
+      var heroObs = new IntersectionObserver(function(entries){
+        heroVisible = entries[0].isIntersecting;
+        if(heroVisible) draw();
+      },{threshold:0});
+      heroObs.observe(hero);
+      function draw(){
+        if(!heroVisible) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         var elapsed = Date.now() - startTime;
         var fadeIn = Math.min(elapsed / 1200, 1);
@@ -2650,7 +2664,8 @@ section:not(.hero):not(:first-of-type) {
           ctx.fill();
         });
         requestAnimationFrame(draw);
-      })();
+      }
+      draw();
     })();
 
     // Cinematic Hero Parallax — zoom-out + mouse + scroll
@@ -2662,6 +2677,12 @@ section:not(.hero):not(:first-of-type) {
       var zoomDur = 11000;
       var mx = 0, my = 0, cx = 0, cy = 0;
       var scrollOff = 0;
+      var parVisible = true;
+      var parObs = new IntersectionObserver(function(entries){
+        parVisible = entries[0].isIntersecting;
+        if(parVisible) tick();
+      },{threshold:0});
+      parObs.observe(hero);
 
       function lerp(a, b, t){ return a + (b - a) * t; }
 
@@ -2678,7 +2699,8 @@ section:not(.hero):not(:first-of-type) {
         }, { passive: true });
       }
 
-      (function tick(){
+      function tick(){
+        if(!parVisible) return;
         var elapsed = Date.now() - startTime;
         var zoomT = Math.min(elapsed / zoomDur, 1);
         var eased = 1 - Math.pow(1 - zoomT, 3);
@@ -2689,7 +2711,8 @@ section:not(.hero):not(:first-of-type) {
 
         heroBg.style.transform = 'scale(' + scale + ') translate(' + cx + 'px, ' + (cy + scrollOff) + 'px)';
         requestAnimationFrame(tick);
-      })();
+      }
+      tick();
     })();
 
 

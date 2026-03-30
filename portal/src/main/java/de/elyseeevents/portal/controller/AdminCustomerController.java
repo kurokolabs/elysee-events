@@ -6,6 +6,7 @@ import de.elyseeevents.portal.model.User;
 import de.elyseeevents.portal.repository.DocumentRepository;
 import de.elyseeevents.portal.repository.UserRepository;
 import de.elyseeevents.portal.service.CustomerService;
+import de.elyseeevents.portal.service.EmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import de.elyseeevents.portal.util.FileUtil;
@@ -31,14 +33,16 @@ public class AdminCustomerController {
     private final CustomerService customerService;
     private final UserRepository userRepository;
     private final DocumentRepository documentRepository;
+    private final EmailService emailService;
     private final Path uploadPath;
 
     public AdminCustomerController(CustomerService customerService, UserRepository userRepository,
-                                   DocumentRepository documentRepository,
+                                   DocumentRepository documentRepository, EmailService emailService,
                                    @Value("${app.upload.path:./uploads}") String uploadDir) {
         this.customerService = customerService;
         this.userRepository = userRepository;
         this.documentRepository = documentRepository;
+        this.emailService = emailService;
         this.uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
     }
 
@@ -103,9 +107,15 @@ public class AdminCustomerController {
 
         CustomerService.CreateResult result = customerService.createWithAccount(customer, email);
 
+        emailService.sendHtmlEmail(email,
+                "Élysée Events - Ihre Zugangsdaten",
+                "email/welcome-credentials",
+                Map.of("customerName", firstName + " " + lastName,
+                       "email", email,
+                       "tempPassword", result.temporaryPassword()));
+
         redirectAttributes.addFlashAttribute("message",
-                "Kunde erfolgreich angelegt. Temporäres Passwort: " + result.temporaryPassword());
-        redirectAttributes.addFlashAttribute("tempPassword", result.temporaryPassword());
+                "Kunde erfolgreich angelegt. Die Zugangsdaten wurden per E-Mail versendet.");
         return "redirect:/portal/admin/kunde/" + result.customer().getId();
     }
 

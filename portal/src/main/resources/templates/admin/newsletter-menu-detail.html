@@ -25,13 +25,22 @@
       letter-spacing: .16em;
       text-transform: uppercase;
       color: var(--gold);
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
+    .menu-day__category {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .menu-day__category--meat { color: var(--muted); }
+    .menu-day__category--veg { color: #6B8E23; }
     .menu-day__text {
       font-size: 14px;
       line-height: 1.6;
       color: var(--dark);
-      white-space: pre-line;
+      margin-bottom: 10px;
     }
     .menu-notes {
       background: var(--surface, #F2EFE9);
@@ -59,7 +68,7 @@
       <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
 
       <div class="portal-header">
-        <h1 class="portal-header__title">Speisekarte</h1>
+        <h1 class="portal-header__title">Speisekarte Vorschau</h1>
         <p class="portal-header__subtitle" th:text="${menu.weekStart} + ' bis ' + ${menu.weekEnd}">Woche</p>
         <div class="portal-header__actions">
           <a th:href="@{/portal/admin/newsletter}" class="btn btn--outline">Zurück</a>
@@ -79,25 +88,64 @@
       </div>
 
       <div class="menu-week">
-        <div class="menu-day">
+        <div class="menu-day" th:if="${menu.mondayMeat != null or menu.mondayVeg != null}">
           <div class="menu-day__label">Montag</div>
-          <div class="menu-day__text" th:text="${menu.monday != null ? menu.monday : '-'}">-</div>
+          <div th:if="${menu.mondayMeat != null and !menu.mondayMeat.isEmpty()}">
+            <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
+            <div class="menu-day__text" th:text="${menu.mondayMeat}"></div>
+          </div>
+          <div th:if="${menu.mondayVeg != null and !menu.mondayVeg.isEmpty()}">
+            <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
+            <div class="menu-day__text" th:text="${menu.mondayVeg}"></div>
+          </div>
         </div>
-        <div class="menu-day">
+
+        <div class="menu-day" th:if="${menu.tuesdayMeat != null or menu.tuesdayVeg != null}">
           <div class="menu-day__label">Dienstag</div>
-          <div class="menu-day__text" th:text="${menu.tuesday != null ? menu.tuesday : '-'}">-</div>
+          <div th:if="${menu.tuesdayMeat != null and !menu.tuesdayMeat.isEmpty()}">
+            <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
+            <div class="menu-day__text" th:text="${menu.tuesdayMeat}"></div>
+          </div>
+          <div th:if="${menu.tuesdayVeg != null and !menu.tuesdayVeg.isEmpty()}">
+            <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
+            <div class="menu-day__text" th:text="${menu.tuesdayVeg}"></div>
+          </div>
         </div>
-        <div class="menu-day">
+
+        <div class="menu-day" th:if="${menu.wednesdayMeat != null or menu.wednesdayVeg != null}">
           <div class="menu-day__label">Mittwoch</div>
-          <div class="menu-day__text" th:text="${menu.wednesday != null ? menu.wednesday : '-'}">-</div>
+          <div th:if="${menu.wednesdayMeat != null and !menu.wednesdayMeat.isEmpty()}">
+            <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
+            <div class="menu-day__text" th:text="${menu.wednesdayMeat}"></div>
+          </div>
+          <div th:if="${menu.wednesdayVeg != null and !menu.wednesdayVeg.isEmpty()}">
+            <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
+            <div class="menu-day__text" th:text="${menu.wednesdayVeg}"></div>
+          </div>
         </div>
-        <div class="menu-day">
+
+        <div class="menu-day" th:if="${menu.thursdayMeat != null or menu.thursdayVeg != null}">
           <div class="menu-day__label">Donnerstag</div>
-          <div class="menu-day__text" th:text="${menu.thursday != null ? menu.thursday : '-'}">-</div>
+          <div th:if="${menu.thursdayMeat != null and !menu.thursdayMeat.isEmpty()}">
+            <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
+            <div class="menu-day__text" th:text="${menu.thursdayMeat}"></div>
+          </div>
+          <div th:if="${menu.thursdayVeg != null and !menu.thursdayVeg.isEmpty()}">
+            <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
+            <div class="menu-day__text" th:text="${menu.thursdayVeg}"></div>
+          </div>
         </div>
-        <div class="menu-day">
+
+        <div class="menu-day" th:if="${menu.fridayMeat != null or menu.fridayVeg != null}">
           <div class="menu-day__label">Freitag</div>
-          <div class="menu-day__text" th:text="${menu.friday != null ? menu.friday : '-'}">-</div>
+          <div th:if="${menu.fridayMeat != null and !menu.fridayMeat.isEmpty()}">
+            <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
+            <div class="menu-day__text" th:text="${menu.fridayMeat}"></div>
+          </div>
+          <div th:if="${menu.fridayVeg != null and !menu.fridayVeg.isEmpty()}">
+            <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
+            <div class="menu-day__text" th:text="${menu.fridayVeg}"></div>
+          </div>
         </div>
       </div>
 
@@ -106,12 +154,38 @@
         <span th:text="${menu.notes}"></span>
       </div>
 
+      <!-- Hinweis vor Versand -->
+      <div th:unless="${menu.sent}" style="background:rgba(201,168,76,.08); border:1px solid rgba(201,168,76,.2); border-radius:2px; padding:20px 24px; margin-bottom:24px;">
+        <p style="font-size:14px; color:var(--dark); margin:0 0 4px 0; font-weight:600;">Vorschau prüfen</p>
+        <p style="font-size:13px; color:var(--muted); margin:0; line-height:1.6;">
+          Bitte überprüfen Sie die Speisekarte auf Schreibfehler, bevor Sie den Newsletter versenden.
+          Der Newsletter geht an alle aktiven Abonnenten und kann nicht zurückgerufen werden.
+        </p>
+      </div>
+
       <div style="display:flex; gap:12px;">
-        <form th:unless="${menu.sent}" th:action="@{/portal/admin/newsletter/speisekarte/{id}/senden(id=${menu.id})}" method="post" style="display:inline;">
-          <button type="submit" class="btn btn--gold" onclick="return confirm('Newsletter jetzt an alle aktiven Abonnenten versenden?')">Newsletter versenden</button>
+        <form th:unless="${menu.sent}" th:action="@{/portal/admin/newsletter/speisekarte/{id}/senden(id=${menu.id})}" method="post" style="display:inline;" id="sendForm">
+          <button type="button" class="btn btn--gold" onclick="document.getElementById('confirmDialog').style.display='flex'">Newsletter versenden</button>
         </form>
-        <a th:href="@{/portal/admin/newsletter/speisekarte/{id}(id=${menu.id})}" th:unless="${menu.sent}" class="btn btn--outline"
-           onclick="this.href=this.href.replace(/speisekarte\/(\d+)$/, 'speisekarte/$1'); var f=document.createElement('form'); f.method='get'; f.action=this.getAttribute('th:href'); return true;">Bearbeiten</a>
+        <a th:href="@{/portal/admin/newsletter/speisekarte/{id}/bearbeiten(id=${menu.id})}" th:unless="${menu.sent}" class="btn btn--outline">Bearbeiten</a>
+        <span th:if="${menu.sent}" style="font-size:13px; color:var(--muted); align-self:center;">Newsletter wurde bereits versendet.</span>
+      </div>
+
+      <!-- Bestätigungs-Dialog -->
+      <div id="confirmDialog" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:var(--white); border-radius:4px; padding:32px; max-width:440px; width:90%; box-shadow:0 8px 32px rgba(0,0,0,.15);">
+          <h3 style="font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:400; margin:0 0 12px 0;">Newsletter versenden?</h3>
+          <p style="font-size:13px; color:var(--muted); line-height:1.6; margin:0 0 8px 0;">
+            Die Speisekarte wird jetzt an <strong th:text="${activeCount}">0</strong> aktive Abonnenten versendet.
+          </p>
+          <p style="font-size:13px; color:var(--muted); line-height:1.6; margin:0 0 24px 0;">
+            Haben Sie alles auf Schreibfehler geprüft?
+          </p>
+          <div style="display:flex; gap:12px; justify-content:flex-end;">
+            <button type="button" class="btn btn--outline" onclick="document.getElementById('confirmDialog').style.display='none'">Abbrechen</button>
+            <button type="button" class="btn btn--gold" onclick="document.getElementById('sendForm').submit()">Ja, jetzt versenden</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

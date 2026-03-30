@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -79,9 +81,12 @@ public class CustomerController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Authentication authentication, Model model) {
+    public String dashboard(Authentication authentication, Model model, HttpServletResponse response) {
         Customer customer = getCustomer(authentication);
         if (customer == null) return "redirect:/portal/login";
+
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
 
         model.addAttribute("activeNav", "dashboard");
         model.addAttribute("customer", customer);
@@ -185,9 +190,12 @@ public class CustomerController {
 
     // ── Rechnungen ─────────────────────────────────────────
     @GetMapping("/rechnungen")
-    public String invoices(Authentication authentication, Model model) {
+    public String invoices(Authentication authentication, Model model, HttpServletResponse response) {
         Customer customer = getCustomer(authentication);
         if (customer == null) return "redirect:/portal/login";
+
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
 
         model.addAttribute("activeNav", "rechnungen");
         model.addAttribute("customer", customer);
@@ -232,9 +240,12 @@ public class CustomerController {
 
     // ── Profil ─────────────────────────────────────────────
     @GetMapping("/profil")
-    public String profile(Authentication authentication, Model model) {
+    public String profile(Authentication authentication, Model model, HttpServletResponse response) {
         Customer customer = getCustomer(authentication);
         if (customer == null) return "redirect:/portal/login";
+
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
 
         model.addAttribute("activeNav", "profil");
         model.addAttribute("customer", customer);
@@ -279,9 +290,12 @@ public class CustomerController {
 
     // -- Dokumente -------------------------------------------------------
     @GetMapping("/dokumente")
-    public String documents(Authentication authentication, Model model) {
+    public String documents(Authentication authentication, Model model, HttpServletResponse response) {
         Customer customer = getCustomer(authentication);
         if (customer == null) return "redirect:/portal/login";
+
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
 
         model.addAttribute("activeNav", "dokumente");
         model.addAttribute("customer", customer);

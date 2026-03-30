@@ -37,6 +37,9 @@ public class EmailService {
     }
 
     public void sendHtmlEmail(String toEmail, String subject, String templateName, Map<String, Object> variables) {
+        if (toEmail == null || toEmail.contains("\n") || toEmail.contains("\r") || toEmail.contains("%0a") || toEmail.contains("%0d")) {
+            throw new IllegalArgumentException("Invalid email address");
+        }
         try {
             Context ctx = new Context();
             ctx.setVariables(variables);

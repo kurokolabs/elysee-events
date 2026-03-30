@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; form-action 'self' https://formsubmit.co; connect-src 'self' https://formsubmit.co; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests">
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; form-action 'self' https://formsubmit.co; connect-src 'self' https://formsubmit.co; base-uri 'self'; upgrade-insecure-requests">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-site-verification" content="ofkC7lPrk_nZWmrvExHFGgzJfkxqi6bsh7TLckbX5MQ" />
   <meta name="theme-color" content="#C9A84C">
@@ -77,6 +79,7 @@
 
     img { display: block; width: 100%; }
     a { color: inherit; text-decoration: none; }
+    :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
     @media (hover: hover) and (pointer: fine) {
       body { cursor: none; }
@@ -217,7 +220,7 @@
       font-size:11px; font-weight:500;
       letter-spacing:.14em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.45);
+      color:rgba(255,255,255,.6);
       padding:7px 16px;
       border-radius:100px;
       transition: color .3s ease, background .3s ease;
@@ -367,7 +370,7 @@
     /* ─── Hero ─────────────────────────────────────────────────────────────── */
     .hero {
       position: relative;
-      height: 100vh; min-height: 680px;
+      height: 100vh; height: 100dvh; min-height: 680px;
       display: grid;
       grid-template-columns: 55fr 45fr;
       overflow: hidden;
@@ -404,6 +407,7 @@
       background-size: cover; background-position: center;
       transform: scale(1.06);
       animation: heroZoom 14s var(--ease-in-out) forwards;
+      contain: strict;
     }
     @keyframes heroZoom { to { transform: scale(1); } }
 
@@ -456,7 +460,7 @@
     .hero__subtitle {
       font-size: 15px; font-weight: 300;
       line-height: 1.72; letter-spacing: .01em;
-      color: rgba(255,255,255,.52);
+      color: rgba(255,255,255,.62);
       max-width: 400px; margin: 0 0 36px;
       text-shadow: none;
       opacity: 0; animation: fadeUp .8s var(--ease-out) .9s forwards;
@@ -491,7 +495,7 @@
     .hero__stat-label {
       font-size: 8px; font-weight: 500;
       letter-spacing: .22em; text-transform: uppercase;
-      color: rgba(255,255,255,.28);
+      color: rgba(255,255,255,.5);
     }
 
     /* ── Scroll indicator ── */
@@ -742,7 +746,7 @@
     .technik__num {
       font-family: 'Cormorant Garamond', serif;
       font-size: 11px; font-weight: 400; font-style: italic;
-      color: rgba(201,168,76,.5);
+      color: rgba(201,168,76,.7);
       letter-spacing: .08em;
     }
     .technik__name {
@@ -904,7 +908,7 @@
     .referenzen__note {
       text-align: center; margin-top: 52px;
       font-size: 12px; font-weight: 300;
-      color: rgba(255,255,255,.3); letter-spacing: .04em;
+      color: rgba(255,255,255,.6); letter-spacing: .04em;
     }
 
     /* ─── Process ───────────────────────────────────────────────────────────── */
@@ -988,13 +992,13 @@
     .footer { background: var(--dark); padding: 88px 48px 44px; border-top: 1px solid rgba(255,255,255,.06); }
     .footer__grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 56px; padding-bottom: 64px; border-bottom: 1px solid rgba(255,255,255,.08); margin-bottom: 40px; }
     .footer__brand { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; letter-spacing: .14em; color: var(--white); text-transform: uppercase; margin-bottom: 16px; }
-    .footer__desc { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.45); line-height: 1.8; max-width: 320px; margin-bottom: 28px; }
-    .footer__address { font-size: 13px; font-weight: 300; color: rgba(255,255,255,.3); letter-spacing: .03em; }
+    .footer__desc { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.55); line-height: 1.8; max-width: 320px; margin-bottom: 28px; }
+    .footer__address { font-size: 13px; font-weight: 300; color: rgba(255,255,255,.55); letter-spacing: .03em; }
     .footer__col-title { font-size: 10px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 22px; }
     .footer__links { display: flex; flex-direction: column; gap: 12px; }
-    .footer__links a { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.5); transition: color .2s ease; overflow-wrap: break-word; word-break: break-word; }
+    .footer__links a { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.6); transition: color .2s ease; overflow-wrap: break-word; word-break: break-word; }
     .footer__links a:hover { color: var(--gold); }
-    .footer__bottom { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 300; color: rgba(255,255,255,.25); letter-spacing: .04em; }
+    .footer__bottom { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 300; color: rgba(255,255,255,.55); letter-spacing: .04em; }
     .footer__bottom a { color: rgba(255,255,255,.35); transition: color .2s ease; }
     .footer__bottom a:hover { color: var(--gold); }
     .footer__gold-bar { height: 2px; background: linear-gradient(90deg, var(--gold) 0%, transparent 100%); margin-bottom: 0; width: 72px; margin-top: 4px; }
@@ -1654,15 +1658,15 @@ section:not(.hero):not(:first-of-type) {
   .bk__nav { flex-direction: column; gap: 8px; width: 100%; }
   .bk__btn { width: 100%; padding: 13px 16px; text-align: center; }
   .bk__cal-grid { gap: 1px; }
-  .bk__cal-day { min-height: 32px; padding: 2px; font-size: 9px; }
+  .bk__cal-day { min-height: 38px; padding: 2px; font-size: 9px; }
   .bk__cal-day__num { font-size: 10px; }
-  .bk__cal-header { padding: 3px; font-size: 7px; letter-spacing: .06em; }
+  .bk__cal-header { padding: 3px; font-size: 9px; letter-spacing: .06em; }
   .bk__calendar { margin-bottom: .8rem; }
   .bk__progress { padding-top: 56px; margin-bottom: 16px; min-height: auto; }
   .bk__progress.is-morphed { min-height: auto; }
   .bk__progress-svg { max-height: 50px; }
   .bk__wm { font-size: .7rem; }
-  .bk__close { top: max(12px, env(safe-area-inset-top, 12px)); right: max(12px, env(safe-area-inset-right, 12px)); width: 38px; height: 38px; z-index: 20; }
+  .bk__close { top: max(12px, env(safe-area-inset-top, 12px)); right: max(12px, env(safe-area-inset-right, 12px)); width: 44px; height: 44px; z-index: 20; }
   .bk__close svg { width: 14px; height: 14px; }
   .bk__textarea { height: 88px; }
   .bk__card { padding: 16px 12px; }
@@ -1779,7 +1783,7 @@ section:not(.hero):not(:first-of-type) {
     <a href="/hochzeit">Hochzeiten</a>
     <a href="/corporate" aria-current="page">Corporate</a>
     <a href="/portal/login">Kundenportal</a>
-    <a href="javascript:void(0)" data-anfrage-open class="nav__drawer-cta">Kostenlos anfragen</a>
+    <a href="#" data-anfrage-open class="nav__drawer-cta">Kostenlos anfragen</a>
   </nav>
 
   <header class="nav" id="mainNav" role="banner">
@@ -1799,7 +1803,7 @@ section:not(.hero):not(:first-of-type) {
       </nav>
       <div class="nav__actions">
         <a href="/portal/login" class="nav__portal-btn">Kundenportal</a>
-        <a href="javascript:void(0)" data-anfrage-open class="nav__cta">Kostenlos anfragen</a>
+        <a href="#" data-anfrage-open class="nav__cta">Kostenlos anfragen</a>
       </div>
       <button class="nav__burger" id="navBurger" aria-label="Menue oeffnen" aria-expanded="false" aria-controls="navDrawer">
         <span></span><span></span><span></span>
@@ -1826,7 +1830,7 @@ section:not(.hero):not(:first-of-type) {
       </p>
       <div class="hero__actions">
         <a href="#kapazitaeten" class="btn btn--gold">Kapazitäten</a>
-        <a href="javascript:void(0)" data-anfrage-open class="btn btn--outline">Anfrage stellen</a>
+        <a href="#" data-anfrage-open class="btn btn--outline">Anfrage stellen</a>
       </div>
 
       <div class="hero__stats" aria-label="Eckdaten">
@@ -2180,7 +2184,7 @@ section:not(.hero):not(:first-of-type) {
         Ob kleine Boardroom-Session oder große Gala — unser Team begleitet Sie von der ersten Idee bis zur letzten Nachspeise. Stellen Sie noch heute Ihre unverbindliche Anfrage.
       </p>
       <div data-reveal data-delay="3">
-        <a href="javascript:void(0)" data-anfrage-open class="btn btn--gold">
+        <a href="#" data-anfrage-open class="btn btn--gold">
           Jetzt Anfrage stellen
         </a>
       </div>
@@ -2254,8 +2258,10 @@ section:not(.hero):not(:first-of-type) {
 
   <script>
     /* ─── Cursor ─────────────────────────────────────────────────────────── */
-    const dot  = document.querySelector('.cursor-dot');
-    const ring = document.querySelector('.cursor-ring');
+    (function(){
+    var d=document.querySelector('.cursor-dot'),r=document.querySelector('.cursor-ring');
+    if(!d||!r)return;
+    if(matchMedia('(pointer:coarse)').matches)return;
     let mx = -100, my = -100, rx = -100, ry = -100;
 
     document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
@@ -2263,16 +2269,17 @@ section:not(.hero):not(:first-of-type) {
     (function raf() {
       rx += (mx - rx) * 0.15;
       ry += (my - ry) * 0.15;
-      dot.style.transform  = 'translate(' + mx + 'px,' + my + 'px) translate(-50%,-50%)';
-      ring.style.transform = 'translate(' + rx + 'px,' + ry + 'px) translate(-50%,-50%)';
+      d.style.transform  = 'translate(' + mx + 'px,' + my + 'px) translate(-50%,-50%)';
+      r.style.transform = 'translate(' + rx + 'px,' + ry + 'px) translate(-50%,-50%)';
       requestAnimationFrame(raf);
     })();
 
     const hoverSel = 'a, button, .card, .etype-card, .cap-card, .pkg-card, .process__step, label, input, select, textarea';
     document.querySelectorAll(hoverSel).forEach(el => {
-      el.addEventListener('mouseenter', () => ring.classList.add('is-hovered'));
-      el.addEventListener('mouseleave', () => ring.classList.remove('is-hovered'));
+      el.addEventListener('mouseenter', () => r.classList.add('is-hovered'));
+      el.addEventListener('mouseleave', () => r.classList.remove('is-hovered'));
     });
+    })();
 
     /* ─── Mobile Nav ─────────────────────────────────────────────────────── */
     const burger  = document.getElementById('navBurger');

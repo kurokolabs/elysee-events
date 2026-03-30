@@ -27,6 +27,16 @@ public class WeeklyMenuRepository {
         m.setWednesday(rs.getString("wednesday"));
         m.setThursday(rs.getString("thursday"));
         m.setFriday(rs.getString("friday"));
+        m.setMondayMeat(rs.getString("monday_meat"));
+        m.setMondayVeg(rs.getString("monday_veg"));
+        m.setTuesdayMeat(rs.getString("tuesday_meat"));
+        m.setTuesdayVeg(rs.getString("tuesday_veg"));
+        m.setWednesdayMeat(rs.getString("wednesday_meat"));
+        m.setWednesdayVeg(rs.getString("wednesday_veg"));
+        m.setThursdayMeat(rs.getString("thursday_meat"));
+        m.setThursdayVeg(rs.getString("thursday_veg"));
+        m.setFridayMeat(rs.getString("friday_meat"));
+        m.setFridayVeg(rs.getString("friday_veg"));
         m.setNotes(rs.getString("notes"));
         m.setSent(rs.getInt("sent") == 1);
         m.setSentAt(rs.getString("sent_at"));
@@ -59,8 +69,10 @@ public class WeeklyMenuRepository {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbc.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(
-                        "INSERT INTO weekly_menus (week_start, week_end, monday, tuesday, wednesday, thursday, friday, notes) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        "INSERT INTO weekly_menus (week_start, week_end, monday, tuesday, wednesday, thursday, friday, " +
+                        "monday_meat, monday_veg, tuesday_meat, tuesday_veg, wednesday_meat, wednesday_veg, " +
+                        "thursday_meat, thursday_veg, friday_meat, friday_veg, notes) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, m.getWeekStart());
                 ps.setString(2, m.getWeekEnd());
@@ -69,20 +81,52 @@ public class WeeklyMenuRepository {
                 ps.setString(5, m.getWednesday());
                 ps.setString(6, m.getThursday());
                 ps.setString(7, m.getFriday());
-                ps.setString(8, m.getNotes());
+                ps.setString(8, m.getMondayMeat());
+                ps.setString(9, m.getMondayVeg());
+                ps.setString(10, m.getTuesdayMeat());
+                ps.setString(11, m.getTuesdayVeg());
+                ps.setString(12, m.getWednesdayMeat());
+                ps.setString(13, m.getWednesdayVeg());
+                ps.setString(14, m.getThursdayMeat());
+                ps.setString(15, m.getThursdayVeg());
+                ps.setString(16, m.getFridayMeat());
+                ps.setString(17, m.getFridayVeg());
+                ps.setString(18, m.getNotes());
                 return ps;
             }, keyHolder);
             m.setId(keyHolder.getKey().longValue());
         } else {
             jdbc.update("UPDATE weekly_menus SET week_start = ?, week_end = ?, monday = ?, tuesday = ?, " +
-                        "wednesday = ?, thursday = ?, friday = ?, notes = ? WHERE id = ?",
+                        "wednesday = ?, thursday = ?, friday = ?, " +
+                        "monday_meat = ?, monday_veg = ?, tuesday_meat = ?, tuesday_veg = ?, " +
+                        "wednesday_meat = ?, wednesday_veg = ?, thursday_meat = ?, thursday_veg = ?, " +
+                        "friday_meat = ?, friday_veg = ?, notes = ? WHERE id = ?",
                     m.getWeekStart(), m.getWeekEnd(), m.getMonday(), m.getTuesday(),
-                    m.getWednesday(), m.getThursday(), m.getFriday(), m.getNotes(), m.getId());
+                    m.getWednesday(), m.getThursday(), m.getFriday(),
+                    m.getMondayMeat(), m.getMondayVeg(), m.getTuesdayMeat(), m.getTuesdayVeg(),
+                    m.getWednesdayMeat(), m.getWednesdayVeg(), m.getThursdayMeat(), m.getThursdayVeg(),
+                    m.getFridayMeat(), m.getFridayVeg(), m.getNotes(), m.getId());
         }
         return m;
     }
 
     public void markSent(Long id) {
         jdbc.update("UPDATE weekly_menus SET sent = 1, sent_at = NOW() WHERE id = ?", id);
+    }
+
+    public List<String> findDistinctDishes() {
+        String sql = "SELECT DISTINCT dish FROM (" +
+                "SELECT monday_meat AS dish FROM weekly_menus UNION " +
+                "SELECT monday_veg FROM weekly_menus UNION " +
+                "SELECT tuesday_meat FROM weekly_menus UNION " +
+                "SELECT tuesday_veg FROM weekly_menus UNION " +
+                "SELECT wednesday_meat FROM weekly_menus UNION " +
+                "SELECT wednesday_veg FROM weekly_menus UNION " +
+                "SELECT thursday_meat FROM weekly_menus UNION " +
+                "SELECT thursday_veg FROM weekly_menus UNION " +
+                "SELECT friday_meat FROM weekly_menus UNION " +
+                "SELECT friday_veg FROM weekly_menus" +
+                ") AS all_dishes WHERE dish IS NOT NULL AND dish != '' ORDER BY dish";
+        return jdbc.queryForList(sql, String.class);
     }
 }

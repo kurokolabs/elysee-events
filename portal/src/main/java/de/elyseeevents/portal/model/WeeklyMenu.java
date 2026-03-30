@@ -9,6 +9,16 @@ public class WeeklyMenu {
     private String wednesday;
     private String thursday;
     private String friday;
+    private String mondayMeat;
+    private String mondayVeg;
+    private String tuesdayMeat;
+    private String tuesdayVeg;
+    private String wednesdayMeat;
+    private String wednesdayVeg;
+    private String thursdayMeat;
+    private String thursdayVeg;
+    private String fridayMeat;
+    private String fridayVeg;
     private String notes;
     private boolean sent;
     private String sentAt;
@@ -37,6 +47,36 @@ public class WeeklyMenu {
 
     public String getFriday() { return friday; }
     public void setFriday(String friday) { this.friday = friday; }
+
+    public String getMondayMeat() { return mondayMeat; }
+    public void setMondayMeat(String mondayMeat) { this.mondayMeat = mondayMeat; }
+
+    public String getMondayVeg() { return mondayVeg; }
+    public void setMondayVeg(String mondayVeg) { this.mondayVeg = mondayVeg; }
+
+    public String getTuesdayMeat() { return tuesdayMeat; }
+    public void setTuesdayMeat(String tuesdayMeat) { this.tuesdayMeat = tuesdayMeat; }
+
+    public String getTuesdayVeg() { return tuesdayVeg; }
+    public void setTuesdayVeg(String tuesdayVeg) { this.tuesdayVeg = tuesdayVeg; }
+
+    public String getWednesdayMeat() { return wednesdayMeat; }
+    public void setWednesdayMeat(String wednesdayMeat) { this.wednesdayMeat = wednesdayMeat; }
+
+    public String getWednesdayVeg() { return wednesdayVeg; }
+    public void setWednesdayVeg(String wednesdayVeg) { this.wednesdayVeg = wednesdayVeg; }
+
+    public String getThursdayMeat() { return thursdayMeat; }
+    public void setThursdayMeat(String thursdayMeat) { this.thursdayMeat = thursdayMeat; }
+
+    public String getThursdayVeg() { return thursdayVeg; }
+    public void setThursdayVeg(String thursdayVeg) { this.thursdayVeg = thursdayVeg; }
+
+    public String getFridayMeat() { return fridayMeat; }
+    public void setFridayMeat(String fridayMeat) { this.fridayMeat = fridayMeat; }
+
+    public String getFridayVeg() { return fridayVeg; }
+    public void setFridayVeg(String fridayVeg) { this.fridayVeg = fridayVeg; }
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }

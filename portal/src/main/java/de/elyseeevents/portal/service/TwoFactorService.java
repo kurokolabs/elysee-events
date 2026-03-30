@@ -21,7 +21,7 @@ public class TwoFactorService {
 
     private static final int CODE_LENGTH = 6;
     private static final int CODE_VALIDITY_MINUTES = 5;
-    private static final int MAX_ATTEMPTS = 5;
+    private static final int MAX_ATTEMPTS = 3;
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 

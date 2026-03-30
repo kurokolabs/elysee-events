@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests">
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; base-uri 'self'; upgrade-insecure-requests">
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
@@ -116,6 +116,7 @@
       border: none;
       background: none;
     }
+    :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
     @media (hover: hover) and (pointer: fine) {
       body, a, button, input, select, textarea, label, [data-magnetic],
@@ -409,7 +410,7 @@
       font-size:11px; font-weight:500;
       letter-spacing:.14em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.45);
+      color:rgba(255,255,255,.6);
       padding:7px 16px;
       border-radius:100px;
       transition: color .3s ease, background .3s ease;
@@ -584,6 +585,7 @@
       background-position: center 40%;
       transform: scale(1.08);
       will-change: transform;
+      contain: strict;
     }
     .hero__overlay {
       position: absolute;
@@ -984,7 +986,7 @@
     }
     @media (max-width: 768px) {
       .wochenkarte__nav { gap: 16px; margin-bottom: 24px; }
-      .wochenkarte__nav-btn { width: 36px; height: 36px; font-size: 16px; }
+      .wochenkarte__nav-btn { width: 44px; height: 44px; font-size: 16px; }
       .wochenkarte__nav-info { min-width: 160px; }
       .wochenkarte__nav-week { font-size: 1.05rem; }
       .wochenkarte__nav-dates { font-size: .7rem; }
@@ -1339,13 +1341,13 @@
     .footer { background: var(--dark); padding: 88px 48px 44px; border-top: 1px solid rgba(255,255,255,.06); }
     .footer__grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 56px; padding-bottom: 64px; border-bottom: 1px solid rgba(255,255,255,.08); margin-bottom: 40px; }
     .footer__brand { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; letter-spacing: .14em; color: var(--white); text-transform: uppercase; margin-bottom: 16px; }
-    .footer__desc { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.45); line-height: 1.8; max-width: 320px; margin-bottom: 28px; }
-    .footer__address { font-size: 13px; font-weight: 300; color: rgba(255,255,255,.3); letter-spacing: .03em; }
+    .footer__desc { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.55); line-height: 1.8; max-width: 320px; margin-bottom: 28px; }
+    .footer__address { font-size: 13px; font-weight: 300; color: rgba(255,255,255,.55); letter-spacing: .03em; }
     .footer__col-title { font-size: 10px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 22px; }
     .footer__links { display: flex; flex-direction: column; gap: 12px; }
-    .footer__links a { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.5); transition: color .2s ease; overflow-wrap: break-word; word-break: break-word; }
+    .footer__links a { font-size: 14px; font-weight: 300; color: rgba(255,255,255,.6); transition: color .2s ease; overflow-wrap: break-word; word-break: break-word; }
     .footer__links a:hover { color: var(--gold); }
-    .footer__bottom { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 300; color: rgba(255,255,255,.25); letter-spacing: .04em; }
+    .footer__bottom { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 300; color: rgba(255,255,255,.55); letter-spacing: .04em; }
     .footer__bottom a { color: rgba(255,255,255,.35); transition: color .2s ease; }
     .footer__bottom a:hover { color: var(--gold); }
     .footer__gold-bar { height: 2px; background: linear-gradient(90deg, var(--gold) 0%, transparent 100%); margin-bottom: 0; width: 72px; margin-top: 4px; }
@@ -1430,7 +1432,7 @@
       .footer__grid > div:first-child .footer__desc { max-width: 280px; margin: 0 auto 16px; font-size: 13px; }
       .footer__grid > div:first-child .footer__address { font-size: 12px; }
       .footer__grid > div:nth-child(2), .footer__grid > div:nth-child(3) { text-align: center; padding-top: 4px; }
-      .footer__col-title { margin-bottom: 14px !important; font-size: 9px !important; letter-spacing: .2em !important; }
+      .footer__col-title { margin-bottom: 14px !important; font-size: 10px !important; letter-spacing: .2em !important; }
       .footer__links { align-items: center; gap: 10px !important; }
       .footer__links a { font-size: 13px !important; }
       .footer__contact { grid-column: 1 / -1; margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.08); text-align: center; }
@@ -1913,7 +1915,7 @@
   .bk__budget-ends {
     display: flex; justify-content: space-between;
     font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
-    color: rgba(255,255,255,.28); margin-top: .5rem;
+    color: rgba(255,255,255,.5); margin-top: .5rem;
   }
 
   /* nav buttons */
@@ -2140,15 +2142,15 @@ section:not(.hero):not(:first-of-type) {
   .bk__nav { flex-direction: column; gap: 8px; width: 100%; }
   .bk__btn { width: 100%; padding: 13px 16px; text-align: center; }
   .bk__cal-grid { gap: 1px; }
-  .bk__cal-day { min-height: 32px; padding: 2px; font-size: 9px; }
+  .bk__cal-day { min-height: 38px; padding: 2px; font-size: 9px; }
   .bk__cal-day__num { font-size: 10px; }
-  .bk__cal-header { padding: 3px; font-size: 7px; letter-spacing: .06em; }
+  .bk__cal-header { padding: 3px; font-size: 9px; letter-spacing: .06em; }
   .bk__calendar { margin-bottom: .8rem; }
   .bk__progress { padding-top: 56px; margin-bottom: 16px; min-height: auto; }
   .bk__progress.is-morphed { min-height: auto; }
   .bk__progress-svg { max-height: 50px; }
   .bk__wm { font-size: .7rem; }
-  .bk__close { top: max(12px, env(safe-area-inset-top, 12px)); right: max(12px, env(safe-area-inset-right, 12px)); width: 38px; height: 38px; z-index: 20; }
+  .bk__close { top: max(12px, env(safe-area-inset-top, 12px)); right: max(12px, env(safe-area-inset-right, 12px)); width: 44px; height: 44px; z-index: 20; }
   .bk__close svg { width: 14px; height: 14px; }
   .bk__textarea { height: 88px; }
   .bk__card { padding: 16px 12px; }
@@ -2271,7 +2273,7 @@ section:not(.hero):not(:first-of-type) {
     <a href="/hochzeit">Hochzeiten</a>
     <a href="/corporate">Corporate</a>
     <a href="/portal/login">Kundenportal</a>
-    <a href="javascript:void(0)" data-anfrage-open class="nav__drawer-cta">Kostenlos anfragen</a>
+    <a href="#" data-anfrage-open class="nav__drawer-cta">Kostenlos anfragen</a>
   </nav>
 
   <header class="nav" id="mainNav" role="banner">
@@ -2291,7 +2293,7 @@ section:not(.hero):not(:first-of-type) {
       </nav>
       <div class="nav__actions">
         <a href="/portal/login" class="nav__portal-btn">Kundenportal</a>
-        <a href="javascript:void(0)" data-anfrage-open class="nav__cta">Kostenlos anfragen</a>
+        <a href="#" data-anfrage-open class="nav__cta">Kostenlos anfragen</a>
       </div>
       <button class="nav__hamburger" id="hamburgerBtn" aria-label="Menue oeffnen" aria-expanded="false" aria-controls="mobileNav">
         <span></span><span></span><span></span>
@@ -2401,118 +2403,117 @@ section:not(.hero):not(:first-of-type) {
   <section class="section section--dark" id="wochenkarte" aria-labelledby="wochenkarte-heading">
     <div class="section__inner">
       <div class="section__header section__header--center">
-        <span class="label label--light" data-reveal>Monatliche Speisekarte</span>
+        <span class="label label--light" data-reveal>Aktuelle Wochenkarte</span>
         <h2 id="wochenkarte-heading" class="u-color-white" data-reveal data-delay="1">Was auf den Tisch kommt</h2>
       </div>
 
-      <!-- Wochennavigation -->
-      <div class="wochenkarte__nav" data-reveal data-delay="2">
-        <button type="button" class="wochenkarte__nav-btn" id="wkPrev" aria-label="Vorherige Woche">&larr;</button>
+      <!-- Wochenanzeige (nur aktuelle Woche) -->
+      <div class="wochenkarte__nav" data-reveal data-delay="2" style="justify-content:center;">
         <div class="wochenkarte__nav-info">
-          <span class="wochenkarte__nav-week" id="wkLabel">Woche 1</span>
+          <span class="wochenkarte__nav-week" id="wkLabel"></span>
           <span class="wochenkarte__nav-dates" id="wkDates"></span>
         </div>
-        <button type="button" class="wochenkarte__nav-btn" id="wkNext" aria-label="Naechste Woche">&rarr;</button>
       </div>
 
       <!-- Dynamischer Inhalt -->
       <div id="wkContent"></div>
 
       <div class="wochenkarte__note" data-reveal data-delay="3">
-        <p>4-Wochen-Rotation. Beilagen separat erhältlich. Vegetarisches Gericht täglich verfügbar.</p>
+        <p>Beilagen separat erhältlich. Fleisch- und vegetarische Option täglich verfügbar.</p>
       </div>
     </div>
 
     <script>
     (function() {
-      var MENU = [
-        [
-          {day:'Montag',meat:'Hähnchenbrust in Rahmsoße mit Champignons und Butterreis',meatP:'8,50',veg:'Spinat-Ricotta-Lasagne',vegP:'8,00'},
-          {day:'Dienstag',meat:'Rinderhack-Frikadellen in Paprikasoße mit Kartoffelpüree',meatP:'8,50',veg:'Gemuese-Käsespätzle',vegP:'8,00'},
-          {day:'Mittwoch',meat:'Putenstreifen in Tomaten-Basilikumsoße mit Penne',meatP:'8,50',veg:'Gefüllte Paprika mit Couscous & Grillgemüse',vegP:'8,00'},
-          {day:'Donnerstag',meat:'Rindergulasch mit Spätzle',meatP:'8,50',veg:'Gnocchi in Gorgonzola-Spinatsoße',vegP:'8,00'},
-          {day:'Freitag',meat:'Lachsfilet in Zitronensoße mit Rosmarinkartoffeln',meatP:'8,50',veg:'Gemüse-Risotto mit Parmesan',vegP:'8,00'}
-        ],
-        [
-          {day:'Montag',meat:'Putensteak mit Kräuterrahm und Reis',meatP:'8,50',veg:'Pasta Arrabbiata mit Grillgemüse',vegP:'8,00'},
-          {day:'Dienstag',meat:'Rindergeschnetzeltes Stroganoff mit Nudeln',meatP:'8,50',veg:'Brokkoli-Kartoffel-Auflauf',vegP:'8,00'},
-          {day:'Mittwoch',meat:'Hähnchenkeulen mit Ofengemüse',meatP:'8,50',veg:'Pilzrahm-Tagliatelle',vegP:'8,00'},
-          {day:'Donnerstag',meat:'Geflügel-Cevapcici mit Djuvec-Reis',meatP:'8,50',veg:'Gemüse-Maultaschen in Butter-Salbei',vegP:'8,00'},
-          {day:'Freitag',meat:'Seelachsfilet paniert mit Kartoffelsalat',meatP:'8,50',veg:'Margherita-Gemüse-Pizza',vegP:'8,00'}
-        ],
-        [
-          {day:'Montag',meat:'Hähnchen-Curry mit Basmatireis',meatP:'8,50',veg:'Gemüse-Lasagne',vegP:'8,00'},
-          {day:'Dienstag',meat:'Rinderbraten mit Rotkohl & Kartoffeln',meatP:'8,50',veg:'Spaghetti Aglio e Olio mit Gemüse',vegP:'8,00'},
-          {day:'Mittwoch',meat:'Putenrahmgeschnetzeltes mit Spätzle',meatP:'8,50',veg:'Kartoffel-Gemüse-Gratin',vegP:'8,00'},
-          {day:'Donnerstag',meat:'Geflügel-Köfte mit Tomatenreis',meatP:'8,50',veg:'Steinpilz-Risotto',vegP:'8,00'},
-          {day:'Freitag',meat:'Doradenfilet mit Zitronenkruste & Ofenkartoffeln',meatP:'8,50',veg:'Spinat-Käse-Cannelloni',vegP:'8,00'}
-        ],
-        [
-          {day:'Montag',meat:'Rindergeschnetzeltes in Pfefferrahm mit Nudeln',meatP:'8,50',veg:'Tortellini in Tomaten-Sahnesoße',vegP:'8,00'},
-          {day:'Dienstag',meat:'Hähnchenbrust Caprese mit Reis',meatP:'8,50',veg:'Gemüse-Paella',vegP:'8,00'},
-          {day:'Mittwoch',meat:'Putenhackbällchen in Paprikarahm mit Kartoffelpüree',meatP:'8,50',veg:'Käsespätzle',vegP:'8,00'},
-          {day:'Donnerstag',meat:'Rindergulasch italienische Art mit Polenta',meatP:'8,50',veg:'Zucchini-Melanzani-Auflauf',vegP:'8,00'},
-          {day:'Freitag',meat:'Lachs-Lasagne mit Blattspinat',meatP:'8,50',veg:'Tagliatelle mit Zitronen-Sahnesoße & Brokkoli',vegP:'8,00'}
-        ]
-      ];
-      var currentWeek = 0;
-      function getWeekOfMonth(date) { return Math.min(Math.floor((date.getDate() - 1) / 7), 3); }
-      function getISOWeek(date) {
-        var d = new Date(date.getTime()); d.setHours(0,0,0,0);
+      var API_URL = 'https://www.elysee-events.de/api/weekly-menu/current';
+      var container = document.getElementById('wkContent');
+      var label = document.getElementById('wkLabel');
+      var dates = document.getElementById('wkDates');
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+      }
+
+      function formatDate(dateStr) {
+        if (!dateStr) return '';
+        var parts = dateStr.split('-');
+        return parseInt(parts[2], 10) + '.' + parseInt(parts[1], 10) + '.' + parts[0];
+      }
+
+      function getISOWeek(dateStr) {
+        var d = new Date(dateStr + 'T00:00:00');
         d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
         var w1 = new Date(d.getFullYear(), 0, 4);
         return 1 + Math.round(((d.getTime() - w1.getTime()) / 86400000 - 3 + (w1.getDay() + 6) % 7) / 7);
       }
-      function getWeekDates(weekIdx) {
-        var now = new Date(), y = now.getFullYear(), m = now.getMonth();
-        var start = new Date(y, m, 1 + weekIdx * 7), last = new Date(y, m + 1, 0).getDate(), dates = [];
-        for (var i = 0; i < 7; i++) {
-          var d = new Date(start); d.setDate(start.getDate() + i);
-          if (d.getMonth() !== m) break;
-          if (d.getDay() >= 1 && d.getDay() <= 5) dates.push(d);
+
+      function renderMenu(data) {
+        if (!data.available) {
+          label.textContent = '';
+          dates.textContent = '';
+          container.innerHTML = '<p style="text-align:center;color:rgba(255,255,255,.5);font-size:15px;padding:40px 0;">Aktuell ist keine Wochenkarte hinterlegt. Schauen Sie bald wieder vorbei.</p>';
+          return;
         }
-        return dates;
-      }
-      function fmt(d) { return d.getDate() + '.' + (d.getMonth() + 1) + '.'; }
-      function renderWeek(idx) {
-        currentWeek = idx;
-        var week = MENU[idx], dates = getWeekDates(idx), now = new Date();
-        var kw = getISOWeek(dates.length > 0 ? dates[0] : now);
-        var days = dates.length > 0 && dates.length < 5 ? dates.length : 5;
-        document.getElementById('wkLabel').textContent = 'Woche ' + (idx + 1) + ' (KW ' + kw + ')';
-        document.getElementById('wkDates').textContent = dates.length >= 2 ? fmt(dates[0]) + ' \u2013 ' + fmt(dates[dates.length - 1]) : dates.length === 1 ? fmt(dates[0]) : '';
-        var h = '<div class="wochenkarte__table-wrap"><table class="wochenkarte__table" role="table"><thead><tr><th>Tag</th><th>Fleisch / Fisch</th><th>Vegetarisch</th></tr></thead><tbody>';
-        for (var i = 0; i < days && i < week.length; i++) {
-          var d = week[i], today = dates[i] && dates[i].toDateString() === now.toDateString();
-          h += '<tr' + (today ? ' class="wochenkarte__today"' : '') + '><td>' + d.day.substring(0,2) + '</td>';
-          h += '<td><div class="wochenkarte__dish"><span class="wochenkarte__dish-name">' + d.meat + '</span><span class="wochenkarte__price">' + d.meatP + ' \u20ac</span></div></td>';
-          h += '<td><div class="wochenkarte__dish"><span class="wochenkarte__dish-name">' + d.veg + '</span><span class="wochenkarte__price">' + d.vegP + ' \u20ac</span></div></td></tr>';
+
+        var kw = getISOWeek(data.weekStart);
+        label.textContent = 'KW ' + kw;
+        dates.textContent = formatDate(data.weekStart) + ' \u2013 ' + formatDate(data.weekEnd);
+
+        var now = new Date();
+        now.setHours(0,0,0,0);
+        var dayNames = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+        var todayName = dayNames[now.getDay()];
+
+        // Desktop-Tabelle
+        var h = '<div class="wochenkarte__table-wrap"><table class="wochenkarte__table" role="table">';
+        h += '<thead><tr><th>Tag</th><th>Fleisch / Fisch</th><th>Vegetarisch</th></tr></thead><tbody>';
+        for (var i = 0; i < data.days.length; i++) {
+          var d = data.days[i];
+          if (!d.meat && !d.vegetarian) continue;
+          var isToday = d.day === todayName;
+          h += '<tr' + (isToday ? ' class="wochenkarte__today"' : '') + '>';
+          h += '<td>' + escapeHtml(d.day.substring(0, 2)) + '</td>';
+          h += '<td><div class="wochenkarte__dish"><span class="wochenkarte__dish-name">' + escapeHtml(d.meat || '') + '</span></div></td>';
+          h += '<td><div class="wochenkarte__dish"><span class="wochenkarte__dish-name" style="color:#9DBF6B;">' + escapeHtml(d.vegetarian || '') + '</span></div></td>';
+          h += '</tr>';
         }
-        h += '</tbody></table></div><div class="wochenkarte__cards">';
-        for (var i = 0; i < days && i < week.length; i++) {
-          var d = week[i], today = dates[i] && dates[i].toDateString() === now.toDateString();
-          h += '<div class="woche-card' + (today ? ' woche-card--today' : '') + '"><div class="woche-card__day">' + d.day + (today ? ' <span class="woche-card__today-badge">Heute</span>' : '') + '</div>';
-          h += '<div class="woche-card__item"><span class="woche-card__dish">' + d.meat + '</span><span class="woche-card__price">' + d.meatP + ' \u20ac</span></div>';
-          h += '<div class="woche-card__item"><span class="woche-card__dish">' + d.veg + ' (vegetarisch)</span><span class="woche-card__price">' + d.vegP + ' \u20ac</span></div></div>';
+        h += '</tbody></table></div>';
+
+        // Mobile-Karten
+        h += '<div class="wochenkarte__cards">';
+        for (var i = 0; i < data.days.length; i++) {
+          var d = data.days[i];
+          if (!d.meat && !d.vegetarian) continue;
+          var isToday = d.day === todayName;
+          h += '<div class="woche-card' + (isToday ? ' woche-card--today' : '') + '">';
+          h += '<div class="woche-card__day">' + escapeHtml(d.day) + (isToday ? ' <span class="woche-card__today-badge">Heute</span>' : '') + '</div>';
+          if (d.meat) {
+            h += '<div class="woche-card__item"><span class="woche-card__dish">' + escapeHtml(d.meat) + '</span></div>';
+          }
+          if (d.vegetarian) {
+            h += '<div class="woche-card__item"><span class="woche-card__dish" style="color:#9DBF6B;">' + escapeHtml(d.vegetarian) + ' (V)</span></div>';
+          }
+          h += '</div>';
         }
         h += '</div>';
-        document.getElementById('wkContent').innerHTML = h;
-        document.getElementById('wkPrev').style.opacity = idx === 0 ? '0.3' : '1';
-        document.getElementById('wkNext').style.opacity = idx === 3 ? '0.3' : '1';
-        document.getElementById('wkPrev').disabled = idx === 0;
-        document.getElementById('wkNext').disabled = idx === 3;
+
+        if (data.notes) {
+          h += '<div style="margin-top:24px;padding:14px 20px;border-left:2px solid var(--gold);background:rgba(201,168,76,.06);">';
+          h += '<p style="font-size:.8125rem;font-weight:300;color:rgba(255,255,255,.55);line-height:1.7;margin:0;">' + escapeHtml(data.notes) + '</p></div>';
+        }
+
+        container.innerHTML = h;
       }
-      function animateToWeek(idx) {
-        var el = document.getElementById('wkContent');
-        el.classList.add('wk-fade-out');
-        setTimeout(function() {
-          renderWeek(idx);
-          el.classList.remove('wk-fade-out');
-        }, 350);
-      }
-      document.getElementById('wkPrev').addEventListener('click', function() { if (currentWeek > 0) animateToWeek(currentWeek - 1); });
-      document.getElementById('wkNext').addEventListener('click', function() { if (currentWeek < 3) animateToWeek(currentWeek + 1); });
-      renderWeek(getWeekOfMonth(new Date()));
+
+      fetch(API_URL)
+        .then(function(res) { return res.json(); })
+        .then(renderMenu)
+        .catch(function() {
+          container.innerHTML = '<p style="text-align:center;color:rgba(255,255,255,.5);font-size:15px;padding:40px 0;">Die Speisekarte konnte nicht geladen werden.</p>';
+        });
     })();
     </script>
 
@@ -2603,7 +2604,7 @@ section:not(.hero):not(:first-of-type) {
             Unser Monatspaket für Firmenkunden: täglich frische Mittagsgerichte für Ihre Mitarbeiter — planbar, verlässlich und ohne den Aufwand täglicher Einzelbestellungen. Eine Investition in Wohlbefinden und Produktivität Ihres Teams.
           </p>
           <div data-reveal data-delay="3">
-            <a href="javascript:void(0)" data-anfrage-open class="btn btn-gold">Partnerschaft anfragen</a>
+            <a href="#" data-anfrage-open class="btn btn-gold">Partnerschaft anfragen</a>
           </div>
         </div>
 
@@ -2665,7 +2666,7 @@ section:not(.hero):not(:first-of-type) {
         Ob tägliches Mittagessen für Ihr Team, Catering für Ihr nächstes Event oder eine Firmenpartnerschaft — wir freuen uns über Ihre Nachricht und beraten Sie persönlich.
       </p>
       <div class="btn-group u-center" data-reveal data-delay="3">
-        <a href="javascript:void(0)" data-anfrage-open class="btn btn-gold">Buchung anfragen</a>
+        <a href="#" data-anfrage-open class="btn btn-gold">Buchung anfragen</a>
         <a href="mailto:verwaltung@elysee-events.de" class="btn btn-outline-dark">Schreiben Sie uns</a>
       </div>
     </div>
@@ -2774,6 +2775,7 @@ section:not(.hero):not(:first-of-type) {
     const ring = document.querySelector('.cursor-ring');
 
     if (dot && ring) {
+      if(matchMedia('(pointer:coarse)').matches)return;
       let mx = -100, my = -100, rx = -100, ry = -100;
 
       document.addEventListener('mousemove', function(e) {
@@ -2991,8 +2993,14 @@ section:not(.hero):not(:first-of-type) {
         });
       }
 
-      (function draw(){
-        if(window.scrollY > window.innerHeight) { requestAnimationFrame(draw); return; }
+      var heroVisible = true;
+      var heroObs = new IntersectionObserver(function(entries){
+        heroVisible = entries[0].isIntersecting;
+        if(heroVisible) draw();
+      },{threshold:0});
+      heroObs.observe(hero);
+      function draw(){
+        if(!heroVisible) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         var fadeIn = Math.min((Date.now() - startTime) / 1200, 1);
         particles.forEach(function(p){
@@ -3006,7 +3014,8 @@ section:not(.hero):not(:first-of-type) {
           ctx.fill();
         });
         requestAnimationFrame(draw);
-      })();
+      }
+      draw();
     })();
 
     // Cinematic Hero Parallax
@@ -3016,6 +3025,12 @@ section:not(.hero):not(:first-of-type) {
       var hero = heroBg.closest('.hero');
       var startTime = Date.now();
       var mx = 0, my = 0, cx = 0, cy = 0, scrollOff = 0;
+      var parVisible = true;
+      var parObs = new IntersectionObserver(function(entries){
+        parVisible = entries[0].isIntersecting;
+        if(parVisible) tick();
+      },{threshold:0});
+      parObs.observe(hero);
 
       function lerp(a, b, t){ return a + (b - a) * t; }
 
@@ -3030,7 +3045,8 @@ section:not(.hero):not(:first-of-type) {
         window.addEventListener('scroll', function(){ scrollOff = window.scrollY * 0.28; }, { passive: true });
       }
 
-      (function tick(){
+      function tick(){
+        if(!parVisible) return;
         var elapsed = Date.now() - startTime;
         var eased = 1 - Math.pow(1 - Math.min(elapsed / 11000, 1), 3);
         var scale = 1.08 - 0.08 * eased;
@@ -3038,7 +3054,8 @@ section:not(.hero):not(:first-of-type) {
         cy = lerp(cy, my, 0.035);
         heroBg.style.transform = 'scale(' + scale + ') translate(' + cx + 'px, ' + (cy + scrollOff) + 'px)';
         requestAnimationFrame(tick);
-      })();
+      }
+      tick();
     })();
 
   </script>

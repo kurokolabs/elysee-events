@@ -17,7 +17,7 @@
 
       <div class="portal-header">
         <h1 class="portal-header__title">Newsletter</h1>
-        <p class="portal-header__subtitle">Abonnenten und woechentliche Speisekarten verwalten</p>
+        <p class="portal-header__subtitle">Abonnenten und wöchentliche Speisekarten verwalten</p>
       </div>
 
       <!-- Subscriber Stats -->
@@ -40,7 +40,7 @@
 
       <div th:if="${#lists.isEmpty(menus)}" class="empty-state">
         <div class="empty-state__title">Keine Speisekarten</div>
-        <div class="empty-state__text">Erstellen Sie eine erste woechentliche Speisekarte.</div>
+        <div class="empty-state__text">Erstellen Sie eine erste wöchentliche Speisekarte.</div>
       </div>
 
       <div class="table-wrap" th:if="${!#lists.isEmpty(menus)}">
@@ -60,11 +60,36 @@
           <tbody>
             <tr th:each="m : ${menus}">
               <td th:text="${m.weekStart} + ' - ' + ${m.weekEnd}">-</td>
-              <td th:text="${m.monday != null ? (#strings.abbreviate(m.monday, 30)) : '-'}">-</td>
-              <td th:text="${m.tuesday != null ? (#strings.abbreviate(m.tuesday, 30)) : '-'}">-</td>
-              <td th:text="${m.wednesday != null ? (#strings.abbreviate(m.wednesday, 30)) : '-'}">-</td>
-              <td th:text="${m.thursday != null ? (#strings.abbreviate(m.thursday, 30)) : '-'}">-</td>
-              <td th:text="${m.friday != null ? (#strings.abbreviate(m.friday, 30)) : '-'}">-</td>
+              <td>
+                <span th:if="${m.mondayMeat != null}" th:text="${#strings.abbreviate(m.mondayMeat, 20)}"></span>
+                <br th:if="${m.mondayMeat != null and m.mondayVeg != null}">
+                <span th:if="${m.mondayVeg != null}" style="color:#6B8E23;" th:text="${#strings.abbreviate(m.mondayVeg, 20)}"></span>
+                <span th:if="${m.mondayMeat == null and m.mondayVeg == null}">-</span>
+              </td>
+              <td>
+                <span th:if="${m.tuesdayMeat != null}" th:text="${#strings.abbreviate(m.tuesdayMeat, 20)}"></span>
+                <br th:if="${m.tuesdayMeat != null and m.tuesdayVeg != null}">
+                <span th:if="${m.tuesdayVeg != null}" style="color:#6B8E23;" th:text="${#strings.abbreviate(m.tuesdayVeg, 20)}"></span>
+                <span th:if="${m.tuesdayMeat == null and m.tuesdayVeg == null}">-</span>
+              </td>
+              <td>
+                <span th:if="${m.wednesdayMeat != null}" th:text="${#strings.abbreviate(m.wednesdayMeat, 20)}"></span>
+                <br th:if="${m.wednesdayMeat != null and m.wednesdayVeg != null}">
+                <span th:if="${m.wednesdayVeg != null}" style="color:#6B8E23;" th:text="${#strings.abbreviate(m.wednesdayVeg, 20)}"></span>
+                <span th:if="${m.wednesdayMeat == null and m.wednesdayVeg == null}">-</span>
+              </td>
+              <td>
+                <span th:if="${m.thursdayMeat != null}" th:text="${#strings.abbreviate(m.thursdayMeat, 20)}"></span>
+                <br th:if="${m.thursdayMeat != null and m.thursdayVeg != null}">
+                <span th:if="${m.thursdayVeg != null}" style="color:#6B8E23;" th:text="${#strings.abbreviate(m.thursdayVeg, 20)}"></span>
+                <span th:if="${m.thursdayMeat == null and m.thursdayVeg == null}">-</span>
+              </td>
+              <td>
+                <span th:if="${m.fridayMeat != null}" th:text="${#strings.abbreviate(m.fridayMeat, 20)}"></span>
+                <br th:if="${m.fridayMeat != null and m.fridayVeg != null}">
+                <span th:if="${m.fridayVeg != null}" style="color:#6B8E23;" th:text="${#strings.abbreviate(m.fridayVeg, 20)}"></span>
+                <span th:if="${m.fridayMeat == null and m.fridayVeg == null}">-</span>
+              </td>
               <td>
                 <span th:if="${m.sent}" class="status-badge status-badge--BESTAETIGT">Ja</span>
                 <span th:unless="${m.sent}" class="status-badge status-badge--ANFRAGE">Nein</span>

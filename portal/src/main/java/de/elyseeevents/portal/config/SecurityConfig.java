@@ -57,10 +57,15 @@ public class SecurityConfig {
         http
             .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterAfter(twoFaFilter, org.springframework.security.web.authentication.AnonymousAuthenticationFilter.class)
-            .csrf(csrf -> {})
+            .csrf(csrf -> csrf
+                .csrfTokenRepository(org.springframework.security.web.csrf.CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRequestHandler(new org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler())
+                .ignoringRequestMatchers("/newsletter/**", "/api/**")
+            )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/portal/login", "/portal/register", "/portal/register-success", "/portal/verify-email", "/portal/2fa", "/portal/2fa/resend").permitAll()
                 .requestMatchers("/newsletter/**").permitAll()
+                .requestMatchers("/api/**").permitAll()
                 .requestMatchers("/portal/css/**", "/portal/js/**", "/portal/fonts/**", "/portal/img/**").permitAll()
                 .requestMatchers("/portal/admin/**").hasRole("ADMIN")
                 .requestMatchers("/portal/**").authenticated()

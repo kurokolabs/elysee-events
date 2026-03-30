@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests">
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; base-uri 'self'; upgrade-insecure-requests">
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
@@ -164,7 +164,7 @@
       font-family: 'DM Sans', sans-serif;
       font-size: 0.9375rem;
       font-weight: 300;
-      color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,0.6);
       line-height: 1.7;
       max-width: 380px;
       margin-bottom: 44px;
@@ -217,7 +217,7 @@
     .footer-strip p {
       font-size: 0.625rem;
       letter-spacing: 0.12em;
-      color: rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.45);
       text-transform: uppercase;
     }
 
@@ -227,7 +227,7 @@
       font-size: 0.625rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.45);
       text-decoration: none;
       transition: color 0.2s;
     }
@@ -235,8 +235,9 @@
     .footer-strip nav a:hover { color: var(--gold); }
 
     .footer__social { display: flex; gap: 16px; margin-top: 12px; justify-content: center; }
-    .footer__social a { color: rgba(255,255,255,.45); transition: color .3s ease; }
+    .footer__social a { color: rgba(255,255,255,.55); transition: color .3s ease; }
     .footer__social a:hover { color: var(--gold, #C9A84C); }
+    :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
     @media (max-width: 600px) {
       .nav { padding: 16px 20px; }
