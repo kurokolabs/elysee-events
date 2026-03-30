@@ -2343,34 +2343,35 @@ section:not(.hero):not(:first-of-type) {
 
   <script>
     // ── Custom Cursor — two-element rAF lerp with mix-blend-mode ──────────
-    const dot  = document.getElementById('cursorDot');
-    const ring = document.getElementById('cursorRing');
-    if(matchMedia('(pointer:coarse)').matches)return;
-    let mx = -100, my = -100, rx = -100, ry = -100;
+    (function() {
+      const dot  = document.getElementById('cursorDot');
+      const ring = document.getElementById('cursorRing');
+      if(matchMedia('(pointer:coarse)').matches) return;
+      let mx = -100, my = -100, rx = -100, ry = -100;
 
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+      document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
 
-    (function raf() {
-      rx += (mx - rx) * 0.15;
-      ry += (my - ry) * 0.15;
-      dot.style.transform  = 'translate(' + mx + 'px,' + my + 'px) translate(-50%,-50%)';
-      ring.style.transform = 'translate(' + rx + 'px,' + ry + 'px) translate(-50%,-50%)';
-      requestAnimationFrame(raf);
+      (function raf() {
+        rx += (mx - rx) * 0.15;
+        ry += (my - ry) * 0.15;
+        dot.style.transform  = 'translate(' + mx + 'px,' + my + 'px) translate(-50%,-50%)';
+        ring.style.transform = 'translate(' + rx + 'px,' + ry + 'px) translate(-50%,-50%)';
+        requestAnimationFrame(raf);
+      })();
+
+      const interactivesSel = 'a, button, .card, .btn, .nav__cta, label, input, select, textarea, .type-card, .slot-btn';
+      document.querySelectorAll(interactivesSel).forEach(el => {
+        el.addEventListener('mouseenter', () => ring.classList.add('is-hovered'));
+        el.addEventListener('mouseleave', () => ring.classList.remove('is-hovered'));
+      });
+
+      document.addEventListener('mouseenter', e => {
+        if (e.target.matches('.slot-btn, .type-card')) ring.classList.add('is-hovered');
+      }, true);
+      document.addEventListener('mouseleave', e => {
+        if (e.target.matches('.slot-btn, .type-card')) ring.classList.remove('is-hovered');
+      }, true);
     })();
-
-    const interactivesSel = 'a, button, .card, .btn, .nav__cta, label, input, select, textarea, .type-card, .slot-btn';
-    document.querySelectorAll(interactivesSel).forEach(el => {
-      el.addEventListener('mouseenter', () => ring.classList.add('is-hovered'));
-      el.addEventListener('mouseleave', () => ring.classList.remove('is-hovered'));
-    });
-
-    // Handle dynamically added slot buttons
-    document.addEventListener('mouseenter', e => {
-      if (e.target.matches('.slot-btn, .type-card')) ring.classList.add('is-hovered');
-    }, true);
-    document.addEventListener('mouseleave', e => {
-      if (e.target.matches('.slot-btn, .type-card')) ring.classList.remove('is-hovered');
-    }, true);
 
     // ── Scroll Reveal ──────────────────────────────────────────────────────
     const reveals = document.querySelectorAll('[data-reveal]');
