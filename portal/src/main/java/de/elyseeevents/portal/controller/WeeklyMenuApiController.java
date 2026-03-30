@@ -34,21 +34,24 @@ public class WeeklyMenuApiController {
         result.put("weekStart", menu.getWeekStart());
         result.put("weekEnd", menu.getWeekEnd());
         result.put("days", new LinkedHashMap[] {
-            dayEntry("Montag", menu.getMondayMeat(), menu.getMondayVeg(), menu.getMonday()),
-            dayEntry("Dienstag", menu.getTuesdayMeat(), menu.getTuesdayVeg(), menu.getTuesday()),
-            dayEntry("Mittwoch", menu.getWednesdayMeat(), menu.getWednesdayVeg(), menu.getWednesday()),
-            dayEntry("Donnerstag", menu.getThursdayMeat(), menu.getThursdayVeg(), menu.getThursday()),
-            dayEntry("Freitag", menu.getFridayMeat(), menu.getFridayVeg(), menu.getFriday())
+            dayEntry("Montag", menu.getMondayMeat(), menu.getMondayVeg(), menu.getMonday(), menu.getMondayMeatPrice(), menu.getMondayVegPrice()),
+            dayEntry("Dienstag", menu.getTuesdayMeat(), menu.getTuesdayVeg(), menu.getTuesday(), menu.getTuesdayMeatPrice(), menu.getTuesdayVegPrice()),
+            dayEntry("Mittwoch", menu.getWednesdayMeat(), menu.getWednesdayVeg(), menu.getWednesday(), menu.getWednesdayMeatPrice(), menu.getWednesdayVegPrice()),
+            dayEntry("Donnerstag", menu.getThursdayMeat(), menu.getThursdayVeg(), menu.getThursday(), menu.getThursdayMeatPrice(), menu.getThursdayVegPrice()),
+            dayEntry("Freitag", menu.getFridayMeat(), menu.getFridayVeg(), menu.getFriday(), menu.getFridayMeatPrice(), menu.getFridayVegPrice())
         });
         result.put("notes", menu.getNotes());
         return ResponseEntity.ok(result);
     }
 
-    private LinkedHashMap<String, String> dayEntry(String day, String meat, String veg, String legacy) {
+    private LinkedHashMap<String, String> dayEntry(String day, String meat, String veg, String legacy,
+                                                     String meatPrice, String vegPrice) {
         LinkedHashMap<String, String> entry = new LinkedHashMap<>();
         entry.put("day", day);
         entry.put("meat", meat != null ? meat : (legacy != null ? legacy : ""));
         entry.put("vegetarian", veg != null ? veg : "");
+        entry.put("meatPrice", meatPrice != null ? meatPrice : "");
+        entry.put("vegPrice", vegPrice != null ? vegPrice : "");
         return entry;
     }
 }

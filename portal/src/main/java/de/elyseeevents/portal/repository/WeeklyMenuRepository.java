@@ -37,6 +37,16 @@ public class WeeklyMenuRepository {
         m.setThursdayVeg(rs.getString("thursday_veg"));
         m.setFridayMeat(rs.getString("friday_meat"));
         m.setFridayVeg(rs.getString("friday_veg"));
+        m.setMondayMeatPrice(rs.getString("monday_meat_price"));
+        m.setMondayVegPrice(rs.getString("monday_veg_price"));
+        m.setTuesdayMeatPrice(rs.getString("tuesday_meat_price"));
+        m.setTuesdayVegPrice(rs.getString("tuesday_veg_price"));
+        m.setWednesdayMeatPrice(rs.getString("wednesday_meat_price"));
+        m.setWednesdayVegPrice(rs.getString("wednesday_veg_price"));
+        m.setThursdayMeatPrice(rs.getString("thursday_meat_price"));
+        m.setThursdayVegPrice(rs.getString("thursday_veg_price"));
+        m.setFridayMeatPrice(rs.getString("friday_meat_price"));
+        m.setFridayVegPrice(rs.getString("friday_veg_price"));
         m.setNotes(rs.getString("notes"));
         m.setSent(rs.getInt("sent") == 1);
         m.setSentAt(rs.getString("sent_at"));
@@ -71,41 +81,61 @@ public class WeeklyMenuRepository {
                 PreparedStatement ps = connection.prepareStatement(
                         "INSERT INTO weekly_menus (week_start, week_end, monday, tuesday, wednesday, thursday, friday, " +
                         "monday_meat, monday_veg, tuesday_meat, tuesday_veg, wednesday_meat, wednesday_veg, " +
-                        "thursday_meat, thursday_veg, friday_meat, friday_veg, notes) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        "thursday_meat, thursday_veg, friday_meat, friday_veg, " +
+                        "monday_meat_price, monday_veg_price, tuesday_meat_price, tuesday_veg_price, " +
+                        "wednesday_meat_price, wednesday_veg_price, thursday_meat_price, thursday_veg_price, " +
+                        "friday_meat_price, friday_veg_price, notes) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         Statement.RETURN_GENERATED_KEYS);
-                ps.setString(1, m.getWeekStart());
-                ps.setString(2, m.getWeekEnd());
-                ps.setString(3, m.getMonday());
-                ps.setString(4, m.getTuesday());
-                ps.setString(5, m.getWednesday());
-                ps.setString(6, m.getThursday());
-                ps.setString(7, m.getFriday());
-                ps.setString(8, m.getMondayMeat());
-                ps.setString(9, m.getMondayVeg());
-                ps.setString(10, m.getTuesdayMeat());
-                ps.setString(11, m.getTuesdayVeg());
-                ps.setString(12, m.getWednesdayMeat());
-                ps.setString(13, m.getWednesdayVeg());
-                ps.setString(14, m.getThursdayMeat());
-                ps.setString(15, m.getThursdayVeg());
-                ps.setString(16, m.getFridayMeat());
-                ps.setString(17, m.getFridayVeg());
-                ps.setString(18, m.getNotes());
+                int i = 1;
+                ps.setString(i++, m.getWeekStart());
+                ps.setString(i++, m.getWeekEnd());
+                ps.setString(i++, m.getMonday());
+                ps.setString(i++, m.getTuesday());
+                ps.setString(i++, m.getWednesday());
+                ps.setString(i++, m.getThursday());
+                ps.setString(i++, m.getFriday());
+                ps.setString(i++, m.getMondayMeat());
+                ps.setString(i++, m.getMondayVeg());
+                ps.setString(i++, m.getTuesdayMeat());
+                ps.setString(i++, m.getTuesdayVeg());
+                ps.setString(i++, m.getWednesdayMeat());
+                ps.setString(i++, m.getWednesdayVeg());
+                ps.setString(i++, m.getThursdayMeat());
+                ps.setString(i++, m.getThursdayVeg());
+                ps.setString(i++, m.getFridayMeat());
+                ps.setString(i++, m.getFridayVeg());
+                ps.setString(i++, m.getMondayMeatPrice());
+                ps.setString(i++, m.getMondayVegPrice());
+                ps.setString(i++, m.getTuesdayMeatPrice());
+                ps.setString(i++, m.getTuesdayVegPrice());
+                ps.setString(i++, m.getWednesdayMeatPrice());
+                ps.setString(i++, m.getWednesdayVegPrice());
+                ps.setString(i++, m.getThursdayMeatPrice());
+                ps.setString(i++, m.getThursdayVegPrice());
+                ps.setString(i++, m.getFridayMeatPrice());
+                ps.setString(i++, m.getFridayVegPrice());
+                ps.setString(i, m.getNotes());
                 return ps;
             }, keyHolder);
             m.setId(keyHolder.getKey().longValue());
         } else {
-            jdbc.update("UPDATE weekly_menus SET week_start = ?, week_end = ?, monday = ?, tuesday = ?, " +
-                        "wednesday = ?, thursday = ?, friday = ?, " +
-                        "monday_meat = ?, monday_veg = ?, tuesday_meat = ?, tuesday_veg = ?, " +
-                        "wednesday_meat = ?, wednesday_veg = ?, thursday_meat = ?, thursday_veg = ?, " +
-                        "friday_meat = ?, friday_veg = ?, notes = ? WHERE id = ?",
+            jdbc.update("UPDATE weekly_menus SET week_start=?, week_end=?, monday=?, tuesday=?, " +
+                        "wednesday=?, thursday=?, friday=?, " +
+                        "monday_meat=?, monday_veg=?, tuesday_meat=?, tuesday_veg=?, " +
+                        "wednesday_meat=?, wednesday_veg=?, thursday_meat=?, thursday_veg=?, " +
+                        "friday_meat=?, friday_veg=?, " +
+                        "monday_meat_price=?, monday_veg_price=?, tuesday_meat_price=?, tuesday_veg_price=?, " +
+                        "wednesday_meat_price=?, wednesday_veg_price=?, thursday_meat_price=?, thursday_veg_price=?, " +
+                        "friday_meat_price=?, friday_veg_price=?, notes=? WHERE id=?",
                     m.getWeekStart(), m.getWeekEnd(), m.getMonday(), m.getTuesday(),
                     m.getWednesday(), m.getThursday(), m.getFriday(),
                     m.getMondayMeat(), m.getMondayVeg(), m.getTuesdayMeat(), m.getTuesdayVeg(),
                     m.getWednesdayMeat(), m.getWednesdayVeg(), m.getThursdayMeat(), m.getThursdayVeg(),
-                    m.getFridayMeat(), m.getFridayVeg(), m.getNotes(), m.getId());
+                    m.getFridayMeat(), m.getFridayVeg(),
+                    m.getMondayMeatPrice(), m.getMondayVegPrice(), m.getTuesdayMeatPrice(), m.getTuesdayVegPrice(),
+                    m.getWednesdayMeatPrice(), m.getWednesdayVegPrice(), m.getThursdayMeatPrice(), m.getThursdayVegPrice(),
+                    m.getFridayMeatPrice(), m.getFridayVegPrice(), m.getNotes(), m.getId());
         }
         return m;
     }

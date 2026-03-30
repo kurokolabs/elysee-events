@@ -34,13 +34,24 @@
       text-transform: uppercase;
       margin-bottom: 2px;
     }
-    .menu-day__category--meat { color: var(--muted); }
+    .menu-day__category--meat { color: #C0392B; }
     .menu-day__category--veg { color: #6B8E23; }
     .menu-day__text {
       font-size: 14px;
       line-height: 1.6;
       color: var(--dark);
       margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .menu-day__price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--gold);
+      white-space: nowrap;
     }
     .menu-notes {
       background: var(--surface, #F2EFE9);
@@ -92,11 +103,11 @@
           <div class="menu-day__label">Montag</div>
           <div th:if="${menu.mondayMeat != null and !menu.mondayMeat.isEmpty()}">
             <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
-            <div class="menu-day__text" th:text="${menu.mondayMeat}"></div>
+            <div class="menu-day__text"><span th:text="${menu.mondayMeat}"></span><span th:if="${menu.mondayMeatPrice != null and !menu.mondayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.mondayMeatPrice} + ' EUR'"></span></div>
           </div>
           <div th:if="${menu.mondayVeg != null and !menu.mondayVeg.isEmpty()}">
             <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
-            <div class="menu-day__text" th:text="${menu.mondayVeg}"></div>
+            <div class="menu-day__text"><span th:text="${menu.mondayVeg}"></span><span th:if="${menu.mondayVegPrice != null and !menu.mondayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.mondayVegPrice} + ' EUR'"></span></div>
           </div>
         </div>
 
@@ -104,11 +115,11 @@
           <div class="menu-day__label">Dienstag</div>
           <div th:if="${menu.tuesdayMeat != null and !menu.tuesdayMeat.isEmpty()}">
             <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
-            <div class="menu-day__text" th:text="${menu.tuesdayMeat}"></div>
+            <div class="menu-day__text"><span th:text="${menu.tuesdayMeat}"></span><span th:if="${menu.tuesdayMeatPrice != null and !menu.tuesdayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.tuesdayMeatPrice} + ' EUR'"></span></div>
           </div>
           <div th:if="${menu.tuesdayVeg != null and !menu.tuesdayVeg.isEmpty()}">
             <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
-            <div class="menu-day__text" th:text="${menu.tuesdayVeg}"></div>
+            <div class="menu-day__text"><span th:text="${menu.tuesdayVeg}"></span><span th:if="${menu.tuesdayVegPrice != null and !menu.tuesdayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.tuesdayVegPrice} + ' EUR'"></span></div>
           </div>
         </div>
 
@@ -116,11 +127,11 @@
           <div class="menu-day__label">Mittwoch</div>
           <div th:if="${menu.wednesdayMeat != null and !menu.wednesdayMeat.isEmpty()}">
             <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
-            <div class="menu-day__text" th:text="${menu.wednesdayMeat}"></div>
+            <div class="menu-day__text"><span th:text="${menu.wednesdayMeat}"></span><span th:if="${menu.wednesdayMeatPrice != null and !menu.wednesdayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.wednesdayMeatPrice} + ' EUR'"></span></div>
           </div>
           <div th:if="${menu.wednesdayVeg != null and !menu.wednesdayVeg.isEmpty()}">
             <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
-            <div class="menu-day__text" th:text="${menu.wednesdayVeg}"></div>
+            <div class="menu-day__text"><span th:text="${menu.wednesdayVeg}"></span><span th:if="${menu.wednesdayVegPrice != null and !menu.wednesdayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.wednesdayVegPrice} + ' EUR'"></span></div>
           </div>
         </div>
 
@@ -128,11 +139,11 @@
           <div class="menu-day__label">Donnerstag</div>
           <div th:if="${menu.thursdayMeat != null and !menu.thursdayMeat.isEmpty()}">
             <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
-            <div class="menu-day__text" th:text="${menu.thursdayMeat}"></div>
+            <div class="menu-day__text"><span th:text="${menu.thursdayMeat}"></span><span th:if="${menu.thursdayMeatPrice != null and !menu.thursdayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.thursdayMeatPrice} + ' EUR'"></span></div>
           </div>
           <div th:if="${menu.thursdayVeg != null and !menu.thursdayVeg.isEmpty()}">
             <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
-            <div class="menu-day__text" th:text="${menu.thursdayVeg}"></div>
+            <div class="menu-day__text"><span th:text="${menu.thursdayVeg}"></span><span th:if="${menu.thursdayVegPrice != null and !menu.thursdayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.thursdayVegPrice} + ' EUR'"></span></div>
           </div>
         </div>
 
@@ -140,11 +151,11 @@
           <div class="menu-day__label">Freitag</div>
           <div th:if="${menu.fridayMeat != null and !menu.fridayMeat.isEmpty()}">
             <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
-            <div class="menu-day__text" th:text="${menu.fridayMeat}"></div>
+            <div class="menu-day__text"><span th:text="${menu.fridayMeat}"></span><span th:if="${menu.fridayMeatPrice != null and !menu.fridayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.fridayMeatPrice} + ' EUR'"></span></div>
           </div>
           <div th:if="${menu.fridayVeg != null and !menu.fridayVeg.isEmpty()}">
             <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
-            <div class="menu-day__text" th:text="${menu.fridayVeg}"></div>
+            <div class="menu-day__text"><span th:text="${menu.fridayVeg}"></span><span th:if="${menu.fridayVegPrice != null and !menu.fridayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.fridayVegPrice} + ' EUR'"></span></div>
           </div>
         </div>
       </div>

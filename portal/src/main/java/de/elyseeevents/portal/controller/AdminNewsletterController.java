@@ -49,33 +49,31 @@ public class AdminNewsletterController {
     }
 
     @PostMapping("/speisekarte/neu")
-    public String saveNewMenu(@RequestParam String weekStart,
-                              @RequestParam String weekEnd,
-                              @RequestParam(required = false) String mondayMeat,
-                              @RequestParam(required = false) String mondayVeg,
-                              @RequestParam(required = false) String tuesdayMeat,
-                              @RequestParam(required = false) String tuesdayVeg,
-                              @RequestParam(required = false) String wednesdayMeat,
-                              @RequestParam(required = false) String wednesdayVeg,
-                              @RequestParam(required = false) String thursdayMeat,
-                              @RequestParam(required = false) String thursdayVeg,
-                              @RequestParam(required = false) String fridayMeat,
-                              @RequestParam(required = false) String fridayVeg,
+    public String saveNewMenu(@RequestParam String weekStart, @RequestParam String weekEnd,
+                              @RequestParam(required = false) String mondayMeat, @RequestParam(required = false) String mondayMeatPrice,
+                              @RequestParam(required = false) String mondayVeg, @RequestParam(required = false) String mondayVegPrice,
+                              @RequestParam(required = false) String tuesdayMeat, @RequestParam(required = false) String tuesdayMeatPrice,
+                              @RequestParam(required = false) String tuesdayVeg, @RequestParam(required = false) String tuesdayVegPrice,
+                              @RequestParam(required = false) String wednesdayMeat, @RequestParam(required = false) String wednesdayMeatPrice,
+                              @RequestParam(required = false) String wednesdayVeg, @RequestParam(required = false) String wednesdayVegPrice,
+                              @RequestParam(required = false) String thursdayMeat, @RequestParam(required = false) String thursdayMeatPrice,
+                              @RequestParam(required = false) String thursdayVeg, @RequestParam(required = false) String thursdayVegPrice,
+                              @RequestParam(required = false) String fridayMeat, @RequestParam(required = false) String fridayMeatPrice,
+                              @RequestParam(required = false) String fridayVeg, @RequestParam(required = false) String fridayVegPrice,
                               @RequestParam(required = false) String notes,
                               RedirectAttributes redirectAttributes) {
         WeeklyMenu menu = new WeeklyMenu();
-        menu.setWeekStart(weekStart);
-        menu.setWeekEnd(weekEnd);
-        menu.setMondayMeat(mondayMeat);
-        menu.setMondayVeg(mondayVeg);
-        menu.setTuesdayMeat(tuesdayMeat);
-        menu.setTuesdayVeg(tuesdayVeg);
-        menu.setWednesdayMeat(wednesdayMeat);
-        menu.setWednesdayVeg(wednesdayVeg);
-        menu.setThursdayMeat(thursdayMeat);
-        menu.setThursdayVeg(thursdayVeg);
-        menu.setFridayMeat(fridayMeat);
-        menu.setFridayVeg(fridayVeg);
+        menu.setWeekStart(weekStart); menu.setWeekEnd(weekEnd);
+        menu.setMondayMeat(mondayMeat); menu.setMondayMeatPrice(mondayMeatPrice);
+        menu.setMondayVeg(mondayVeg); menu.setMondayVegPrice(mondayVegPrice);
+        menu.setTuesdayMeat(tuesdayMeat); menu.setTuesdayMeatPrice(tuesdayMeatPrice);
+        menu.setTuesdayVeg(tuesdayVeg); menu.setTuesdayVegPrice(tuesdayVegPrice);
+        menu.setWednesdayMeat(wednesdayMeat); menu.setWednesdayMeatPrice(wednesdayMeatPrice);
+        menu.setWednesdayVeg(wednesdayVeg); menu.setWednesdayVegPrice(wednesdayVegPrice);
+        menu.setThursdayMeat(thursdayMeat); menu.setThursdayMeatPrice(thursdayMeatPrice);
+        menu.setThursdayVeg(thursdayVeg); menu.setThursdayVegPrice(thursdayVegPrice);
+        menu.setFridayMeat(fridayMeat); menu.setFridayMeatPrice(fridayMeatPrice);
+        menu.setFridayVeg(fridayVeg); menu.setFridayVegPrice(fridayVegPrice);
         menu.setNotes(notes);
         weeklyMenuRepository.save(menu);
 
@@ -112,18 +110,17 @@ public class AdminNewsletterController {
 
     @PostMapping("/speisekarte/{id}")
     public String updateMenu(@PathVariable Long id,
-                             @RequestParam String weekStart,
-                             @RequestParam String weekEnd,
-                             @RequestParam(required = false) String mondayMeat,
-                             @RequestParam(required = false) String mondayVeg,
-                             @RequestParam(required = false) String tuesdayMeat,
-                             @RequestParam(required = false) String tuesdayVeg,
-                             @RequestParam(required = false) String wednesdayMeat,
-                             @RequestParam(required = false) String wednesdayVeg,
-                             @RequestParam(required = false) String thursdayMeat,
-                             @RequestParam(required = false) String thursdayVeg,
-                             @RequestParam(required = false) String fridayMeat,
-                             @RequestParam(required = false) String fridayVeg,
+                             @RequestParam String weekStart, @RequestParam String weekEnd,
+                             @RequestParam(required = false) String mondayMeat, @RequestParam(required = false) String mondayMeatPrice,
+                             @RequestParam(required = false) String mondayVeg, @RequestParam(required = false) String mondayVegPrice,
+                             @RequestParam(required = false) String tuesdayMeat, @RequestParam(required = false) String tuesdayMeatPrice,
+                             @RequestParam(required = false) String tuesdayVeg, @RequestParam(required = false) String tuesdayVegPrice,
+                             @RequestParam(required = false) String wednesdayMeat, @RequestParam(required = false) String wednesdayMeatPrice,
+                             @RequestParam(required = false) String wednesdayVeg, @RequestParam(required = false) String wednesdayVegPrice,
+                             @RequestParam(required = false) String thursdayMeat, @RequestParam(required = false) String thursdayMeatPrice,
+                             @RequestParam(required = false) String thursdayVeg, @RequestParam(required = false) String thursdayVegPrice,
+                             @RequestParam(required = false) String fridayMeat, @RequestParam(required = false) String fridayMeatPrice,
+                             @RequestParam(required = false) String fridayVeg, @RequestParam(required = false) String fridayVegPrice,
                              @RequestParam(required = false) String notes,
                              RedirectAttributes redirectAttributes) {
         Optional<WeeklyMenu> menuOpt = weeklyMenuRepository.findById(id);
@@ -133,18 +130,17 @@ public class AdminNewsletterController {
         }
 
         WeeklyMenu menu = menuOpt.get();
-        menu.setWeekStart(weekStart);
-        menu.setWeekEnd(weekEnd);
-        menu.setMondayMeat(mondayMeat);
-        menu.setMondayVeg(mondayVeg);
-        menu.setTuesdayMeat(tuesdayMeat);
-        menu.setTuesdayVeg(tuesdayVeg);
-        menu.setWednesdayMeat(wednesdayMeat);
-        menu.setWednesdayVeg(wednesdayVeg);
-        menu.setThursdayMeat(thursdayMeat);
-        menu.setThursdayVeg(thursdayVeg);
-        menu.setFridayMeat(fridayMeat);
-        menu.setFridayVeg(fridayVeg);
+        menu.setWeekStart(weekStart); menu.setWeekEnd(weekEnd);
+        menu.setMondayMeat(mondayMeat); menu.setMondayMeatPrice(mondayMeatPrice);
+        menu.setMondayVeg(mondayVeg); menu.setMondayVegPrice(mondayVegPrice);
+        menu.setTuesdayMeat(tuesdayMeat); menu.setTuesdayMeatPrice(tuesdayMeatPrice);
+        menu.setTuesdayVeg(tuesdayVeg); menu.setTuesdayVegPrice(tuesdayVegPrice);
+        menu.setWednesdayMeat(wednesdayMeat); menu.setWednesdayMeatPrice(wednesdayMeatPrice);
+        menu.setWednesdayVeg(wednesdayVeg); menu.setWednesdayVegPrice(wednesdayVegPrice);
+        menu.setThursdayMeat(thursdayMeat); menu.setThursdayMeatPrice(thursdayMeatPrice);
+        menu.setThursdayVeg(thursdayVeg); menu.setThursdayVegPrice(thursdayVegPrice);
+        menu.setFridayMeat(fridayMeat); menu.setFridayMeatPrice(fridayMeatPrice);
+        menu.setFridayVeg(fridayVeg); menu.setFridayVegPrice(fridayVegPrice);
         menu.setNotes(notes);
         weeklyMenuRepository.save(menu);
 

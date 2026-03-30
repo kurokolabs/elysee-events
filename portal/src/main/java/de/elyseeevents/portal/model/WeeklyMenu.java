@@ -19,6 +19,16 @@ public class WeeklyMenu {
     private String thursdayVeg;
     private String fridayMeat;
     private String fridayVeg;
+    private String mondayMeatPrice;
+    private String mondayVegPrice;
+    private String tuesdayMeatPrice;
+    private String tuesdayVegPrice;
+    private String wednesdayMeatPrice;
+    private String wednesdayVegPrice;
+    private String thursdayMeatPrice;
+    private String thursdayVegPrice;
+    private String fridayMeatPrice;
+    private String fridayVegPrice;
     private String notes;
     private boolean sent;
     private String sentAt;
@@ -77,6 +87,27 @@ public class WeeklyMenu {
 
     public String getFridayVeg() { return fridayVeg; }
     public void setFridayVeg(String fridayVeg) { this.fridayVeg = fridayVeg; }
+
+    public String getMondayMeatPrice() { return mondayMeatPrice; }
+    public void setMondayMeatPrice(String mondayMeatPrice) { this.mondayMeatPrice = mondayMeatPrice; }
+    public String getMondayVegPrice() { return mondayVegPrice; }
+    public void setMondayVegPrice(String mondayVegPrice) { this.mondayVegPrice = mondayVegPrice; }
+    public String getTuesdayMeatPrice() { return tuesdayMeatPrice; }
+    public void setTuesdayMeatPrice(String tuesdayMeatPrice) { this.tuesdayMeatPrice = tuesdayMeatPrice; }
+    public String getTuesdayVegPrice() { return tuesdayVegPrice; }
+    public void setTuesdayVegPrice(String tuesdayVegPrice) { this.tuesdayVegPrice = tuesdayVegPrice; }
+    public String getWednesdayMeatPrice() { return wednesdayMeatPrice; }
+    public void setWednesdayMeatPrice(String wednesdayMeatPrice) { this.wednesdayMeatPrice = wednesdayMeatPrice; }
+    public String getWednesdayVegPrice() { return wednesdayVegPrice; }
+    public void setWednesdayVegPrice(String wednesdayVegPrice) { this.wednesdayVegPrice = wednesdayVegPrice; }
+    public String getThursdayMeatPrice() { return thursdayMeatPrice; }
+    public void setThursdayMeatPrice(String thursdayMeatPrice) { this.thursdayMeatPrice = thursdayMeatPrice; }
+    public String getThursdayVegPrice() { return thursdayVegPrice; }
+    public void setThursdayVegPrice(String thursdayVegPrice) { this.thursdayVegPrice = thursdayVegPrice; }
+    public String getFridayMeatPrice() { return fridayMeatPrice; }
+    public void setFridayMeatPrice(String fridayMeatPrice) { this.fridayMeatPrice = fridayMeatPrice; }
+    public String getFridayVegPrice() { return fridayVegPrice; }
+    public void setFridayVegPrice(String fridayVegPrice) { this.fridayVegPrice = fridayVegPrice; }
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }

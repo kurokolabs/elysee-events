@@ -168,7 +168,7 @@ ALTER TABLE invoices MODIFY COLUMN booking_id BIGINT NULL;
 ALTER TABLE invoices ADD COLUMN recipient_name VARCHAR(200);
 ALTER TABLE invoices ADD COLUMN recipient_company VARCHAR(200);
 ALTER TABLE invoices ADD COLUMN recipient_address VARCHAR(300);
-ALTER TABLE invoices ADD COLUMN recipient_postal_code VARCHAR(10);
+ALTER TABLE invoices ADD COLUMN recipient_postal_code VARCHAR(20);
 ALTER TABLE invoices ADD COLUMN recipient_city VARCHAR(100);
 ALTER TABLE invoices ADD COLUMN recipient_email VARCHAR(255);
 
@@ -182,7 +182,7 @@ ALTER TABLE quotes MODIFY COLUMN customer_id BIGINT NULL;
 ALTER TABLE quotes ADD COLUMN recipient_name VARCHAR(200);
 ALTER TABLE quotes ADD COLUMN recipient_company VARCHAR(200);
 ALTER TABLE quotes ADD COLUMN recipient_address VARCHAR(300);
-ALTER TABLE quotes ADD COLUMN recipient_postal_code VARCHAR(10);
+ALTER TABLE quotes ADD COLUMN recipient_postal_code VARCHAR(20);
 ALTER TABLE quotes ADD COLUMN recipient_city VARCHAR(100);
 ALTER TABLE quotes ADD COLUMN recipient_email VARCHAR(255);
 ALTER TABLE quote_items ADD COLUMN tax_type VARCHAR(20) NOT NULL DEFAULT 'GETRAENKE';
@@ -222,3 +222,15 @@ ALTER TABLE weekly_menus ADD COLUMN thursday_meat TEXT;
 ALTER TABLE weekly_menus ADD COLUMN thursday_veg TEXT;
 ALTER TABLE weekly_menus ADD COLUMN friday_meat TEXT;
 ALTER TABLE weekly_menus ADD COLUMN friday_veg TEXT;
+
+-- Preise pro Gericht
+ALTER TABLE weekly_menus ADD COLUMN monday_meat_price VARCHAR(20);
+ALTER TABLE weekly_menus ADD COLUMN monday_veg_price VARCHAR(20);
+ALTER TABLE weekly_menus ADD COLUMN tuesday_meat_price VARCHAR(20);
+ALTER TABLE weekly_menus ADD COLUMN tuesday_veg_price VARCHAR(20);
+ALTER TABLE weekly_menus ADD COLUMN wednesday_meat_price VARCHAR(20);
+ALTER TABLE weekly_menus ADD COLUMN wednesday_veg_price VARCHAR(20);
+ALTER TABLE weekly_menus ADD COLUMN thursday_meat_price VARCHAR(20);
+ALTER TABLE weekly_menus ADD COLUMN thursday_veg_price VARCHAR(20);
+ALTER TABLE weekly_menus ADD COLUMN friday_meat_price VARCHAR(20);
+ALTER TABLE weekly_menus ADD COLUMN friday_veg_price VARCHAR(20);

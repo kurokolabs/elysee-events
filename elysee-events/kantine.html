@@ -2476,8 +2476,12 @@ section:not(.hero):not(:first-of-type) {
           var isToday = d.day === todayName;
           h += '<tr' + (isToday ? ' class="wochenkarte__today"' : '') + '>';
           h += '<td>' + escapeHtml(d.day.substring(0, 2)) + '</td>';
-          h += '<td><div class="wochenkarte__dish"><span class="wochenkarte__dish-name">' + escapeHtml(d.meat || '') + '</span></div></td>';
-          h += '<td><div class="wochenkarte__dish"><span class="wochenkarte__dish-name" style="color:#9DBF6B;">' + escapeHtml(d.vegetarian || '') + '</span></div></td>';
+          h += '<td><div class="wochenkarte__dish"><span class="wochenkarte__dish-name">' + escapeHtml(d.meat || '') + '</span>';
+          if (d.meatPrice) h += '<span class="wochenkarte__price">' + escapeHtml(d.meatPrice) + ' \u20ac</span>';
+          h += '</div></td>';
+          h += '<td><div class="wochenkarte__dish"><span class="wochenkarte__dish-name" style="color:#9DBF6B;">' + escapeHtml(d.vegetarian || '') + '</span>';
+          if (d.vegPrice) h += '<span class="wochenkarte__price" style="color:#9DBF6B;">' + escapeHtml(d.vegPrice) + ' \u20ac</span>';
+          h += '</div></td>';
           h += '</tr>';
         }
         h += '</tbody></table></div>';
@@ -2491,10 +2495,14 @@ section:not(.hero):not(:first-of-type) {
           h += '<div class="woche-card' + (isToday ? ' woche-card--today' : '') + '">';
           h += '<div class="woche-card__day">' + escapeHtml(d.day) + (isToday ? ' <span class="woche-card__today-badge">Heute</span>' : '') + '</div>';
           if (d.meat) {
-            h += '<div class="woche-card__item"><span class="woche-card__dish">' + escapeHtml(d.meat) + '</span></div>';
+            h += '<div class="woche-card__item"><span class="woche-card__dish">' + escapeHtml(d.meat) + '</span>';
+            if (d.meatPrice) h += '<span class="woche-card__price">' + escapeHtml(d.meatPrice) + ' \u20ac</span>';
+            h += '</div>';
           }
           if (d.vegetarian) {
-            h += '<div class="woche-card__item"><span class="woche-card__dish" style="color:#9DBF6B;">' + escapeHtml(d.vegetarian) + ' (V)</span></div>';
+            h += '<div class="woche-card__item"><span class="woche-card__dish" style="color:#9DBF6B;">' + escapeHtml(d.vegetarian) + ' (V)</span>';
+            if (d.vegPrice) h += '<span class="woche-card__price" style="color:#9DBF6B;">' + escapeHtml(d.vegPrice) + ' \u20ac</span>';
+            h += '</div>';
           }
           h += '</div>';
         }
