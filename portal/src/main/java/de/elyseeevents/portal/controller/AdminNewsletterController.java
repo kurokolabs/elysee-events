@@ -3,8 +3,12 @@ package de.elyseeevents.portal.controller;
 import de.elyseeevents.portal.model.WeeklyMenu;
 import de.elyseeevents.portal.repository.NewsletterRepository;
 import de.elyseeevents.portal.repository.WeeklyMenuRepository;
+import de.elyseeevents.portal.service.MenuPdfService;
 import de.elyseeevents.portal.service.NewsletterService;
 import de.elyseeevents.portal.util.BavarianHolidayUtil;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,15 +28,18 @@ public class AdminNewsletterController {
     private final NewsletterRepository newsletterRepository;
     private final WeeklyMenuRepository weeklyMenuRepository;
     private final NewsletterService newsletterService;
+    private final MenuPdfService menuPdfService;
     private final BavarianHolidayUtil holidayUtil;
 
     public AdminNewsletterController(NewsletterRepository newsletterRepository,
                                      WeeklyMenuRepository weeklyMenuRepository,
                                      NewsletterService newsletterService,
+                                     MenuPdfService menuPdfService,
                                      BavarianHolidayUtil holidayUtil) {
         this.newsletterRepository = newsletterRepository;
         this.weeklyMenuRepository = weeklyMenuRepository;
         this.newsletterService = newsletterService;
+        this.menuPdfService = menuPdfService;
         this.holidayUtil = holidayUtil;
     }
 
@@ -182,6 +189,29 @@ public class AdminNewsletterController {
         redirectAttributes.addFlashAttribute("message",
                 "Newsletter wurde an " + sent + " Abonnenten versendet.");
         return "redirect:/portal/admin/newsletter/speisekarte/" + id;
+    }
+
+    @GetMapping("/speisekarte/{id}/pdf")
+    public ResponseEntity<byte[]> downloadPdf(@PathVariable Long id) {
+        WeeklyMenu menu = weeklyMenuRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Speisekarte nicht gefunden"));
+        byte[] pdf = menuPdfService.generate(menu);
+        String filename = "Speisekarte_" + menu.getWeekStart() + ".pdf";
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+    @GetMapping("/speisekarte/{id}/pdf-vorschau")
+    public ResponseEntity<byte[]> previewPdf(@PathVariable Long id) {
+        WeeklyMenu menu = weeklyMenuRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Speisekarte nicht gefunden"));
+        byte[] pdf = menuPdfService.generate(menu);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 
     @GetMapping("/speisekarte/dishes")

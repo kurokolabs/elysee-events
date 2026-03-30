@@ -123,6 +123,18 @@
         <p style="font-size:13px; color:var(--muted); margin:0;" th:text="'Versendet am ' + ${menu.sentAt}"></p>
       </div>
 
+      <!-- PDF Vorschau + Download -->
+      <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px;">
+        <a th:href="@{/portal/admin/newsletter/speisekarte/{id}/pdf-vorschau(id=${menu.id})}" target="_blank" class="btn btn--outline" style="display:inline-flex; align-items:center; gap:6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          PDF-Vorschau
+        </a>
+        <a th:href="@{/portal/admin/newsletter/speisekarte/{id}/pdf(id=${menu.id})}" class="btn btn--outline" style="display:inline-flex; align-items:center; gap:6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          PDF herunterladen
+        </a>
+      </div>
+
       <div style="display:flex; gap:12px; flex-wrap:wrap;">
         <!-- Entwurf: Bestätigen + Bearbeiten -->
         <form th:if="${menu.status == 'ENTWURF'}" th:action="@{/portal/admin/newsletter/speisekarte/{id}/bestaetigen(id=${menu.id})}" method="post" style="display:inline;">
@@ -130,13 +142,13 @@
         </form>
         <a th:if="${menu.status == 'ENTWURF'}" th:href="@{/portal/admin/newsletter/speisekarte/{id}/bearbeiten(id=${menu.id})}" class="btn btn--outline">Bearbeiten</a>
 
-        <!-- Bestätigt: Jetzt senden + Bearbeiten + Zurücksetzen -->
+        <!-- Bestätigt: Jetzt senden + Bearbeiten -->
         <form th:if="${menu.status == 'BESTAETIGT'}" th:action="@{/portal/admin/newsletter/speisekarte/{id}/senden(id=${menu.id})}" method="post" style="display:inline;" id="sendForm">
           <button type="button" class="btn btn--gold" onclick="document.getElementById('confirmDialog').style.display='flex'">Jetzt manuell versenden</button>
         </form>
         <a th:if="${menu.status == 'BESTAETIGT'}" th:href="@{/portal/admin/newsletter/speisekarte/{id}/bearbeiten(id=${menu.id})}" class="btn btn--outline">Bearbeiten</a>
 
-        <!-- Versendet: Nur noch anschauen -->
+        <!-- Versendet: Zurück -->
         <a th:if="${menu.status == 'VERSENDET'}" th:href="@{/portal/admin/newsletter}" class="btn btn--outline">Zurück zur Übersicht</a>
       </div>
 
