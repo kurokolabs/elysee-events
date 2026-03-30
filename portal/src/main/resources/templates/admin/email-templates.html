@@ -21,15 +21,33 @@
       <div class="stat-cards" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
 
         <div class="stat-card">
-          <div class="stat-card__label" style="font-size:13px; font-weight:600; color:#1A1A1A; margin-bottom:8px;">Wöchentliche Speisekarte</div>
-          <p style="font-size:13px; color:#6B6560; line-height:1.5; margin:0 0 16px 0;">Wochenplan mit Tagesgericht für Newsletter-Abonnenten.</p>
+          <div class="stat-card__label" style="font-size:13px; font-weight:600; color:#1A1A1A; margin-bottom:8px;">Speisekarte-Newsletter</div>
+          <p style="font-size:13px; color:#6B6560; line-height:1.5; margin:0 0 16px 0;">Wöchentliche Speisekarte mit Fleisch- und Vegetarisch-Option für Newsletter-Abonnenten.</p>
+          <a th:href="@{/portal/admin/email-preview/weekly-menu-newsletter}" class="btn btn--outline btn--sm">Vorschau</a>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card__label" style="font-size:13px; font-weight:600; color:#1A1A1A; margin-bottom:8px;">Speisekarte (alt)</div>
+          <p style="font-size:13px; color:#6B6560; line-height:1.5; margin:0 0 16px 0;">Ältere Vorlage mit einzelnem Gericht pro Tag.</p>
           <a th:href="@{/portal/admin/email-preview/weekly-menu}" class="btn btn--outline btn--sm">Vorschau</a>
         </div>
 
         <div class="stat-card">
-          <div class="stat-card__label" style="font-size:13px; font-weight:600; color:#1A1A1A; margin-bottom:8px;">Willkommens-Email</div>
+          <div class="stat-card__label" style="font-size:13px; font-weight:600; color:#1A1A1A; margin-bottom:8px;">Newsletter-Willkommen</div>
           <p style="font-size:13px; color:#6B6560; line-height:1.5; margin:0 0 16px 0;">Begrüßungsmail für neue Newsletter-Abonnenten.</p>
           <a th:href="@{/portal/admin/email-preview/welcome-subscriber}" class="btn btn--outline btn--sm">Vorschau</a>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card__label" style="font-size:13px; font-weight:600; color:#1A1A1A; margin-bottom:8px;">Zugangsdaten</div>
+          <p style="font-size:13px; color:#6B6560; line-height:1.5; margin:0 0 16px 0;">Willkommens-Email mit Login-Daten für neue Kundenkonten.</p>
+          <a th:href="@{/portal/admin/email-preview/welcome-credentials}" class="btn btn--outline btn--sm">Vorschau</a>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card__label" style="font-size:13px; font-weight:600; color:#1A1A1A; margin-bottom:8px;">E-Mail-Verifizierung</div>
+          <p style="font-size:13px; color:#6B6560; line-height:1.5; margin:0 0 16px 0;">Verifizierungslink für neue Registrierungen.</p>
+          <a th:href="@{/portal/admin/email-preview/email-verification}" class="btn btn--outline btn--sm">Vorschau</a>
         </div>
 
         <div class="stat-card">

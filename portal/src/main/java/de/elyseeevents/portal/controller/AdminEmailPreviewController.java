@@ -20,8 +20,9 @@ public class AdminEmailPreviewController {
     }
 
     private static final java.util.Set<String> ALLOWED_TEMPLATES = java.util.Set.of(
-            "weekly-menu", "welcome-subscriber", "two-factor-code",
-            "invoice-notification", "booking-status-update", "email-verification");
+            "weekly-menu", "weekly-menu-newsletter", "welcome-subscriber",
+            "welcome-credentials", "two-factor-code", "invoice-notification",
+            "booking-status-update", "email-verification");
 
     @GetMapping("/email-preview/{template}")
     public String preview(@PathVariable String template, Model model) {
@@ -33,7 +34,7 @@ public class AdminEmailPreviewController {
                 WeeklyMenu menu = new WeeklyMenu();
                 menu.setWeekStart("24.03.2026");
                 menu.setWeekEnd("28.03.2026");
-                menu.setMonday("Haehnchenbrust mit Kartoffelgratin, Beilagensalat");
+                menu.setMonday("Hähnchenbrust mit Kartoffelgratin, Beilagensalat");
                 menu.setTuesday("Spaghetti Bolognese, Parmesan, gemischter Salat");
                 menu.setWednesday("Gebratener Lachs, Wildreis, Zitronenbutter");
                 menu.setThursday("Wiener Schnitzel, Pommes frites, Gurkensalat");
@@ -44,9 +45,34 @@ public class AdminEmailPreviewController {
                 model.addAttribute("weekEnd", menu.getWeekEnd());
                 model.addAttribute("unsubscribeUrl", "#");
             }
+            case "weekly-menu-newsletter" -> {
+                WeeklyMenu menu = new WeeklyMenu();
+                menu.setWeekStart("24.03.2026");
+                menu.setWeekEnd("28.03.2026");
+                menu.setMondayMeat("Hähnchenbrust in Rahmsoße mit Champignons und Butterreis");
+                menu.setMondayVeg("Spinat-Ricotta-Lasagne");
+                menu.setTuesdayMeat("Rindergulasch mit Spätzle");
+                menu.setTuesdayVeg("Gemüse-Käsespätzle");
+                menu.setWednesdayMeat("Gebratener Lachs mit Zitronenkruste und Ofenkartoffeln");
+                menu.setWednesdayVeg("Pilzrisotto mit Parmesan");
+                menu.setThursdayMeat("Wiener Schnitzel mit Pommes frites");
+                menu.setThursdayVeg("Gnocchi in Gorgonzola-Spinatsoße");
+                menu.setFridayMeat("Seelachsfilet paniert mit Kartoffelsalat");
+                menu.setFridayVeg("Gemüse-Risotto mit Parmesan");
+                menu.setNotes("Beilagen separat erhältlich.");
+                model.addAttribute("menu", menu);
+                model.addAttribute("subscriberName", "Max Mustermann");
+                model.addAttribute("unsubscribeToken", "demo-token");
+            }
             case "welcome-subscriber" -> {
                 model.addAttribute("name", "Max Mustermann");
                 model.addAttribute("unsubscribeUrl", "#");
+            }
+            case "welcome-credentials" -> {
+                model.addAttribute("customerName", "Sophie Meier");
+                model.addAttribute("email", "sophie.meier@beispiel.de");
+                model.addAttribute("tempPassword", "Temp-2026-xK9m");
+                model.addAttribute("loginUrl", "#");
             }
             case "two-factor-code" -> {
                 model.addAttribute("code", "847291");
