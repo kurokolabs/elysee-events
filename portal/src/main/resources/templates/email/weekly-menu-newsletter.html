@@ -34,10 +34,10 @@
               <td style="padding:16px 0; border-top:1px solid rgba(201,168,76,.15);">
                 <div style="font-size:10px; font-weight:bold; color:#C9A84C; letter-spacing:.15em; text-transform:uppercase; margin-bottom:6px;">Montag</div>
                 <div th:if="${menu.mondayMeat != null and !menu.mondayMeat.isEmpty()}" style="font-size:14px; color:#1A1A1A; line-height:1.6;">
-                  <strong style="font-size:10px; letter-spacing:.08em; color:#C0392B;">FLEISCH:</strong> <span th:text="${menu.mondayMeat}"></span><span th:if="${menu.mondayMeatPrice != null and !menu.mondayMeatPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold;"> &mdash; <span th:text="${menu.mondayMeatPrice}"></span> EUR</span>
+                  <strong style="font-size:10px; letter-spacing:.08em; color:#C0392B;">FLEISCH:</strong> <span th:text="${menu.mondayMeat}"></span><span th:if="${menu.mondayMeatPrice != null and !menu.mondayMeatPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold; white-space:nowrap;"> &mdash;&nbsp;<span th:text="${menu.mondayMeatPrice}"></span> EUR</span>
                 </div>
                 <div th:if="${menu.mondayVeg != null and !menu.mondayVeg.isEmpty()}" style="font-size:14px; color:#6B8E23; line-height:1.6; margin-top:4px;">
-                  <strong style="font-size:10px; letter-spacing:.08em;">VEGETARISCH:</strong> <span th:text="${menu.mondayVeg}"></span><span th:if="${menu.mondayVegPrice != null and !menu.mondayVegPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold;"> &mdash; <span th:text="${menu.mondayVegPrice}"></span> EUR</span>
+                  <strong style="font-size:10px; letter-spacing:.08em;">VEGETARISCH:</strong> <span th:text="${menu.mondayVeg}"></span><span th:if="${menu.mondayVegPrice != null and !menu.mondayVegPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold; white-space:nowrap;"> &mdash;&nbsp;<span th:text="${menu.mondayVegPrice}"></span> EUR</span>
                 </div>
               </td>
             </tr>
@@ -47,10 +47,10 @@
               <td style="padding:16px 0; border-top:1px solid rgba(201,168,76,.08);">
                 <div style="font-size:10px; font-weight:bold; color:#C9A84C; letter-spacing:.15em; text-transform:uppercase; margin-bottom:6px;">Dienstag</div>
                 <div th:if="${menu.tuesdayMeat != null and !menu.tuesdayMeat.isEmpty()}" style="font-size:14px; color:#1A1A1A; line-height:1.6;">
-                  <strong style="font-size:10px; letter-spacing:.08em; color:#C0392B;">FLEISCH:</strong> <span th:text="${menu.tuesdayMeat}"></span><span th:if="${menu.tuesdayMeatPrice != null and !menu.tuesdayMeatPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold;"> &mdash; <span th:text="${menu.tuesdayMeatPrice}"></span> EUR</span>
+                  <strong style="font-size:10px; letter-spacing:.08em; color:#C0392B;">FLEISCH:</strong> <span th:text="${menu.tuesdayMeat}"></span><span th:if="${menu.tuesdayMeatPrice != null and !menu.tuesdayMeatPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold; white-space:nowrap;"> &mdash;&nbsp;<span th:text="${menu.tuesdayMeatPrice}"></span> EUR</span>
                 </div>
                 <div th:if="${menu.tuesdayVeg != null and !menu.tuesdayVeg.isEmpty()}" style="font-size:14px; color:#6B8E23; line-height:1.6; margin-top:4px;">
-                  <strong style="font-size:10px; letter-spacing:.08em;">VEGETARISCH:</strong> <span th:text="${menu.tuesdayVeg}"></span><span th:if="${menu.tuesdayVegPrice != null and !menu.tuesdayVegPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold;"> &mdash; <span th:text="${menu.tuesdayVegPrice}"></span> EUR</span>
+                  <strong style="font-size:10px; letter-spacing:.08em;">VEGETARISCH:</strong> <span th:text="${menu.tuesdayVeg}"></span><span th:if="${menu.tuesdayVegPrice != null and !menu.tuesdayVegPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold; white-space:nowrap;"> &mdash;&nbsp;<span th:text="${menu.tuesdayVegPrice}"></span> EUR</span>
                 </div>
               </td>
             </tr>
@@ -60,10 +60,10 @@
               <td style="padding:16px 0; border-top:1px solid rgba(201,168,76,.08);">
                 <div style="font-size:10px; font-weight:bold; color:#C9A84C; letter-spacing:.15em; text-transform:uppercase; margin-bottom:6px;">Mittwoch</div>
                 <div th:if="${menu.wednesdayMeat != null and !menu.wednesdayMeat.isEmpty()}" style="font-size:14px; color:#1A1A1A; line-height:1.6;">
-                  <strong style="font-size:10px; letter-spacing:.08em; color:#C0392B;">FLEISCH:</strong> <span th:text="${menu.wednesdayMeat}"></span><span th:if="${menu.wednesdayMeatPrice != null and !menu.wednesdayMeatPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold;"> &mdash; <span th:text="${menu.wednesdayMeatPrice}"></span> EUR</span>
+                  <strong style="font-size:10px; letter-spacing:.08em; color:#C0392B;">FLEISCH:</strong> <span th:text="${menu.wednesdayMeat}"></span><span th:if="${menu.wednesdayMeatPrice != null and !menu.wednesdayMeatPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold; white-space:nowrap;"> &mdash;&nbsp;<span th:text="${menu.wednesdayMeatPrice}"></span> EUR</span>
                 </div>
                 <div th:if="${menu.wednesdayVeg != null and !menu.wednesdayVeg.isEmpty()}" style="font-size:14px; color:#6B8E23; line-height:1.6; margin-top:4px;">
-                  <strong style="font-size:10px; letter-spacing:.08em;">VEGETARISCH:</strong> <span th:text="${menu.wednesdayVeg}"></span><span th:if="${menu.wednesdayVegPrice != null and !menu.wednesdayVegPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold;"> &mdash; <span th:text="${menu.wednesdayVegPrice}"></span> EUR</span>
+                  <strong style="font-size:10px; letter-spacing:.08em;">VEGETARISCH:</strong> <span th:text="${menu.wednesdayVeg}"></span><span th:if="${menu.wednesdayVegPrice != null and !menu.wednesdayVegPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold; white-space:nowrap;"> &mdash;&nbsp;<span th:text="${menu.wednesdayVegPrice}"></span> EUR</span>
                 </div>
               </td>
             </tr>
@@ -73,10 +73,10 @@
               <td style="padding:16px 0; border-top:1px solid rgba(201,168,76,.08);">
                 <div style="font-size:10px; font-weight:bold; color:#C9A84C; letter-spacing:.15em; text-transform:uppercase; margin-bottom:6px;">Donnerstag</div>
                 <div th:if="${menu.thursdayMeat != null and !menu.thursdayMeat.isEmpty()}" style="font-size:14px; color:#1A1A1A; line-height:1.6;">
-                  <strong style="font-size:10px; letter-spacing:.08em; color:#C0392B;">FLEISCH:</strong> <span th:text="${menu.thursdayMeat}"></span><span th:if="${menu.thursdayMeatPrice != null and !menu.thursdayMeatPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold;"> &mdash; <span th:text="${menu.thursdayMeatPrice}"></span> EUR</span>
+                  <strong style="font-size:10px; letter-spacing:.08em; color:#C0392B;">FLEISCH:</strong> <span th:text="${menu.thursdayMeat}"></span><span th:if="${menu.thursdayMeatPrice != null and !menu.thursdayMeatPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold; white-space:nowrap;"> &mdash;&nbsp;<span th:text="${menu.thursdayMeatPrice}"></span> EUR</span>
                 </div>
                 <div th:if="${menu.thursdayVeg != null and !menu.thursdayVeg.isEmpty()}" style="font-size:14px; color:#6B8E23; line-height:1.6; margin-top:4px;">
-                  <strong style="font-size:10px; letter-spacing:.08em;">VEGETARISCH:</strong> <span th:text="${menu.thursdayVeg}"></span><span th:if="${menu.thursdayVegPrice != null and !menu.thursdayVegPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold;"> &mdash; <span th:text="${menu.thursdayVegPrice}"></span> EUR</span>
+                  <strong style="font-size:10px; letter-spacing:.08em;">VEGETARISCH:</strong> <span th:text="${menu.thursdayVeg}"></span><span th:if="${menu.thursdayVegPrice != null and !menu.thursdayVegPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold; white-space:nowrap;"> &mdash;&nbsp;<span th:text="${menu.thursdayVegPrice}"></span> EUR</span>
                 </div>
               </td>
             </tr>
@@ -86,10 +86,10 @@
               <td style="padding:16px 0; border-top:1px solid rgba(201,168,76,.08); border-bottom:1px solid rgba(201,168,76,.15);">
                 <div style="font-size:10px; font-weight:bold; color:#C9A84C; letter-spacing:.15em; text-transform:uppercase; margin-bottom:6px;">Freitag</div>
                 <div th:if="${menu.fridayMeat != null and !menu.fridayMeat.isEmpty()}" style="font-size:14px; color:#1A1A1A; line-height:1.6;">
-                  <strong style="font-size:10px; letter-spacing:.08em; color:#C0392B;">FLEISCH:</strong> <span th:text="${menu.fridayMeat}"></span><span th:if="${menu.fridayMeatPrice != null and !menu.fridayMeatPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold;"> &mdash; <span th:text="${menu.fridayMeatPrice}"></span> EUR</span>
+                  <strong style="font-size:10px; letter-spacing:.08em; color:#C0392B;">FLEISCH:</strong> <span th:text="${menu.fridayMeat}"></span><span th:if="${menu.fridayMeatPrice != null and !menu.fridayMeatPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold; white-space:nowrap;"> &mdash;&nbsp;<span th:text="${menu.fridayMeatPrice}"></span> EUR</span>
                 </div>
                 <div th:if="${menu.fridayVeg != null and !menu.fridayVeg.isEmpty()}" style="font-size:14px; color:#6B8E23; line-height:1.6; margin-top:4px;">
-                  <strong style="font-size:10px; letter-spacing:.08em;">VEGETARISCH:</strong> <span th:text="${menu.fridayVeg}"></span><span th:if="${menu.fridayVegPrice != null and !menu.fridayVegPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold;"> &mdash; <span th:text="${menu.fridayVegPrice}"></span> EUR</span>
+                  <strong style="font-size:10px; letter-spacing:.08em;">VEGETARISCH:</strong> <span th:text="${menu.fridayVeg}"></span><span th:if="${menu.fridayVegPrice != null and !menu.fridayVegPrice.isEmpty()}" style="color:#C9A84C; font-weight:bold; white-space:nowrap;"> &mdash;&nbsp;<span th:text="${menu.fridayVegPrice}"></span> EUR</span>
                 </div>
               </td>
             </tr>
