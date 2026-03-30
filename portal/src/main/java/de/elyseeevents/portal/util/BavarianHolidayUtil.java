@@ -65,10 +65,12 @@ public class BavarianHolidayUtil {
         return getHolidayName(date) != null;
     }
 
-    public LocalDate getNextMonday() {
+    public LocalDate getNextWorkWeekMonday() {
         LocalDate today = LocalDate.now(java.time.ZoneId.of("Europe/Berlin"));
-        if (today.getDayOfWeek() == DayOfWeek.MONDAY) {
-            return today.plusWeeks(1);
+        // Mo-Do: aktuelle Woche vorschlagen (Montag dieser Woche)
+        // Fr-So: nächste Woche vorschlagen
+        if (today.getDayOfWeek().getValue() <= 4) {
+            return today.with(java.time.temporal.TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         }
         return today.with(java.time.temporal.TemporalAdjusters.next(DayOfWeek.MONDAY));
     }

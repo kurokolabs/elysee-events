@@ -56,7 +56,7 @@ public class AdminNewsletterController {
     @GetMapping("/speisekarte/neu")
     public String newMenuForm(Model model) {
         WeeklyMenu menu = new WeeklyMenu();
-        LocalDate nextMonday = holidayUtil.getNextMonday();
+        LocalDate nextMonday = holidayUtil.getNextWorkWeekMonday();
         LocalDate nextFriday = nextMonday.plusDays(4);
         menu.setWeekStart(nextMonday.toString());
         menu.setWeekEnd(nextFriday.toString());
