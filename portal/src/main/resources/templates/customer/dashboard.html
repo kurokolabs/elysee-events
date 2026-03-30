@@ -151,6 +151,27 @@
       </a>
     </div>
 
+    <!-- Newsletter -->
+    <div class="dash-section">
+      <div class="dash-section__head">
+        <div class="dash-section__title">Speisekarten-Newsletter</div>
+      </div>
+      <div id="nlCard" style="padding:24px; background:#fff; border:1px solid rgba(26,26,26,.08); border-radius:12px; box-shadow:0 1px 3px rgba(0,0,0,.04);">
+        <p style="font-size:13px; color:#6B6560; margin:0 0 16px 0; line-height:1.6;">
+          Jeden Montag die aktuelle Kantinen-Speisekarte per E-Mail -- kostenlos und jederzeit abbestellbar.
+        </p>
+        <form id="nlForm" style="display:flex; gap:8px; flex-wrap:wrap;" onsubmit="return false;">
+          <input type="email" id="nl-email" name="email" placeholder="ihre@email.de" required autocomplete="email"
+                 style="flex:1; min-width:200px; padding:10px 14px; font-family:inherit; font-size:14px; border:1px solid rgba(26,26,26,.15); border-radius:8px; outline:none;">
+          <button type="submit" id="nlBtn" class="btn btn--gold" style="font-size:12px; padding:10px 20px;">Abonnieren</button>
+        </form>
+        <p id="nlMsg" style="font-size:13px; margin-top:10px; display:none;"></p>
+      </div>
+      <script>
+      document.getElementById('nlForm').addEventListener('submit',function(e){e.preventDefault();var b=document.getElementById('nlBtn'),m=document.getElementById('nlMsg'),em=document.getElementById('nl-email').value;if(!em)return;b.disabled=true;b.textContent='...';m.style.display='none';fetch('/newsletter/api/subscribe',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'email='+encodeURIComponent(em)}).then(function(r){return r.json()}).then(function(d){m.style.display='block';if(d.ok){m.style.color='#2E7D32';m.textContent=d.message;document.getElementById('nlForm').style.display='none'}else{m.style.color='#c0392b';m.textContent=d.message;b.disabled=false;b.textContent='Abonnieren'}}).catch(function(){m.style.display='block';m.style.color='#c0392b';m.textContent='Fehler. Bitte erneut versuchen.';b.disabled=false;b.textContent='Abonnieren'})});
+      </script>
+    </div>
+
     <!-- Buchungen -->
     <div class="dash-section">
       <div class="dash-section__head">

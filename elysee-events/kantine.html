@@ -2708,21 +2708,54 @@ section:not(.hero):not(:first-of-type) {
       <div style="width:48px; height:2px; background:var(--gold); margin:0 auto 24px;"></div>
       <h2 style="font-family:'Cormorant Garamond',serif; font-size:clamp(28px,4vw,38px); font-weight:300; letter-spacing:.05em; text-transform:uppercase; color:var(--white); margin-bottom:12px;">Wöchentliche Speisekarte</h2>
       <p style="font-size:14px; font-weight:300; color:rgba(255,255,255,.6); line-height:1.7; margin-bottom:32px;">
-        Erhalten Sie jeden Montag unsere aktuelle Speisekarte per E-Mail — kostenlos und jederzeit abbestellbar.
+        Erhalten Sie jeden Montag unsere aktuelle Speisekarte per E-Mail -- kostenlos und jederzeit abbestellbar.
       </p>
-      <form action="https://formsubmit.co/ajax/info@elysee-events.de" method="post" class="newsletter-form" style="display:flex; gap:10px; max-width:480px; margin:0 auto; flex-wrap:wrap;">
-        <input type="hidden" name="_subject" value="Newsletter-Anmeldung">
-        <input type="hidden" name="_template" value="table">
+      <form id="nlForm" style="display:flex; gap:10px; max-width:480px; margin:0 auto; flex-wrap:wrap;" onsubmit="return false;">
         <label for="nl-name" class="sr-only">Ihr Name</label>
         <input type="text" id="nl-name" name="name" placeholder="Ihr Name" autocomplete="name" aria-label="Ihr Name" style="flex:1; padding:14px 16px; font-family:'DM Sans',sans-serif; font-size:16px; background:rgba(255,255,255,.06); border:1px solid rgba(201,168,76,.3); border-radius:2px; color:#fff; outline:none;">
         <label for="nl-email" class="sr-only">E-Mail-Adresse</label>
         <input type="email" id="nl-email" name="email" placeholder="ihre@email.de" required autocomplete="email" aria-label="E-Mail-Adresse" style="flex:1.5; padding:14px 16px; font-family:'DM Sans',sans-serif; font-size:16px; background:rgba(255,255,255,.06); border:1px solid rgba(201,168,76,.3); border-radius:2px; color:#fff; outline:none;">
-        <button type="submit" style="padding:14px 28px; background:var(--gold); color:#0a0a0a; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; border:none; border-radius:2px; cursor:pointer; white-space:nowrap; transition:background .25s ease;">Anmelden</button>
+        <button type="submit" id="nlBtn" style="padding:14px 28px; background:var(--gold); color:#0a0a0a; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; border:none; border-radius:2px; cursor:pointer; white-space:nowrap; transition:background .25s ease;">Anmelden</button>
       </form>
+      <p id="nlMsg" style="font-size:13px; margin-top:14px; color:rgba(255,255,255,.45); display:none;"></p>
       <p style="font-size:11px; color:rgba(255,255,255,.45); margin-top:14px;">
-        Kein Spam -- nur die Speisekarte. <a href="/datenschutz" style="color:rgba(201,168,76,.7);">Datenschutzerklärung</a>
+        Kein Spam -- nur die Speisekarte. <a href="/datenschutz" style="color:rgba(201,168,76,.7);">Datenschutzerkl&auml;rung</a>
       </p>
     </div>
+    <script>
+    document.getElementById('nlForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var btn = document.getElementById('nlBtn');
+      var msg = document.getElementById('nlMsg');
+      var email = document.getElementById('nl-email').value;
+      var name = document.getElementById('nl-name').value;
+      if (!email) return;
+      btn.disabled = true; btn.textContent = 'Wird angemeldet...';
+      msg.style.display = 'none';
+      var body = 'email=' + encodeURIComponent(email);
+      if (name) body += '&name=' + encodeURIComponent(name);
+      fetch('/newsletter/api/subscribe', { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: body })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          msg.style.display = 'block';
+          if (data.ok) {
+            msg.style.color = '#C9A84C';
+            msg.textContent = data.message;
+            document.getElementById('nlForm').style.display = 'none';
+          } else {
+            msg.style.color = '#e74c3c';
+            msg.textContent = data.message;
+            btn.disabled = false; btn.textContent = 'Anmelden';
+          }
+        })
+        .catch(function() {
+          msg.style.display = 'block';
+          msg.style.color = '#e74c3c';
+          msg.textContent = 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.';
+          btn.disabled = false; btn.textContent = 'Anmelden';
+        });
+    });
+    </script>
   </section>
 
   <!-- ============================================================

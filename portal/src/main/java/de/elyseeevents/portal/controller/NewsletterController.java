@@ -2,13 +2,13 @@ package de.elyseeevents.portal.controller;
 
 import de.elyseeevents.portal.model.NewsletterSubscriber;
 import de.elyseeevents.portal.repository.NewsletterRepository;
+import de.elyseeevents.portal.service.EmailService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -21,9 +21,11 @@ public class NewsletterController {
             "^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}$");
 
     private final NewsletterRepository newsletterRepository;
+    private final EmailService emailService;
 
-    public NewsletterController(NewsletterRepository newsletterRepository) {
+    public NewsletterController(NewsletterRepository newsletterRepository, EmailService emailService) {
         this.newsletterRepository = newsletterRepository;
+        this.emailService = emailService;
     }
 
     @PostMapping("/subscribe")
@@ -35,34 +37,59 @@ public class NewsletterController {
             return "newsletter/subscribed";
         }
 
-        String trimmedEmail = email.trim().toLowerCase();
-
-        Optional<NewsletterSubscriber> existing = newsletterRepository.findByEmail(trimmedEmail);
-        if (existing.isPresent()) {
-            NewsletterSubscriber s = existing.get();
-            if (!s.isActive()) {
-                String newToken = UUID.randomUUID().toString();
-                String newName = name != null ? name.trim() : s.getName();
-                newsletterRepository.reactivate(s.getId(), newName, newToken);
-            }
-            // If already active, just show success without duplicate insert
-            model.addAttribute("success", true);
-            return "newsletter/subscribed";
-        }
-
-        NewsletterSubscriber subscriber = new NewsletterSubscriber();
-        subscriber.setEmail(trimmedEmail);
-        subscriber.setName(name != null ? name.trim() : null);
-        subscriber.setActive(true);
-        subscriber.setToken(UUID.randomUUID().toString());
-        newsletterRepository.save(subscriber);
-
+        doSubscribe(email.trim().toLowerCase(), name != null ? name.trim() : null);
         model.addAttribute("success", true);
         return "newsletter/subscribed";
     }
 
+    @PostMapping("/api/subscribe")
+    @ResponseBody
+    public ResponseEntity<?> subscribeApi(@RequestParam String email,
+                                          @RequestParam(required = false) String name) {
+        if (email == null || email.isBlank() || !EMAIL_PATTERN.matcher(email.trim()).matches()) {
+            return ResponseEntity.badRequest().body(Map.of("ok", false, "message", "Bitte geben Sie eine gültige E-Mail-Adresse ein."));
+        }
+
+        doSubscribe(email.trim().toLowerCase(), name != null ? name.trim() : null);
+        return ResponseEntity.ok(Map.of("ok", true, "message", "Sie erhalten ab sofort unsere wöchentliche Speisekarte per E-Mail."));
+    }
+
+    private void doSubscribe(String email, String name) {
+        Optional<NewsletterSubscriber> existing = newsletterRepository.findByEmail(email);
+        if (existing.isPresent()) {
+            NewsletterSubscriber s = existing.get();
+            if (!s.isActive()) {
+                String newToken = UUID.randomUUID().toString();
+                newsletterRepository.reactivate(s.getId(), name != null ? name : s.getName(), newToken);
+                sendWelcome(email, name != null ? name : s.getName());
+            }
+            return;
+        }
+
+        NewsletterSubscriber subscriber = new NewsletterSubscriber();
+        subscriber.setEmail(email);
+        subscriber.setName(name);
+        subscriber.setActive(true);
+        subscriber.setToken(UUID.randomUUID().toString());
+        newsletterRepository.save(subscriber);
+        sendWelcome(email, name);
+    }
+
+    private void sendWelcome(String email, String name) {
+        try {
+            emailService.sendHtmlEmail(email, "Willkommen zum Speisekarten-Newsletter",
+                    "email/welcome-subscriber", Map.of(
+                            "name", name != null ? name : "",
+                            "unsubscribeUrl", "https://www.elysee-events.de/newsletter/abmelden?token="));
+        } catch (Exception ignored) {}
+    }
+
     @GetMapping("/abmelden")
     public String unsubscribe(@RequestParam String token, Model model) {
+        if (token == null || token.length() < 10 || token.length() > 64) {
+            model.addAttribute("error", "Ungültiger Abmelde-Link.");
+            return "newsletter/unsubscribed";
+        }
         Optional<NewsletterSubscriber> subscriber = newsletterRepository.findByToken(token);
         if (subscriber.isPresent()) {
             newsletterRepository.unsubscribe(token);
