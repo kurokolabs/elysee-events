@@ -47,6 +47,7 @@ public class WeeklyMenuRepository {
         m.setThursdayVegPrice(rs.getString("thursday_veg_price"));
         m.setFridayMeatPrice(rs.getString("friday_meat_price"));
         m.setFridayVegPrice(rs.getString("friday_veg_price"));
+        m.setStatus(rs.getString("status"));
         m.setNotes(rs.getString("notes"));
         m.setSent(rs.getInt("sent") == 1);
         m.setSentAt(rs.getString("sent_at"));
@@ -84,8 +85,8 @@ public class WeeklyMenuRepository {
                         "thursday_meat, thursday_veg, friday_meat, friday_veg, " +
                         "monday_meat_price, monday_veg_price, tuesday_meat_price, tuesday_veg_price, " +
                         "wednesday_meat_price, wednesday_veg_price, thursday_meat_price, thursday_veg_price, " +
-                        "friday_meat_price, friday_veg_price, notes) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        "friday_meat_price, friday_veg_price, status, notes) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         Statement.RETURN_GENERATED_KEYS);
                 int i = 1;
                 ps.setString(i++, m.getWeekStart());
@@ -115,6 +116,7 @@ public class WeeklyMenuRepository {
                 ps.setString(i++, m.getThursdayVegPrice());
                 ps.setString(i++, m.getFridayMeatPrice());
                 ps.setString(i++, m.getFridayVegPrice());
+                ps.setString(i++, m.getStatus());
                 ps.setString(i, m.getNotes());
                 return ps;
             }, keyHolder);
@@ -127,7 +129,7 @@ public class WeeklyMenuRepository {
                         "friday_meat=?, friday_veg=?, " +
                         "monday_meat_price=?, monday_veg_price=?, tuesday_meat_price=?, tuesday_veg_price=?, " +
                         "wednesday_meat_price=?, wednesday_veg_price=?, thursday_meat_price=?, thursday_veg_price=?, " +
-                        "friday_meat_price=?, friday_veg_price=?, notes=? WHERE id=?",
+                        "friday_meat_price=?, friday_veg_price=?, status=?, notes=? WHERE id=?",
                     m.getWeekStart(), m.getWeekEnd(), m.getMonday(), m.getTuesday(),
                     m.getWednesday(), m.getThursday(), m.getFriday(),
                     m.getMondayMeat(), m.getMondayVeg(), m.getTuesdayMeat(), m.getTuesdayVeg(),
@@ -135,13 +137,22 @@ public class WeeklyMenuRepository {
                     m.getFridayMeat(), m.getFridayVeg(),
                     m.getMondayMeatPrice(), m.getMondayVegPrice(), m.getTuesdayMeatPrice(), m.getTuesdayVegPrice(),
                     m.getWednesdayMeatPrice(), m.getWednesdayVegPrice(), m.getThursdayMeatPrice(), m.getThursdayVegPrice(),
-                    m.getFridayMeatPrice(), m.getFridayVegPrice(), m.getNotes(), m.getId());
+                    m.getFridayMeatPrice(), m.getFridayVegPrice(), m.getStatus(), m.getNotes(), m.getId());
         }
         return m;
     }
 
     public void markSent(Long id) {
-        jdbc.update("UPDATE weekly_menus SET sent = 1, sent_at = NOW() WHERE id = ?", id);
+        jdbc.update("UPDATE weekly_menus SET sent = 1, sent_at = NOW(), status = 'VERSENDET' WHERE id = ?", id);
+    }
+
+    public void updateStatus(Long id, String status) {
+        jdbc.update("UPDATE weekly_menus SET status = ? WHERE id = ?", status, id);
+    }
+
+    public List<WeeklyMenu> findByStatusAndWeekStart(String status, String weekStart) {
+        return jdbc.query("SELECT * FROM weekly_menus WHERE status = ? AND week_start = ?",
+                rowMapper, status, weekStart);
     }
 
     public List<String> findDistinctDishes() {

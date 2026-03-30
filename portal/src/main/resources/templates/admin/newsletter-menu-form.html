@@ -13,7 +13,11 @@
     .dish-field .price-input { width:80px; flex-shrink:0; text-align:right; }
     .label-meat { font-size:11px; color:#C0392B; font-weight:600; }
     .label-veg { font-size:11px; color:#6B8E23; font-weight:600; }
-    .price-label { font-size:10px; color:var(--muted); text-align:right; display:block; }
+    .holiday-banner {
+      padding:16px 20px; background:rgba(201,168,76,.08); border:1px solid rgba(201,168,76,.2);
+      border-radius:2px; text-align:center; font-family:'Cormorant Garamond',serif;
+      font-size:1.1rem; color:#C9A84C; font-style:italic;
+    }
   </style>
 </head>
 <body>
@@ -26,121 +30,138 @@
 
       <div class="portal-header">
         <h1 class="portal-header__title" th:text="${isNew} ? 'Neue Speisekarte' : 'Speisekarte bearbeiten'">Neue Speisekarte</h1>
-        <p class="portal-header__subtitle">Woche auswählen, Gerichte eintragen, speichern und in der Vorschau prüfen</p>
+        <p class="portal-header__subtitle">Woche auswählen, Gerichte eintragen. Bestätigte Karten werden Montag 09:00 automatisch versendet.</p>
       </div>
 
-      <form th:action="${isNew} ? @{/portal/admin/newsletter/speisekarte/neu} : @{/portal/admin/newsletter/speisekarte/{id}(id=${menu.id})}" method="post" class="form-card">
+      <form id="menuForm" th:action="${isNew} ? @{/portal/admin/newsletter/speisekarte/neu} : @{/portal/admin/newsletter/speisekarte/{id}(id=${menu.id})}" method="post" class="form-card">
+        <input type="hidden" id="statusField" name="status" value="ENTWURF">
+
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
           <div class="form-group">
-            <label class="form-label" for="weekStart">Woche von</label>
+            <label class="form-label" for="weekStart">Woche von (Montag)</label>
             <input type="date" id="weekStart" name="weekStart" class="form-input" th:value="${menu.weekStart}" required>
           </div>
           <div class="form-group">
-            <label class="form-label" for="weekEnd">Woche bis</label>
+            <label class="form-label" for="weekEnd">Woche bis (Freitag)</label>
             <input type="date" id="weekEnd" name="weekEnd" class="form-input" th:value="${menu.weekEnd}" required>
           </div>
         </div>
 
         <!-- Montag -->
-        <div class="form-group">
+        <div class="form-group" id="monday-group">
           <label class="form-label">Montag</label>
-          <div class="day-row">
-            <div>
-              <label class="form-label label-meat" for="mondayMeat">Fleisch / Fisch</label>
-              <div class="dish-field">
-                <input type="text" id="mondayMeat" name="mondayMeat" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.mondayMeat}" placeholder="z.B. Schnitzel mit Pommes" autocomplete="off">
-                <input type="text" id="mondayMeatPrice" name="mondayMeatPrice" class="form-input price-input" th:value="${menu.mondayMeatPrice}" placeholder="8,50">
+          <div id="monday-holiday" class="holiday-banner" th:if="${holidays != null and holidays.containsKey('monday')}" th:text="${holidays.get('monday')}"></div>
+          <div id="monday-section" th:unless="${holidays != null and holidays.containsKey('monday')}">
+            <div class="day-row">
+              <div>
+                <label class="form-label label-meat">Fleisch / Fisch</label>
+                <div class="dish-field">
+                  <input type="text" name="mondayMeat" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.mondayMeat}" placeholder="z.B. Schnitzel mit Pommes" autocomplete="off">
+                  <input type="text" name="mondayMeatPrice" class="form-input price-input" th:value="${menu.mondayMeatPrice}" placeholder="8,50">
+                </div>
               </div>
-            </div>
-            <div>
-              <label class="form-label label-veg" for="mondayVeg">Vegetarisch</label>
-              <div class="dish-field">
-                <input type="text" id="mondayVeg" name="mondayVeg" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.mondayVeg}" placeholder="z.B. Gemüselasagne" autocomplete="off">
-                <input type="text" id="mondayVegPrice" name="mondayVegPrice" class="form-input price-input" th:value="${menu.mondayVegPrice}" placeholder="8,00">
+              <div>
+                <label class="form-label label-veg">Vegetarisch</label>
+                <div class="dish-field">
+                  <input type="text" name="mondayVeg" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.mondayVeg}" placeholder="z.B. Gemüselasagne" autocomplete="off">
+                  <input type="text" name="mondayVegPrice" class="form-input price-input" th:value="${menu.mondayVegPrice}" placeholder="8,00">
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Dienstag -->
-        <div class="form-group">
+        <div class="form-group" id="tuesday-group">
           <label class="form-label">Dienstag</label>
-          <div class="day-row">
-            <div>
-              <label class="form-label label-meat" for="tuesdayMeat">Fleisch / Fisch</label>
-              <div class="dish-field">
-                <input type="text" id="tuesdayMeat" name="tuesdayMeat" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.tuesdayMeat}" placeholder="z.B. Rindergulasch mit Spätzle" autocomplete="off">
-                <input type="text" id="tuesdayMeatPrice" name="tuesdayMeatPrice" class="form-input price-input" th:value="${menu.tuesdayMeatPrice}" placeholder="8,50">
+          <div id="tuesday-holiday" class="holiday-banner" th:if="${holidays != null and holidays.containsKey('tuesday')}" th:text="${holidays.get('tuesday')}"></div>
+          <div id="tuesday-section" th:unless="${holidays != null and holidays.containsKey('tuesday')}">
+            <div class="day-row">
+              <div>
+                <label class="form-label label-meat">Fleisch / Fisch</label>
+                <div class="dish-field">
+                  <input type="text" name="tuesdayMeat" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.tuesdayMeat}" placeholder="z.B. Rindergulasch" autocomplete="off">
+                  <input type="text" name="tuesdayMeatPrice" class="form-input price-input" th:value="${menu.tuesdayMeatPrice}" placeholder="8,50">
+                </div>
               </div>
-            </div>
-            <div>
-              <label class="form-label label-veg" for="tuesdayVeg">Vegetarisch</label>
-              <div class="dish-field">
-                <input type="text" id="tuesdayVeg" name="tuesdayVeg" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.tuesdayVeg}" placeholder="z.B. Käsespätzle" autocomplete="off">
-                <input type="text" id="tuesdayVegPrice" name="tuesdayVegPrice" class="form-input price-input" th:value="${menu.tuesdayVegPrice}" placeholder="8,00">
+              <div>
+                <label class="form-label label-veg">Vegetarisch</label>
+                <div class="dish-field">
+                  <input type="text" name="tuesdayVeg" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.tuesdayVeg}" placeholder="z.B. Käsespätzle" autocomplete="off">
+                  <input type="text" name="tuesdayVegPrice" class="form-input price-input" th:value="${menu.tuesdayVegPrice}" placeholder="8,00">
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Mittwoch -->
-        <div class="form-group">
+        <div class="form-group" id="wednesday-group">
           <label class="form-label">Mittwoch</label>
-          <div class="day-row">
-            <div>
-              <label class="form-label label-meat" for="wednesdayMeat">Fleisch / Fisch</label>
-              <div class="dish-field">
-                <input type="text" id="wednesdayMeat" name="wednesdayMeat" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.wednesdayMeat}" placeholder="z.B. Hähnchen-Curry mit Reis" autocomplete="off">
-                <input type="text" id="wednesdayMeatPrice" name="wednesdayMeatPrice" class="form-input price-input" th:value="${menu.wednesdayMeatPrice}" placeholder="8,50">
+          <div id="wednesday-holiday" class="holiday-banner" th:if="${holidays != null and holidays.containsKey('wednesday')}" th:text="${holidays.get('wednesday')}"></div>
+          <div id="wednesday-section" th:unless="${holidays != null and holidays.containsKey('wednesday')}">
+            <div class="day-row">
+              <div>
+                <label class="form-label label-meat">Fleisch / Fisch</label>
+                <div class="dish-field">
+                  <input type="text" name="wednesdayMeat" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.wednesdayMeat}" placeholder="z.B. Hähnchen-Curry" autocomplete="off">
+                  <input type="text" name="wednesdayMeatPrice" class="form-input price-input" th:value="${menu.wednesdayMeatPrice}" placeholder="8,50">
+                </div>
               </div>
-            </div>
-            <div>
-              <label class="form-label label-veg" for="wednesdayVeg">Vegetarisch</label>
-              <div class="dish-field">
-                <input type="text" id="wednesdayVeg" name="wednesdayVeg" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.wednesdayVeg}" placeholder="z.B. Pilzrisotto" autocomplete="off">
-                <input type="text" id="wednesdayVegPrice" name="wednesdayVegPrice" class="form-input price-input" th:value="${menu.wednesdayVegPrice}" placeholder="8,00">
+              <div>
+                <label class="form-label label-veg">Vegetarisch</label>
+                <div class="dish-field">
+                  <input type="text" name="wednesdayVeg" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.wednesdayVeg}" placeholder="z.B. Pilzrisotto" autocomplete="off">
+                  <input type="text" name="wednesdayVegPrice" class="form-input price-input" th:value="${menu.wednesdayVegPrice}" placeholder="8,00">
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Donnerstag -->
-        <div class="form-group">
+        <div class="form-group" id="thursday-group">
           <label class="form-label">Donnerstag</label>
-          <div class="day-row">
-            <div>
-              <label class="form-label label-meat" for="thursdayMeat">Fleisch / Fisch</label>
-              <div class="dish-field">
-                <input type="text" id="thursdayMeat" name="thursdayMeat" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.thursdayMeat}" placeholder="z.B. Putengeschnetzeltes" autocomplete="off">
-                <input type="text" id="thursdayMeatPrice" name="thursdayMeatPrice" class="form-input price-input" th:value="${menu.thursdayMeatPrice}" placeholder="8,50">
+          <div id="thursday-holiday" class="holiday-banner" th:if="${holidays != null and holidays.containsKey('thursday')}" th:text="${holidays.get('thursday')}"></div>
+          <div id="thursday-section" th:unless="${holidays != null and holidays.containsKey('thursday')}">
+            <div class="day-row">
+              <div>
+                <label class="form-label label-meat">Fleisch / Fisch</label>
+                <div class="dish-field">
+                  <input type="text" name="thursdayMeat" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.thursdayMeat}" placeholder="z.B. Putengeschnetzeltes" autocomplete="off">
+                  <input type="text" name="thursdayMeatPrice" class="form-input price-input" th:value="${menu.thursdayMeatPrice}" placeholder="8,50">
+                </div>
               </div>
-            </div>
-            <div>
-              <label class="form-label label-veg" for="thursdayVeg">Vegetarisch</label>
-              <div class="dish-field">
-                <input type="text" id="thursdayVeg" name="thursdayVeg" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.thursdayVeg}" placeholder="z.B. Spinat-Cannelloni" autocomplete="off">
-                <input type="text" id="thursdayVegPrice" name="thursdayVegPrice" class="form-input price-input" th:value="${menu.thursdayVegPrice}" placeholder="8,00">
+              <div>
+                <label class="form-label label-veg">Vegetarisch</label>
+                <div class="dish-field">
+                  <input type="text" name="thursdayVeg" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.thursdayVeg}" placeholder="z.B. Spinat-Cannelloni" autocomplete="off">
+                  <input type="text" name="thursdayVegPrice" class="form-input price-input" th:value="${menu.thursdayVegPrice}" placeholder="8,00">
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Freitag -->
-        <div class="form-group">
+        <div class="form-group" id="friday-group">
           <label class="form-label">Freitag</label>
-          <div class="day-row">
-            <div>
-              <label class="form-label label-meat" for="fridayMeat">Fleisch / Fisch</label>
-              <div class="dish-field">
-                <input type="text" id="fridayMeat" name="fridayMeat" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.fridayMeat}" placeholder="z.B. Lachsfilet mit Kartoffeln" autocomplete="off">
-                <input type="text" id="fridayMeatPrice" name="fridayMeatPrice" class="form-input price-input" th:value="${menu.fridayMeatPrice}" placeholder="8,50">
+          <div id="friday-holiday" class="holiday-banner" th:if="${holidays != null and holidays.containsKey('friday')}" th:text="${holidays.get('friday')}"></div>
+          <div id="friday-section" th:unless="${holidays != null and holidays.containsKey('friday')}">
+            <div class="day-row">
+              <div>
+                <label class="form-label label-meat">Fleisch / Fisch</label>
+                <div class="dish-field">
+                  <input type="text" name="fridayMeat" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.fridayMeat}" placeholder="z.B. Lachsfilet" autocomplete="off">
+                  <input type="text" name="fridayMeatPrice" class="form-input price-input" th:value="${menu.fridayMeatPrice}" placeholder="8,50">
+                </div>
               </div>
-            </div>
-            <div>
-              <label class="form-label label-veg" for="fridayVeg">Vegetarisch</label>
-              <div class="dish-field">
-                <input type="text" id="fridayVeg" name="fridayVeg" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.fridayVeg}" placeholder="z.B. Gemüse-Quiche" autocomplete="off">
-                <input type="text" id="fridayVegPrice" name="fridayVegPrice" class="form-input price-input" th:value="${menu.fridayVegPrice}" placeholder="8,00">
+              <div>
+                <label class="form-label label-veg">Vegetarisch</label>
+                <div class="dish-field">
+                  <input type="text" name="fridayVeg" class="form-input dish-autocomplete" spellcheck="true" th:value="${menu.fridayVeg}" placeholder="z.B. Gemüse-Quiche" autocomplete="off">
+                  <input type="text" name="fridayVegPrice" class="form-input price-input" th:value="${menu.fridayVegPrice}" placeholder="8,00">
+                </div>
               </div>
             </div>
           </div>
@@ -152,9 +173,10 @@
                     placeholder="z.B. Vegetarische Alternative auf Anfrage" th:text="${menu.notes}"></textarea>
         </div>
 
-        <div style="display:flex; gap:12px; margin-top:24px;">
-          <button type="submit" class="btn btn--gold">Speisekarte speichern</button>
-          <a th:href="@{/portal/admin/newsletter}" class="btn btn--outline">Abbrechen</a>
+        <div style="display:flex; gap:12px; margin-top:24px; flex-wrap:wrap;">
+          <button type="button" class="btn btn--outline" onclick="document.getElementById('statusField').value='ENTWURF';document.getElementById('menuForm').submit();">Als Entwurf speichern</button>
+          <button type="button" class="btn btn--gold" onclick="document.getElementById('statusField').value='BESTAETIGT';document.getElementById('menuForm').submit();">Bestätigen und planen</button>
+          <a th:href="@{/portal/admin/newsletter}" class="btn btn--outline" style="margin-left:auto;">Abbrechen</a>
         </div>
       </form>
     </div>
@@ -163,13 +185,50 @@
   <script th:src="@{/portal/js/portal.js}"></script>
   <script th:inline="javascript">
   (function() {
+    // Auto-calculate Friday when Monday changes
+    document.getElementById('weekStart').addEventListener('change', function() {
+      var start = new Date(this.value);
+      if (isNaN(start.getTime())) return;
+      var end = new Date(start);
+      end.setDate(end.getDate() + 4);
+      document.getElementById('weekEnd').value = end.toISOString().substring(0, 10);
+      fetchHolidays(this.value);
+    });
+
+    function fetchHolidays(weekStart) {
+      fetch(/*[[@{/portal/admin/newsletter/speisekarte/feiertage}]]*/ '/portal/admin/newsletter/speisekarte/feiertage' + '?weekStart=' + weekStart)
+        .then(function(r) { return r.json(); })
+        .then(function(holidays) {
+          ['monday','tuesday','wednesday','thursday','friday'].forEach(function(day) {
+            var section = document.getElementById(day + '-section');
+            var holiday = document.getElementById(day + '-holiday');
+            if (!section && !holiday) return;
+            if (holidays[day]) {
+              if (section) section.style.display = 'none';
+              if (!holiday) {
+                holiday = document.createElement('div');
+                holiday.id = day + '-holiday';
+                holiday.className = 'holiday-banner';
+                document.getElementById(day + '-group').appendChild(holiday);
+              }
+              holiday.textContent = holidays[day];
+              holiday.style.display = 'block';
+            } else {
+              if (section) section.style.display = '';
+              if (holiday) holiday.style.display = 'none';
+            }
+          });
+        });
+    }
+
+    // Autocomplete
     var dishes = [];
     fetch(/*[[@{/portal/admin/newsletter/speisekarte/dishes}]]*/ '/portal/admin/newsletter/speisekarte/dishes')
       .then(function(r) { return r.json(); })
       .then(function(data) { dishes = data; });
 
     document.querySelectorAll('.dish-autocomplete').forEach(function(input) {
-      var listId = input.id + '-suggestions';
+      var listId = input.name + '-suggestions';
       var datalist = document.createElement('datalist');
       datalist.id = listId;
       input.setAttribute('list', listId);

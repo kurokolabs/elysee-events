@@ -234,3 +234,6 @@ ALTER TABLE weekly_menus ADD COLUMN thursday_meat_price VARCHAR(20);
 ALTER TABLE weekly_menus ADD COLUMN thursday_veg_price VARCHAR(20);
 ALTER TABLE weekly_menus ADD COLUMN friday_meat_price VARCHAR(20);
 ALTER TABLE weekly_menus ADD COLUMN friday_veg_price VARCHAR(20);
+
+-- Speisekarten-Status: ENTWURF -> BESTAETIGT -> VERSENDET
+ALTER TABLE weekly_menus ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ENTWURF';

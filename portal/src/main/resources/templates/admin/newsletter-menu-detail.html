@@ -7,67 +7,20 @@
   <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
   <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
   <style>
-    .menu-week {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-      margin: 24px 0;
-    }
-    .menu-day {
-      background: var(--white);
-      border: 1px solid rgba(201,168,76,.15);
-      border-radius: 2px;
-      padding: 20px;
-    }
-    .menu-day__label {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 12px;
-    }
-    .menu-day__category {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      margin-bottom: 2px;
-    }
-    .menu-day__category--meat { color: #C0392B; }
-    .menu-day__category--veg { color: #6B8E23; }
-    .menu-day__text {
-      font-size: 14px;
-      line-height: 1.6;
-      color: var(--dark);
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-    }
-    .menu-day__price {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--gold);
-      white-space: nowrap;
-    }
-    .menu-notes {
-      background: var(--surface, #F2EFE9);
-      border-radius: 2px;
-      padding: 16px 20px;
-      margin: 16px 0 24px;
-      font-size: 14px;
-      line-height: 1.6;
-      color: var(--muted);
-      white-space: pre-line;
-    }
-    .menu-meta {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 24px;
-    }
+    .menu-week { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:16px; margin:24px 0; }
+    .menu-day { background:var(--white); border:1px solid rgba(201,168,76,.15); border-radius:2px; padding:20px; }
+    .menu-day__label { font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+    .menu-day__category { font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; margin-bottom:2px; }
+    .menu-day__category--meat { color:#C0392B; }
+    .menu-day__category--veg { color:#6B8E23; }
+    .menu-day__text { font-size:14px; line-height:1.6; color:var(--dark); margin-bottom:10px; display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+    .menu-day__price { font-family:'Cormorant Garamond',serif; font-size:15px; font-weight:500; color:var(--gold); white-space:nowrap; }
+    .menu-day__holiday { font-family:'Cormorant Garamond',serif; font-size:1.1rem; color:#C9A84C; font-style:italic; }
+    .menu-notes { background:var(--surface,#F2EFE9); border-radius:2px; padding:16px 20px; margin:16px 0 24px; font-size:14px; line-height:1.6; color:var(--muted); white-space:pre-line; }
+    .menu-meta { font-size:13px; color:var(--muted); margin-bottom:24px; }
+    .status-badge--ENTWURF { background:rgba(107,101,96,.12); color:#6B6560; }
+    .status-badge--BESTAETIGT { background:rgba(201,168,76,.15); color:#8B7330; }
+    .status-badge--VERSENDET { background:rgba(46,125,50,.12); color:#2E7D32; }
   </style>
 </head>
 <body>
@@ -88,109 +41,111 @@
 
       <div class="menu-meta">
         <span>Erstellt: <span th:text="${menu.createdAt}">-</span></span>
-        <span th:if="${menu.sent}" style="margin-left:16px;">
-          Versendet: <span th:text="${menu.sentAt}">-</span>
-        </span>
+        <span th:if="${menu.sentAt != null}" style="margin-left:16px;">Versendet: <span th:text="${menu.sentAt}">-</span></span>
         <span style="margin-left:16px;">
-          Status:
-          <span th:if="${menu.sent}" class="status-badge status-badge--BESTAETIGT">Versendet</span>
-          <span th:unless="${menu.sent}" class="status-badge status-badge--ANFRAGE">Nicht versendet</span>
+          Status: <span class="status-badge" th:classappend="'status-badge--' + ${menu.status}" th:text="${menu.statusLabel}">-</span>
         </span>
       </div>
 
       <div class="menu-week">
-        <div class="menu-day" th:if="${menu.mondayMeat != null or menu.mondayVeg != null}">
+        <!-- Montag -->
+        <div class="menu-day">
           <div class="menu-day__label">Montag</div>
-          <div th:if="${menu.mondayMeat != null and !menu.mondayMeat.isEmpty()}">
-            <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
-            <div class="menu-day__text"><span th:text="${menu.mondayMeat}"></span><span th:if="${menu.mondayMeatPrice != null and !menu.mondayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.mondayMeatPrice} + ' EUR'"></span></div>
-          </div>
-          <div th:if="${menu.mondayVeg != null and !menu.mondayVeg.isEmpty()}">
-            <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
-            <div class="menu-day__text"><span th:text="${menu.mondayVeg}"></span><span th:if="${menu.mondayVegPrice != null and !menu.mondayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.mondayVegPrice} + ' EUR'"></span></div>
-          </div>
+          <div th:if="${holidays != null and holidays.containsKey('monday')}" class="menu-day__holiday" th:text="${holidays.get('monday')}"></div>
+          <th:block th:unless="${holidays != null and holidays.containsKey('monday')}">
+            <div th:if="${menu.mondayMeat != null and !menu.mondayMeat.isEmpty()}">
+              <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
+              <div class="menu-day__text"><span th:text="${menu.mondayMeat}"></span><span th:if="${menu.mondayMeatPrice != null and !menu.mondayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.mondayMeatPrice} + ' EUR'"></span></div>
+            </div>
+            <div th:if="${menu.mondayVeg != null and !menu.mondayVeg.isEmpty()}">
+              <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
+              <div class="menu-day__text"><span th:text="${menu.mondayVeg}"></span><span th:if="${menu.mondayVegPrice != null and !menu.mondayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.mondayVegPrice} + ' EUR'"></span></div>
+            </div>
+          </th:block>
         </div>
-
-        <div class="menu-day" th:if="${menu.tuesdayMeat != null or menu.tuesdayVeg != null}">
+        <!-- Dienstag -->
+        <div class="menu-day">
           <div class="menu-day__label">Dienstag</div>
-          <div th:if="${menu.tuesdayMeat != null and !menu.tuesdayMeat.isEmpty()}">
-            <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
-            <div class="menu-day__text"><span th:text="${menu.tuesdayMeat}"></span><span th:if="${menu.tuesdayMeatPrice != null and !menu.tuesdayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.tuesdayMeatPrice} + ' EUR'"></span></div>
-          </div>
-          <div th:if="${menu.tuesdayVeg != null and !menu.tuesdayVeg.isEmpty()}">
-            <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
-            <div class="menu-day__text"><span th:text="${menu.tuesdayVeg}"></span><span th:if="${menu.tuesdayVegPrice != null and !menu.tuesdayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.tuesdayVegPrice} + ' EUR'"></span></div>
-          </div>
+          <div th:if="${holidays != null and holidays.containsKey('tuesday')}" class="menu-day__holiday" th:text="${holidays.get('tuesday')}"></div>
+          <th:block th:unless="${holidays != null and holidays.containsKey('tuesday')}">
+            <div th:if="${menu.tuesdayMeat != null and !menu.tuesdayMeat.isEmpty()}"><div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div><div class="menu-day__text"><span th:text="${menu.tuesdayMeat}"></span><span th:if="${menu.tuesdayMeatPrice != null and !menu.tuesdayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.tuesdayMeatPrice} + ' EUR'"></span></div></div>
+            <div th:if="${menu.tuesdayVeg != null and !menu.tuesdayVeg.isEmpty()}"><div class="menu-day__category menu-day__category--veg">Vegetarisch</div><div class="menu-day__text"><span th:text="${menu.tuesdayVeg}"></span><span th:if="${menu.tuesdayVegPrice != null and !menu.tuesdayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.tuesdayVegPrice} + ' EUR'"></span></div></div>
+          </th:block>
         </div>
-
-        <div class="menu-day" th:if="${menu.wednesdayMeat != null or menu.wednesdayVeg != null}">
+        <!-- Mittwoch -->
+        <div class="menu-day">
           <div class="menu-day__label">Mittwoch</div>
-          <div th:if="${menu.wednesdayMeat != null and !menu.wednesdayMeat.isEmpty()}">
-            <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
-            <div class="menu-day__text"><span th:text="${menu.wednesdayMeat}"></span><span th:if="${menu.wednesdayMeatPrice != null and !menu.wednesdayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.wednesdayMeatPrice} + ' EUR'"></span></div>
-          </div>
-          <div th:if="${menu.wednesdayVeg != null and !menu.wednesdayVeg.isEmpty()}">
-            <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
-            <div class="menu-day__text"><span th:text="${menu.wednesdayVeg}"></span><span th:if="${menu.wednesdayVegPrice != null and !menu.wednesdayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.wednesdayVegPrice} + ' EUR'"></span></div>
-          </div>
+          <div th:if="${holidays != null and holidays.containsKey('wednesday')}" class="menu-day__holiday" th:text="${holidays.get('wednesday')}"></div>
+          <th:block th:unless="${holidays != null and holidays.containsKey('wednesday')}">
+            <div th:if="${menu.wednesdayMeat != null and !menu.wednesdayMeat.isEmpty()}"><div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div><div class="menu-day__text"><span th:text="${menu.wednesdayMeat}"></span><span th:if="${menu.wednesdayMeatPrice != null and !menu.wednesdayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.wednesdayMeatPrice} + ' EUR'"></span></div></div>
+            <div th:if="${menu.wednesdayVeg != null and !menu.wednesdayVeg.isEmpty()}"><div class="menu-day__category menu-day__category--veg">Vegetarisch</div><div class="menu-day__text"><span th:text="${menu.wednesdayVeg}"></span><span th:if="${menu.wednesdayVegPrice != null and !menu.wednesdayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.wednesdayVegPrice} + ' EUR'"></span></div></div>
+          </th:block>
         </div>
-
-        <div class="menu-day" th:if="${menu.thursdayMeat != null or menu.thursdayVeg != null}">
+        <!-- Donnerstag -->
+        <div class="menu-day">
           <div class="menu-day__label">Donnerstag</div>
-          <div th:if="${menu.thursdayMeat != null and !menu.thursdayMeat.isEmpty()}">
-            <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
-            <div class="menu-day__text"><span th:text="${menu.thursdayMeat}"></span><span th:if="${menu.thursdayMeatPrice != null and !menu.thursdayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.thursdayMeatPrice} + ' EUR'"></span></div>
-          </div>
-          <div th:if="${menu.thursdayVeg != null and !menu.thursdayVeg.isEmpty()}">
-            <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
-            <div class="menu-day__text"><span th:text="${menu.thursdayVeg}"></span><span th:if="${menu.thursdayVegPrice != null and !menu.thursdayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.thursdayVegPrice} + ' EUR'"></span></div>
-          </div>
+          <div th:if="${holidays != null and holidays.containsKey('thursday')}" class="menu-day__holiday" th:text="${holidays.get('thursday')}"></div>
+          <th:block th:unless="${holidays != null and holidays.containsKey('thursday')}">
+            <div th:if="${menu.thursdayMeat != null and !menu.thursdayMeat.isEmpty()}"><div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div><div class="menu-day__text"><span th:text="${menu.thursdayMeat}"></span><span th:if="${menu.thursdayMeatPrice != null and !menu.thursdayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.thursdayMeatPrice} + ' EUR'"></span></div></div>
+            <div th:if="${menu.thursdayVeg != null and !menu.thursdayVeg.isEmpty()}"><div class="menu-day__category menu-day__category--veg">Vegetarisch</div><div class="menu-day__text"><span th:text="${menu.thursdayVeg}"></span><span th:if="${menu.thursdayVegPrice != null and !menu.thursdayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.thursdayVegPrice} + ' EUR'"></span></div></div>
+          </th:block>
         </div>
-
-        <div class="menu-day" th:if="${menu.fridayMeat != null or menu.fridayVeg != null}">
+        <!-- Freitag -->
+        <div class="menu-day">
           <div class="menu-day__label">Freitag</div>
-          <div th:if="${menu.fridayMeat != null and !menu.fridayMeat.isEmpty()}">
-            <div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div>
-            <div class="menu-day__text"><span th:text="${menu.fridayMeat}"></span><span th:if="${menu.fridayMeatPrice != null and !menu.fridayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.fridayMeatPrice} + ' EUR'"></span></div>
-          </div>
-          <div th:if="${menu.fridayVeg != null and !menu.fridayVeg.isEmpty()}">
-            <div class="menu-day__category menu-day__category--veg">Vegetarisch</div>
-            <div class="menu-day__text"><span th:text="${menu.fridayVeg}"></span><span th:if="${menu.fridayVegPrice != null and !menu.fridayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.fridayVegPrice} + ' EUR'"></span></div>
-          </div>
+          <div th:if="${holidays != null and holidays.containsKey('friday')}" class="menu-day__holiday" th:text="${holidays.get('friday')}"></div>
+          <th:block th:unless="${holidays != null and holidays.containsKey('friday')}">
+            <div th:if="${menu.fridayMeat != null and !menu.fridayMeat.isEmpty()}"><div class="menu-day__category menu-day__category--meat">Fleisch / Fisch</div><div class="menu-day__text"><span th:text="${menu.fridayMeat}"></span><span th:if="${menu.fridayMeatPrice != null and !menu.fridayMeatPrice.isEmpty()}" class="menu-day__price" th:text="${menu.fridayMeatPrice} + ' EUR'"></span></div></div>
+            <div th:if="${menu.fridayVeg != null and !menu.fridayVeg.isEmpty()}"><div class="menu-day__category menu-day__category--veg">Vegetarisch</div><div class="menu-day__text"><span th:text="${menu.fridayVeg}"></span><span th:if="${menu.fridayVegPrice != null and !menu.fridayVegPrice.isEmpty()}" class="menu-day__price" th:text="${menu.fridayVegPrice} + ' EUR'"></span></div></div>
+          </th:block>
         </div>
       </div>
 
       <div th:if="${menu.notes != null and !menu.notes.isEmpty()}" class="menu-notes">
-        <strong>Hinweise:</strong><br>
-        <span th:text="${menu.notes}"></span>
+        <strong>Hinweise:</strong><br><span th:text="${menu.notes}"></span>
       </div>
 
-      <!-- Hinweis vor Versand -->
-      <div th:unless="${menu.sent}" style="background:rgba(201,168,76,.08); border:1px solid rgba(201,168,76,.2); border-radius:2px; padding:20px 24px; margin-bottom:24px;">
-        <p style="font-size:14px; color:var(--dark); margin:0 0 4px 0; font-weight:600;">Vorschau prüfen</p>
+      <!-- Aktionen basierend auf Status -->
+      <div th:if="${menu.status == 'ENTWURF'}" style="background:rgba(107,101,96,.06); border:1px solid rgba(107,101,96,.15); border-radius:2px; padding:20px 24px; margin-bottom:24px;">
+        <p style="font-size:14px; color:var(--dark); margin:0 0 4px 0; font-weight:600;">Entwurf</p>
+        <p style="font-size:13px; color:var(--muted); margin:0; line-height:1.6;">Diese Speisekarte ist noch nicht bestätigt. Bestätigen Sie sie, damit der Newsletter am Montag um 09:00 Uhr automatisch versendet wird.</p>
+      </div>
+
+      <div th:if="${menu.status == 'BESTAETIGT'}" style="background:rgba(201,168,76,.08); border:1px solid rgba(201,168,76,.2); border-radius:2px; padding:20px 24px; margin-bottom:24px;">
+        <p style="font-size:14px; color:var(--dark); margin:0 0 4px 0; font-weight:600;">Bestätigt -- Versand geplant</p>
         <p style="font-size:13px; color:var(--muted); margin:0; line-height:1.6;">
-          Bitte überprüfen Sie die Speisekarte auf Schreibfehler, bevor Sie den Newsletter versenden.
-          Der Newsletter geht an alle aktiven Abonnenten und kann nicht zurückgerufen werden.
+          Der Newsletter wird am Montag um 09:00 Uhr automatisch an <strong th:text="${activeCount}">0</strong> aktive Abonnenten versendet.
         </p>
       </div>
 
-      <div style="display:flex; gap:12px;">
-        <form th:unless="${menu.sent}" th:action="@{/portal/admin/newsletter/speisekarte/{id}/senden(id=${menu.id})}" method="post" style="display:inline;" id="sendForm">
-          <button type="button" class="btn btn--gold" onclick="document.getElementById('confirmDialog').style.display='flex'">Newsletter versenden</button>
-        </form>
-        <a th:href="@{/portal/admin/newsletter/speisekarte/{id}/bearbeiten(id=${menu.id})}" th:unless="${menu.sent}" class="btn btn--outline">Bearbeiten</a>
-        <span th:if="${menu.sent}" style="font-size:13px; color:var(--muted); align-self:center;">Newsletter wurde bereits versendet.</span>
+      <div th:if="${menu.status == 'VERSENDET'}" style="background:rgba(46,125,50,.06); border:1px solid rgba(46,125,50,.15); border-radius:2px; padding:20px 24px; margin-bottom:24px;">
+        <p style="font-size:14px; color:#2E7D32; margin:0 0 4px 0; font-weight:600;">Newsletter versendet</p>
+        <p style="font-size:13px; color:var(--muted); margin:0;" th:text="'Versendet am ' + ${menu.sentAt}"></p>
       </div>
 
-      <!-- Bestätigungs-Dialog -->
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <!-- Entwurf: Bestätigen + Bearbeiten -->
+        <form th:if="${menu.status == 'ENTWURF'}" th:action="@{/portal/admin/newsletter/speisekarte/{id}/bestaetigen(id=${menu.id})}" method="post" style="display:inline;">
+          <button type="submit" class="btn btn--gold">Bestätigen und planen</button>
+        </form>
+        <a th:if="${menu.status == 'ENTWURF'}" th:href="@{/portal/admin/newsletter/speisekarte/{id}/bearbeiten(id=${menu.id})}" class="btn btn--outline">Bearbeiten</a>
+
+        <!-- Bestätigt: Jetzt senden + Bearbeiten + Zurücksetzen -->
+        <form th:if="${menu.status == 'BESTAETIGT'}" th:action="@{/portal/admin/newsletter/speisekarte/{id}/senden(id=${menu.id})}" method="post" style="display:inline;" id="sendForm">
+          <button type="button" class="btn btn--gold" onclick="document.getElementById('confirmDialog').style.display='flex'">Jetzt manuell versenden</button>
+        </form>
+        <a th:if="${menu.status == 'BESTAETIGT'}" th:href="@{/portal/admin/newsletter/speisekarte/{id}/bearbeiten(id=${menu.id})}" class="btn btn--outline">Bearbeiten</a>
+
+        <!-- Versendet: Nur noch anschauen -->
+        <a th:if="${menu.status == 'VERSENDET'}" th:href="@{/portal/admin/newsletter}" class="btn btn--outline">Zurück zur Übersicht</a>
+      </div>
+
+      <!-- Bestätigungs-Dialog für manuellen Versand -->
       <div id="confirmDialog" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
         <div style="background:var(--white); border-radius:4px; padding:32px; max-width:440px; width:90%; box-shadow:0 8px 32px rgba(0,0,0,.15);">
-          <h3 style="font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:400; margin:0 0 12px 0;">Newsletter versenden?</h3>
-          <p style="font-size:13px; color:var(--muted); line-height:1.6; margin:0 0 8px 0;">
-            Die Speisekarte wird jetzt an <strong th:text="${activeCount}">0</strong> aktive Abonnenten versendet.
-          </p>
+          <h3 style="font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:400; margin:0 0 12px 0;">Newsletter jetzt versenden?</h3>
           <p style="font-size:13px; color:var(--muted); line-height:1.6; margin:0 0 24px 0;">
-            Haben Sie alles auf Schreibfehler geprüft?
+            Die Speisekarte wird sofort an <strong th:text="${activeCount}">0</strong> aktive Abonnenten versendet (statt am Montag 09:00).
           </p>
           <div style="display:flex; gap:12px; justify-content:flex-end;">
             <button type="button" class="btn btn--outline" onclick="document.getElementById('confirmDialog').style.display='none'">Abbrechen</button>
@@ -200,7 +155,6 @@
       </div>
     </div>
   </div>
-
   <script th:src="@{/portal/js/portal.js}"></script>
 </body>
 </html>

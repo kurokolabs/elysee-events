@@ -44,56 +44,25 @@
       </div>
 
       <div class="table-wrap" th:if="${!#lists.isEmpty(menus)}">
+        <style>.status-badge--ENTWURF{background:rgba(107,101,96,.12);color:#6B6560}.status-badge--BESTAETIGT_MENU{background:rgba(201,168,76,.15);color:#8B7330}.status-badge--VERSENDET{background:rgba(46,125,50,.12);color:#2E7D32}</style>
         <table class="data-table">
           <thead>
             <tr>
               <th>Woche</th>
-              <th>Montag</th>
-              <th>Dienstag</th>
-              <th>Mittwoch</th>
-              <th>Donnerstag</th>
-              <th>Freitag</th>
-              <th>Versendet</th>
+              <th>Status</th>
+              <th>Erstellt</th>
               <th>Aktionen</th>
             </tr>
           </thead>
           <tbody>
             <tr th:each="m : ${menus}">
-              <td th:text="${m.weekStart} + ' - ' + ${m.weekEnd}">-</td>
+              <td style="white-space:nowrap;" th:text="${m.weekStart} + ' - ' + ${m.weekEnd}">-</td>
               <td>
-                <span th:if="${m.mondayMeat != null}" th:text="${#strings.abbreviate(m.mondayMeat, 20)}"></span>
-                <br th:if="${m.mondayMeat != null and m.mondayVeg != null}">
-                <span th:if="${m.mondayVeg != null}" style="color:#6B8E23;" th:text="${#strings.abbreviate(m.mondayVeg, 20)}"></span>
-                <span th:if="${m.mondayMeat == null and m.mondayVeg == null}">-</span>
+                <span th:if="${m.status == 'ENTWURF'}" class="status-badge status-badge--ENTWURF">Entwurf</span>
+                <span th:if="${m.status == 'BESTAETIGT'}" class="status-badge status-badge--BESTAETIGT_MENU">Bestätigt</span>
+                <span th:if="${m.status == 'VERSENDET'}" class="status-badge status-badge--VERSENDET">Versendet</span>
               </td>
-              <td>
-                <span th:if="${m.tuesdayMeat != null}" th:text="${#strings.abbreviate(m.tuesdayMeat, 20)}"></span>
-                <br th:if="${m.tuesdayMeat != null and m.tuesdayVeg != null}">
-                <span th:if="${m.tuesdayVeg != null}" style="color:#6B8E23;" th:text="${#strings.abbreviate(m.tuesdayVeg, 20)}"></span>
-                <span th:if="${m.tuesdayMeat == null and m.tuesdayVeg == null}">-</span>
-              </td>
-              <td>
-                <span th:if="${m.wednesdayMeat != null}" th:text="${#strings.abbreviate(m.wednesdayMeat, 20)}"></span>
-                <br th:if="${m.wednesdayMeat != null and m.wednesdayVeg != null}">
-                <span th:if="${m.wednesdayVeg != null}" style="color:#6B8E23;" th:text="${#strings.abbreviate(m.wednesdayVeg, 20)}"></span>
-                <span th:if="${m.wednesdayMeat == null and m.wednesdayVeg == null}">-</span>
-              </td>
-              <td>
-                <span th:if="${m.thursdayMeat != null}" th:text="${#strings.abbreviate(m.thursdayMeat, 20)}"></span>
-                <br th:if="${m.thursdayMeat != null and m.thursdayVeg != null}">
-                <span th:if="${m.thursdayVeg != null}" style="color:#6B8E23;" th:text="${#strings.abbreviate(m.thursdayVeg, 20)}"></span>
-                <span th:if="${m.thursdayMeat == null and m.thursdayVeg == null}">-</span>
-              </td>
-              <td>
-                <span th:if="${m.fridayMeat != null}" th:text="${#strings.abbreviate(m.fridayMeat, 20)}"></span>
-                <br th:if="${m.fridayMeat != null and m.fridayVeg != null}">
-                <span th:if="${m.fridayVeg != null}" style="color:#6B8E23;" th:text="${#strings.abbreviate(m.fridayVeg, 20)}"></span>
-                <span th:if="${m.fridayMeat == null and m.fridayVeg == null}">-</span>
-              </td>
-              <td>
-                <span th:if="${m.sent}" class="status-badge status-badge--BESTAETIGT">Ja</span>
-                <span th:unless="${m.sent}" class="status-badge status-badge--ANFRAGE">Nein</span>
-              </td>
+              <td th:text="${m.createdAt}">-</td>
               <td>
                 <a th:href="@{/portal/admin/newsletter/speisekarte/{id}(id=${m.id})}" class="btn btn--sm btn--outline">Details</a>
               </td>

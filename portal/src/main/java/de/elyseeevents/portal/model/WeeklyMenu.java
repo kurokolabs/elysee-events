@@ -29,6 +29,7 @@ public class WeeklyMenu {
     private String thursdayVegPrice;
     private String fridayMeatPrice;
     private String fridayVegPrice;
+    private String status = "ENTWURF";
     private String notes;
     private boolean sent;
     private String sentAt;
@@ -108,6 +109,14 @@ public class WeeklyMenu {
     public void setFridayMeatPrice(String fridayMeatPrice) { this.fridayMeatPrice = fridayMeatPrice; }
     public String getFridayVegPrice() { return fridayVegPrice; }
     public void setFridayVegPrice(String fridayVegPrice) { this.fridayVegPrice = fridayVegPrice; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getStatusLabel() {
+        try { return MenuStatus.valueOf(status).getLabel(); }
+        catch (Exception e) { return status; }
+    }
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }

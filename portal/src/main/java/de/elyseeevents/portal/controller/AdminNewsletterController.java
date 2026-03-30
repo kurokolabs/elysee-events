@@ -4,13 +4,16 @@ import de.elyseeevents.portal.model.WeeklyMenu;
 import de.elyseeevents.portal.repository.NewsletterRepository;
 import de.elyseeevents.portal.repository.WeeklyMenuRepository;
 import de.elyseeevents.portal.service.NewsletterService;
+import de.elyseeevents.portal.util.BavarianHolidayUtil;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -21,13 +24,16 @@ public class AdminNewsletterController {
     private final NewsletterRepository newsletterRepository;
     private final WeeklyMenuRepository weeklyMenuRepository;
     private final NewsletterService newsletterService;
+    private final BavarianHolidayUtil holidayUtil;
 
     public AdminNewsletterController(NewsletterRepository newsletterRepository,
                                      WeeklyMenuRepository weeklyMenuRepository,
-                                     NewsletterService newsletterService) {
+                                     NewsletterService newsletterService,
+                                     BavarianHolidayUtil holidayUtil) {
         this.newsletterRepository = newsletterRepository;
         this.weeklyMenuRepository = weeklyMenuRepository;
         this.newsletterService = newsletterService;
+        this.holidayUtil = holidayUtil;
     }
 
     @GetMapping
@@ -42,9 +48,16 @@ public class AdminNewsletterController {
 
     @GetMapping("/speisekarte/neu")
     public String newMenuForm(Model model) {
+        WeeklyMenu menu = new WeeklyMenu();
+        LocalDate nextMonday = holidayUtil.getNextMonday();
+        LocalDate nextFriday = nextMonday.plusDays(4);
+        menu.setWeekStart(nextMonday.toString());
+        menu.setWeekEnd(nextFriday.toString());
+
         model.addAttribute("activeNav", "newsletter");
-        model.addAttribute("menu", new WeeklyMenu());
+        model.addAttribute("menu", menu);
         model.addAttribute("isNew", true);
+        model.addAttribute("holidays", holidayUtil.getHolidaysForWeek(nextMonday, nextFriday));
         return "admin/newsletter-menu-form";
     }
 
@@ -61,24 +74,20 @@ public class AdminNewsletterController {
                               @RequestParam(required = false) String fridayMeat, @RequestParam(required = false) String fridayMeatPrice,
                               @RequestParam(required = false) String fridayVeg, @RequestParam(required = false) String fridayVegPrice,
                               @RequestParam(required = false) String notes,
+                              @RequestParam(defaultValue = "ENTWURF") String status,
                               RedirectAttributes redirectAttributes) {
         WeeklyMenu menu = new WeeklyMenu();
-        menu.setWeekStart(weekStart); menu.setWeekEnd(weekEnd);
-        menu.setMondayMeat(mondayMeat); menu.setMondayMeatPrice(mondayMeatPrice);
-        menu.setMondayVeg(mondayVeg); menu.setMondayVegPrice(mondayVegPrice);
-        menu.setTuesdayMeat(tuesdayMeat); menu.setTuesdayMeatPrice(tuesdayMeatPrice);
-        menu.setTuesdayVeg(tuesdayVeg); menu.setTuesdayVegPrice(tuesdayVegPrice);
-        menu.setWednesdayMeat(wednesdayMeat); menu.setWednesdayMeatPrice(wednesdayMeatPrice);
-        menu.setWednesdayVeg(wednesdayVeg); menu.setWednesdayVegPrice(wednesdayVegPrice);
-        menu.setThursdayMeat(thursdayMeat); menu.setThursdayMeatPrice(thursdayMeatPrice);
-        menu.setThursdayVeg(thursdayVeg); menu.setThursdayVegPrice(thursdayVegPrice);
-        menu.setFridayMeat(fridayMeat); menu.setFridayMeatPrice(fridayMeatPrice);
-        menu.setFridayVeg(fridayVeg); menu.setFridayVegPrice(fridayVegPrice);
-        menu.setNotes(notes);
+        populateMenu(menu, weekStart, weekEnd, mondayMeat, mondayMeatPrice, mondayVeg, mondayVegPrice,
+                tuesdayMeat, tuesdayMeatPrice, tuesdayVeg, tuesdayVegPrice,
+                wednesdayMeat, wednesdayMeatPrice, wednesdayVeg, wednesdayVegPrice,
+                thursdayMeat, thursdayMeatPrice, thursdayVeg, thursdayVegPrice,
+                fridayMeat, fridayMeatPrice, fridayVeg, fridayVegPrice, notes, status);
         weeklyMenuRepository.save(menu);
 
-        redirectAttributes.addFlashAttribute("message",
-                "Speisekarte wurde gespeichert. Bitte prüfen Sie die Vorschau und versenden Sie den Newsletter.");
+        String msg = "BESTAETIGT".equals(status)
+                ? "Speisekarte bestätigt. Newsletter wird am Montag um 09:00 Uhr automatisch versendet."
+                : "Entwurf gespeichert.";
+        redirectAttributes.addFlashAttribute("message", msg);
         return "redirect:/portal/admin/newsletter/speisekarte/" + menu.getId();
     }
 
@@ -89,8 +98,12 @@ public class AdminNewsletterController {
             redirectAttributes.addFlashAttribute("error", "Speisekarte nicht gefunden.");
             return "redirect:/portal/admin/newsletter";
         }
+        WeeklyMenu menu = menuOpt.get();
+        Map<String, String> holidays = computeHolidays(menu);
+
         model.addAttribute("activeNav", "newsletter");
-        model.addAttribute("menu", menuOpt.get());
+        model.addAttribute("menu", menu);
+        model.addAttribute("holidays", holidays);
         model.addAttribute("activeCount", newsletterRepository.countActive());
         return "admin/newsletter-menu-detail";
     }
@@ -102,9 +115,13 @@ public class AdminNewsletterController {
             redirectAttributes.addFlashAttribute("error", "Speisekarte nicht gefunden.");
             return "redirect:/portal/admin/newsletter";
         }
+        WeeklyMenu menu = menuOpt.get();
+        Map<String, String> holidays = computeHolidays(menu);
+
         model.addAttribute("activeNav", "newsletter");
-        model.addAttribute("menu", menuOpt.get());
+        model.addAttribute("menu", menu);
         model.addAttribute("isNew", false);
+        model.addAttribute("holidays", holidays);
         return "admin/newsletter-menu-form";
     }
 
@@ -122,6 +139,7 @@ public class AdminNewsletterController {
                              @RequestParam(required = false) String fridayMeat, @RequestParam(required = false) String fridayMeatPrice,
                              @RequestParam(required = false) String fridayVeg, @RequestParam(required = false) String fridayVegPrice,
                              @RequestParam(required = false) String notes,
+                             @RequestParam(defaultValue = "ENTWURF") String status,
                              RedirectAttributes redirectAttributes) {
         Optional<WeeklyMenu> menuOpt = weeklyMenuRepository.findById(id);
         if (menuOpt.isEmpty()) {
@@ -130,22 +148,25 @@ public class AdminNewsletterController {
         }
 
         WeeklyMenu menu = menuOpt.get();
-        menu.setWeekStart(weekStart); menu.setWeekEnd(weekEnd);
-        menu.setMondayMeat(mondayMeat); menu.setMondayMeatPrice(mondayMeatPrice);
-        menu.setMondayVeg(mondayVeg); menu.setMondayVegPrice(mondayVegPrice);
-        menu.setTuesdayMeat(tuesdayMeat); menu.setTuesdayMeatPrice(tuesdayMeatPrice);
-        menu.setTuesdayVeg(tuesdayVeg); menu.setTuesdayVegPrice(tuesdayVegPrice);
-        menu.setWednesdayMeat(wednesdayMeat); menu.setWednesdayMeatPrice(wednesdayMeatPrice);
-        menu.setWednesdayVeg(wednesdayVeg); menu.setWednesdayVegPrice(wednesdayVegPrice);
-        menu.setThursdayMeat(thursdayMeat); menu.setThursdayMeatPrice(thursdayMeatPrice);
-        menu.setThursdayVeg(thursdayVeg); menu.setThursdayVegPrice(thursdayVegPrice);
-        menu.setFridayMeat(fridayMeat); menu.setFridayMeatPrice(fridayMeatPrice);
-        menu.setFridayVeg(fridayVeg); menu.setFridayVegPrice(fridayVegPrice);
-        menu.setNotes(notes);
+        populateMenu(menu, weekStart, weekEnd, mondayMeat, mondayMeatPrice, mondayVeg, mondayVegPrice,
+                tuesdayMeat, tuesdayMeatPrice, tuesdayVeg, tuesdayVegPrice,
+                wednesdayMeat, wednesdayMeatPrice, wednesdayVeg, wednesdayVegPrice,
+                thursdayMeat, thursdayMeatPrice, thursdayVeg, thursdayVegPrice,
+                fridayMeat, fridayMeatPrice, fridayVeg, fridayVegPrice, notes, status);
         weeklyMenuRepository.save(menu);
 
+        String msg = "BESTAETIGT".equals(status)
+                ? "Speisekarte bestätigt. Newsletter wird am Montag um 09:00 Uhr automatisch versendet."
+                : "Entwurf gespeichert.";
+        redirectAttributes.addFlashAttribute("message", msg);
+        return "redirect:/portal/admin/newsletter/speisekarte/" + id;
+    }
+
+    @PostMapping("/speisekarte/{id}/bestaetigen")
+    public String confirmMenu(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        weeklyMenuRepository.updateStatus(id, "BESTAETIGT");
         redirectAttributes.addFlashAttribute("message",
-                "Speisekarte wurde aktualisiert. Bitte prüfen Sie die Vorschau und versenden Sie den Newsletter.");
+                "Speisekarte bestätigt. Newsletter wird am Montag um 09:00 Uhr automatisch versendet.");
         return "redirect:/portal/admin/newsletter/speisekarte/" + id;
     }
 
@@ -167,5 +188,43 @@ public class AdminNewsletterController {
     @ResponseBody
     public List<String> getDishSuggestions() {
         return weeklyMenuRepository.findDistinctDishes();
+    }
+
+    @GetMapping("/speisekarte/feiertage")
+    @ResponseBody
+    public Map<String, String> getHolidays(@RequestParam String weekStart) {
+        LocalDate monday = LocalDate.parse(weekStart);
+        return holidayUtil.getHolidaysForWeek(monday, monday.plusDays(4));
+    }
+
+    private Map<String, String> computeHolidays(WeeklyMenu menu) {
+        try {
+            LocalDate monday = LocalDate.parse(menu.getWeekStart());
+            LocalDate friday = LocalDate.parse(menu.getWeekEnd());
+            return holidayUtil.getHolidaysForWeek(monday, friday);
+        } catch (Exception e) {
+            return Map.of();
+        }
+    }
+
+    private void populateMenu(WeeklyMenu menu, String weekStart, String weekEnd,
+                              String mondayMeat, String mondayMeatPrice, String mondayVeg, String mondayVegPrice,
+                              String tuesdayMeat, String tuesdayMeatPrice, String tuesdayVeg, String tuesdayVegPrice,
+                              String wednesdayMeat, String wednesdayMeatPrice, String wednesdayVeg, String wednesdayVegPrice,
+                              String thursdayMeat, String thursdayMeatPrice, String thursdayVeg, String thursdayVegPrice,
+                              String fridayMeat, String fridayMeatPrice, String fridayVeg, String fridayVegPrice,
+                              String notes, String status) {
+        menu.setWeekStart(weekStart); menu.setWeekEnd(weekEnd);
+        menu.setMondayMeat(mondayMeat); menu.setMondayMeatPrice(mondayMeatPrice);
+        menu.setMondayVeg(mondayVeg); menu.setMondayVegPrice(mondayVegPrice);
+        menu.setTuesdayMeat(tuesdayMeat); menu.setTuesdayMeatPrice(tuesdayMeatPrice);
+        menu.setTuesdayVeg(tuesdayVeg); menu.setTuesdayVegPrice(tuesdayVegPrice);
+        menu.setWednesdayMeat(wednesdayMeat); menu.setWednesdayMeatPrice(wednesdayMeatPrice);
+        menu.setWednesdayVeg(wednesdayVeg); menu.setWednesdayVegPrice(wednesdayVegPrice);
+        menu.setThursdayMeat(thursdayMeat); menu.setThursdayMeatPrice(thursdayMeatPrice);
+        menu.setThursdayVeg(thursdayVeg); menu.setThursdayVegPrice(thursdayVegPrice);
+        menu.setFridayMeat(fridayMeat); menu.setFridayMeatPrice(fridayMeatPrice);
+        menu.setFridayVeg(fridayVeg); menu.setFridayVegPrice(fridayVegPrice);
+        menu.setNotes(notes); menu.setStatus(status);
     }
 }
