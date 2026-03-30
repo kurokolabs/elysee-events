@@ -30,12 +30,14 @@ import java.util.Map;
 @Service
 public class MenuPdfService {
 
-    // Farben exakt wie die Website: --gold, --dark, --muted
     private static final DeviceRgb GOLD = new DeviceRgb(201, 168, 76);
     private static final DeviceRgb DARK = new DeviceRgb(26, 26, 26);
     private static final DeviceRgb MUTED = new DeviceRgb(107, 101, 96);
     private static final DeviceRgb WHITE = new DeviceRgb(255, 255, 255);
     private static final DeviceRgb RULE = new DeviceRgb(215, 210, 200);
+    private static final DeviceRgb MEAT = new DeviceRgb(168, 50, 45);
+    private static final DeviceRgb VEG = new DeviceRgb(90, 130, 40);
+    private static final DeviceRgb HOLIDAY_BG = new DeviceRgb(252, 250, 245);
 
     private static final DateTimeFormatter DE_LONG = DateTimeFormatter.ofPattern("d. MMMM yyyy", Locale.GERMANY);
     private static final DateTimeFormatter DE_SHORT = DateTimeFormatter.ofPattern("d. MMMM", Locale.GERMANY);
@@ -50,7 +52,7 @@ public class MenuPdfService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfDocument pdf = new PdfDocument(new PdfWriter(baos));
         try (pdf; Document doc = new Document(pdf, PageSize.A4)) {
-            doc.setMargins(50, 56, 40, 56);
+            doc.setMargins(40, 50, 30, 50);
 
             Map<String, String> holidays = Map.of();
             try {
@@ -60,27 +62,25 @@ public class MenuPdfService {
 
             addLogoWatermark(pdf);
 
-            // ── Marke ───────────────────────────────────────
+            // ── Header ──────────────────────────────────────
             doc.add(new Paragraph("\u00C9lys\u00E9e Events")
-                    .setFontSize(28).setFontColor(GOLD)
+                    .setFontSize(30).setFontColor(GOLD)
                     .setTextAlignment(TextAlignment.CENTER)
-                    .setMarginBottom(16));
+                    .setMarginBottom(12));
 
-            // Feine Linie
             rule(doc);
 
-            // ── Woche ───────────────────────────────────────
             int kw = getIsoWeek(menu.getWeekStart());
             doc.add(new Paragraph("Speisekarte  \u00B7  Kalenderwoche " + kw)
-                    .setFontSize(10).setFontColor(MUTED)
+                    .setFontSize(11).setFontColor(MUTED)
                     .setTextAlignment(TextAlignment.CENTER)
                     .setCharacterSpacing(0.5f)
-                    .setMarginTop(14).setMarginBottom(3));
+                    .setMarginTop(12).setMarginBottom(2));
 
             doc.add(new Paragraph(formatRange(menu.getWeekStart(), menu.getWeekEnd()))
-                    .setFontSize(8.5f).setFontColor(MUTED)
+                    .setFontSize(9).setFontColor(MUTED)
                     .setTextAlignment(TextAlignment.CENTER)
-                    .setMarginBottom(20));
+                    .setMarginBottom(18));
 
             // ── Tage ────────────────────────────────────────
             String[] labels = {"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"};
@@ -95,32 +95,39 @@ public class MenuPdfService {
 
                 // Tag-Name
                 doc.add(new Paragraph(labels[i].toUpperCase())
-                        .setFontSize(7).setFontColor(GOLD).setBold()
+                        .setFontSize(8).setFontColor(GOLD).setBold()
                         .setCharacterSpacing(2.5f)
-                        .setMarginTop(i == 0 ? 0 : 14).setMarginBottom(6));
+                        .setMarginTop(i == 0 ? 0 : 16).setMarginBottom(8));
 
                 if (holiday != null) {
-                    doc.add(new Paragraph(holiday)
-                            .setFontSize(10.5f).setFontColor(MUTED).setItalic()
-                            .setMarginBottom(2));
+                    // Feiertag: hervorgehoben mit Hintergrund und Gold-Rahmen
+                    Table holidayBox = new Table(1).useAllAvailableWidth();
+                    holidayBox.addCell(new Cell().setBorder(new SolidBorder(GOLD, 0.5f))
+                            .setBackgroundColor(HOLIDAY_BG)
+                            .setPadding(14)
+                            .add(new Paragraph(holiday)
+                                    .setFontSize(12).setFontColor(GOLD).setItalic()
+                                    .setTextAlignment(TextAlignment.CENTER)));
+                    doc.add(holidayBox);
                 } else {
+                    // Fleisch-Zeile
                     if (m_[i] != null && !m_[i].isEmpty()) {
-                        dishLine(doc, m_[i], mp_[i]);
+                        dishLine(doc, "Fleisch / Fisch", m_[i], mp_[i], MEAT);
                     }
+                    // Vegetarisch-Zeile
                     if (v_[i] != null && !v_[i].isEmpty()) {
-                        dishLine(doc, v_[i] + "  (V)", vp_[i]);
+                        dishLine(doc, "Vegetarisch", v_[i], vp_[i], VEG);
                     }
                 }
 
-                // Trennlinie nach jedem Tag
                 rule(doc);
             }
 
             // ── Hinweise ────────────────────────────────────
             if (menu.getNotes() != null && !menu.getNotes().isEmpty()) {
                 doc.add(new Paragraph(menu.getNotes())
-                        .setFontSize(8).setFontColor(MUTED).setItalic()
-                        .setMarginTop(12).setMarginBottom(0));
+                        .setFontSize(8.5f).setFontColor(MUTED).setItalic()
+                        .setMarginTop(16).setMarginBottom(0));
             }
 
             // ── Footer ──────────────────────────────────────
@@ -128,7 +135,7 @@ public class MenuPdfService {
                     "\u00C9lys\u00E9e Event GmbH  \u00B7  Werner-von-Siemensstrasse 6  \u00B7  86159 Augsburg  \u00B7  Mo\u2013Fr 08\u201314 Uhr")
                     .setFontSize(6.5f).setFontColor(MUTED)
                     .setTextAlignment(TextAlignment.CENTER)
-                    .setMarginTop(20));
+                    .setMarginTop(24));
 
         } catch (Exception e) {
             throw new RuntimeException("PDF-Generierung fehlgeschlagen", e);
@@ -136,23 +143,35 @@ public class MenuPdfService {
         return baos.toByteArray();
     }
 
-    private void dishLine(Document doc, String dish, String price) {
-        Table row = new Table(UnitValue.createPercentArray(new float[]{80, 20}))
+    private void dishLine(Document doc, String label, String dish, String price, DeviceRgb labelColor) {
+        // 3-Spalten: Label | Gericht | Preis
+        Table row = new Table(UnitValue.createPercentArray(new float[]{18, 62, 20}))
                 .useAllAvailableWidth().setMarginTop(0).setMarginBottom(0);
 
-        Cell dishCell = new Cell().setBorder(Border.NO_BORDER)
-                .setPaddingTop(3).setPaddingBottom(3)
+        // Label (Fleisch/Fisch oder Vegetarisch)
+        Cell labelCell = new Cell().setBorder(Border.NO_BORDER)
+                .setPaddingTop(5).setPaddingBottom(5)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE);
-        dishCell.add(new Paragraph(dish).setFontSize(10).setFontColor(DARK));
+        labelCell.add(new Paragraph(label)
+                .setFontSize(7).setFontColor(labelColor).setBold()
+                .setCharacterSpacing(0.3f));
+        row.addCell(labelCell);
+
+        // Gerichtname
+        Cell dishCell = new Cell().setBorder(Border.NO_BORDER)
+                .setPaddingTop(5).setPaddingBottom(5)
+                .setVerticalAlignment(VerticalAlignment.MIDDLE);
+        dishCell.add(new Paragraph(dish).setFontSize(10.5f).setFontColor(DARK));
         row.addCell(dishCell);
 
+        // Preis
         Cell priceCell = new Cell().setBorder(Border.NO_BORDER)
-                .setPaddingTop(3).setPaddingBottom(3)
+                .setPaddingTop(5).setPaddingBottom(5)
                 .setTextAlignment(TextAlignment.RIGHT)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE);
         if (price != null && !price.isEmpty()) {
             priceCell.add(new Paragraph(price + " \u20ac")
-                    .setFontSize(10).setFontColor(DARK));
+                    .setFontSize(10.5f).setFontColor(GOLD));
         }
         row.addCell(priceCell);
 
