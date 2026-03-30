@@ -2779,12 +2779,11 @@ section:not(.hero):not(:first-of-type) {
     /* -------------------------------------------------------
        Custom Cursor
     ------------------------------------------------------- */
-    const dot = document.querySelector('.cursor-dot');
-    const ring = document.querySelector('.cursor-ring');
-
-    if (dot && ring) {
-      if(matchMedia('(pointer:coarse)').matches)return;
-      let mx = -100, my = -100, rx = -100, ry = -100;
+    (function() {
+      var dot = document.querySelector('.cursor-dot');
+      var ring = document.querySelector('.cursor-ring');
+      if (!dot || !ring || matchMedia('(pointer:coarse)').matches) return;
+      var mx = -100, my = -100, rx = -100, ry = -100;
 
       document.addEventListener('mousemove', function(e) {
         mx = e.clientX;
@@ -2799,12 +2798,12 @@ section:not(.hero):not(:first-of-type) {
         requestAnimationFrame(raf);
       })();
 
-      const hoverSel = 'a, button, .card, label, input, select, textarea, .type-card, .slot-btn, .paket-card, .catering__service, .stat, .pill';
+      var hoverSel = 'a, button, .card, label, input, select, textarea, .type-card, .slot-btn, .paket-card, .catering__service, .stat, .pill';
       document.querySelectorAll(hoverSel).forEach(function(el) {
         el.addEventListener('mouseenter', function() { ring.classList.add('is-hovered'); });
         el.addEventListener('mouseleave', function() { ring.classList.remove('is-hovered'); });
       });
-    }
+    })();
 
     /* -------------------------------------------------------
        Scroll Reveal
