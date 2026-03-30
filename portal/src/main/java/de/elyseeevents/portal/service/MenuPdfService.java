@@ -35,6 +35,7 @@ public class MenuPdfService {
     private static final DeviceRgb MEAT_RED = new DeviceRgb(192, 57, 43);
     private static final DeviceRgb VEG_GREEN = new DeviceRgb(107, 142, 35);
     private static final DeviceRgb WHITE = new DeviceRgb(255, 255, 255);
+    private static final DeviceRgb LINE_GREY = new DeviceRgb(230, 230, 230);
     private static final DateTimeFormatter DE_DATE = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.GERMANY);
 
     private final BavarianHolidayUtil holidayUtil;
@@ -47,39 +48,36 @@ public class MenuPdfService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfDocument pdf = new PdfDocument(new PdfWriter(baos));
         try (pdf; Document doc = new Document(pdf, PageSize.A4)) {
-            doc.setMargins(40, 45, 40, 45);
+            doc.setMargins(30, 40, 30, 40);
 
-            // Feiertage berechnen
             Map<String, String> holidays = Map.of();
             try {
                 LocalDate monday = LocalDate.parse(menu.getWeekStart());
                 holidays = holidayUtil.getHolidaysForWeek(monday, monday.plusDays(4));
             } catch (Exception ignored) {}
 
-            // Wasserzeichen
             watermark(pdf);
 
-            // Header: Marke + Woche
+            // Header
             String weekLabel = formatDate(menu.getWeekStart()) + " \u2013 " + formatDate(menu.getWeekEnd());
             String kwLabel = "KW " + getIsoWeek(menu.getWeekStart());
 
             doc.add(new Paragraph("\u00C9LYS\u00C9E EVENTS")
-                    .setFontSize(28).setFontColor(GOLD).setBold()
-                    .setTextAlignment(TextAlignment.CENTER).setMarginBottom(2));
+                    .setFontSize(24).setFontColor(GOLD).setBold()
+                    .setTextAlignment(TextAlignment.CENTER).setMarginBottom(1));
             doc.add(new Paragraph("Wochenkarte")
-                    .setFontSize(11).setFontColor(MUTED).setTextAlignment(TextAlignment.CENTER)
-                    .setCharacterSpacing(3).setMarginBottom(6));
+                    .setFontSize(9).setFontColor(MUTED).setTextAlignment(TextAlignment.CENTER)
+                    .setCharacterSpacing(3).setMarginBottom(4));
 
-            // Gold-Linie
-            Table line = new Table(1).useAllAvailableWidth().setMarginBottom(6);
+            Table line = new Table(1).useAllAvailableWidth().setMarginBottom(4);
             line.addCell(new Cell().setBorder(Border.NO_BORDER).setBorderBottom(new SolidBorder(GOLD, 1.5f)).setHeight(1));
             doc.add(line);
 
             doc.add(new Paragraph(kwLabel + "  |  " + weekLabel)
-                    .setFontSize(13).setFontColor(DARK).setTextAlignment(TextAlignment.CENTER)
-                    .setMarginBottom(20));
+                    .setFontSize(11).setFontColor(DARK).setTextAlignment(TextAlignment.CENTER)
+                    .setMarginBottom(12));
 
-            // Tages-Karten
+            // Tage
             String[] dayLabels = {"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"};
             String[] dayKeys = {"monday", "tuesday", "wednesday", "thursday", "friday"};
             String[] meats = {menu.getMondayMeat(), menu.getTuesdayMeat(), menu.getWednesdayMeat(), menu.getThursdayMeat(), menu.getFridayMeat()};
@@ -90,30 +88,26 @@ public class MenuPdfService {
             for (int i = 0; i < 5; i++) {
                 String holiday = holidays.get(dayKeys[i]);
 
-                // Tag-Header
+                // Tag-Header (kompakter)
                 Table dayHeader = new Table(1).useAllAvailableWidth()
-                        .setBackgroundColor(GOLD).setMarginTop(i == 0 ? 0 : 10);
-                dayHeader.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(6).setPaddingLeft(14)
+                        .setBackgroundColor(GOLD).setMarginTop(i == 0 ? 0 : 6);
+                dayHeader.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(4).setPaddingLeft(12)
                         .add(new Paragraph(dayLabels[i].toUpperCase())
-                                .setFontSize(10).setFontColor(WHITE).setBold()
+                                .setFontSize(8).setFontColor(WHITE).setBold()
                                 .setCharacterSpacing(2)));
                 doc.add(dayHeader);
 
                 if (holiday != null) {
-                    // Feiertag
-                    Table holidayRow = new Table(1).useAllAvailableWidth()
-                            .setBackgroundColor(SURFACE);
-                    holidayRow.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(14)
+                    Table holidayRow = new Table(1).useAllAvailableWidth().setBackgroundColor(SURFACE);
+                    holidayRow.addCell(new Cell().setBorder(Border.NO_BORDER).setPadding(10)
                             .add(new Paragraph(holiday)
-                                    .setFontSize(14).setFontColor(GOLD).setItalic()
+                                    .setFontSize(12).setFontColor(GOLD).setItalic()
                                     .setTextAlignment(TextAlignment.CENTER)));
                     doc.add(holidayRow);
                 } else {
-                    // Fleisch-Zeile
                     if (meats[i] != null && !meats[i].isEmpty()) {
                         addDishRow(doc, "FLEISCH / FISCH", meats[i], meatPrices[i], MEAT_RED, true);
                     }
-                    // Vegetarisch-Zeile
                     if (vegs[i] != null && !vegs[i].isEmpty()) {
                         addDishRow(doc, "VEGETARISCH", vegs[i], vegPrices[i], VEG_GREEN, false);
                     }
@@ -122,25 +116,24 @@ public class MenuPdfService {
 
             // Hinweise
             if (menu.getNotes() != null && !menu.getNotes().isEmpty()) {
-                doc.add(new Paragraph("").setMarginTop(16));
-                Table noteBox = new Table(1).useAllAvailableWidth()
-                        .setBackgroundColor(SURFACE);
+                doc.add(new Paragraph("").setMarginTop(10));
+                Table noteBox = new Table(1).useAllAvailableWidth().setBackgroundColor(SURFACE);
                 noteBox.addCell(new Cell().setBorder(Border.NO_BORDER)
-                        .setBorderLeft(new SolidBorder(GOLD, 2)).setPadding(12).setPaddingLeft(16)
+                        .setBorderLeft(new SolidBorder(GOLD, 2)).setPadding(8).setPaddingLeft(14)
                         .add(new Paragraph(menu.getNotes())
-                                .setFontSize(10).setFontColor(MUTED).setItalic()));
+                                .setFontSize(9).setFontColor(MUTED).setItalic()));
                 doc.add(noteBox);
             }
 
             // Footer
-            doc.add(new Paragraph("").setMarginTop(20));
+            doc.add(new Paragraph("").setMarginTop(12));
             Table footLine = new Table(1).useAllAvailableWidth();
             footLine.addCell(new Cell().setBorder(Border.NO_BORDER).setBorderTop(new SolidBorder(GOLD, 0.5f)).setHeight(1));
             doc.add(footLine);
             doc.add(new Paragraph("\u00C9lys\u00E9e Event GmbH  \u00B7  Werner-von-Siemensstrasse 6  \u00B7  86159 Augsburg")
-                    .setFontSize(8).setFontColor(MUTED).setTextAlignment(TextAlignment.CENTER).setMarginTop(8));
+                    .setFontSize(7).setFontColor(MUTED).setTextAlignment(TextAlignment.CENTER).setMarginTop(6));
             doc.add(new Paragraph("Mo\u2013Fr 08:00\u201314:00  \u00B7  verwaltung@elysee-events.de  \u00B7  www.elysee-events.de")
-                    .setFontSize(8).setFontColor(MUTED).setTextAlignment(TextAlignment.CENTER));
+                    .setFontSize(7).setFontColor(MUTED).setTextAlignment(TextAlignment.CENTER));
 
         } catch (Exception e) {
             throw new RuntimeException("PDF-Generierung fehlgeschlagen", e);
@@ -148,28 +141,27 @@ public class MenuPdfService {
         return baos.toByteArray();
     }
 
-    private void addDishRow(Document doc, String label, String dish, String price, DeviceRgb labelColor, boolean topBorder) {
-        Table row = new Table(UnitValue.createPercentArray(new float[]{20, 55, 25}))
+    private void addDishRow(Document doc, String label, String dish, String price, DeviceRgb labelColor, boolean first) {
+        Table row = new Table(UnitValue.createPercentArray(new float[]{18, 58, 24}))
                 .useAllAvailableWidth().setMarginTop(0);
 
-        Cell labelCell = new Cell().setBorder(Border.NO_BORDER).setPadding(10).setPaddingLeft(14)
+        Cell labelCell = new Cell().setBorder(Border.NO_BORDER).setPadding(7).setPaddingLeft(12)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE);
-        if (!topBorder) labelCell.setBorderTop(new SolidBorder(new DeviceRgb(230, 230, 230), 0.5f));
-        labelCell.add(new Paragraph(label)
-                .setFontSize(7).setFontColor(labelColor).setBold().setCharacterSpacing(1));
+        if (!first) labelCell.setBorderTop(new SolidBorder(LINE_GREY, 0.5f));
+        labelCell.add(new Paragraph(label).setFontSize(6.5f).setFontColor(labelColor).setBold().setCharacterSpacing(0.8f));
         row.addCell(labelCell);
 
-        Cell dishCell = new Cell().setBorder(Border.NO_BORDER).setPadding(10)
+        Cell dishCell = new Cell().setBorder(Border.NO_BORDER).setPadding(7)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE);
-        if (!topBorder) dishCell.setBorderTop(new SolidBorder(new DeviceRgb(230, 230, 230), 0.5f));
-        dishCell.add(new Paragraph(dish).setFontSize(11).setFontColor(DARK));
+        if (!first) dishCell.setBorderTop(new SolidBorder(LINE_GREY, 0.5f));
+        dishCell.add(new Paragraph(dish).setFontSize(10).setFontColor(DARK));
         row.addCell(dishCell);
 
-        Cell priceCell = new Cell().setBorder(Border.NO_BORDER).setPadding(10).setPaddingRight(14)
+        Cell priceCell = new Cell().setBorder(Border.NO_BORDER).setPadding(7).setPaddingRight(12)
                 .setTextAlignment(TextAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE);
-        if (!topBorder) priceCell.setBorderTop(new SolidBorder(new DeviceRgb(230, 230, 230), 0.5f));
+        if (!first) priceCell.setBorderTop(new SolidBorder(LINE_GREY, 0.5f));
         if (price != null && !price.isEmpty()) {
-            priceCell.add(new Paragraph(price + " \u20ac").setFontSize(12).setFontColor(GOLD).setBold());
+            priceCell.add(new Paragraph(price + " \u20ac").setFontSize(11).setFontColor(GOLD).setBold());
         }
         row.addCell(priceCell);
 
@@ -197,18 +189,12 @@ public class MenuPdfService {
     }
 
     private String formatDate(String isoDate) {
-        try {
-            return LocalDate.parse(isoDate).format(DE_DATE);
-        } catch (Exception e) {
-            return isoDate;
-        }
+        try { return LocalDate.parse(isoDate).format(DE_DATE); }
+        catch (Exception e) { return isoDate; }
     }
 
     private int getIsoWeek(String isoDate) {
-        try {
-            return LocalDate.parse(isoDate).get(java.time.temporal.WeekFields.ISO.weekOfWeekBasedYear());
-        } catch (Exception e) {
-            return 0;
-        }
+        try { return LocalDate.parse(isoDate).get(java.time.temporal.WeekFields.ISO.weekOfWeekBasedYear()); }
+        catch (Exception e) { return 0; }
     }
 }
