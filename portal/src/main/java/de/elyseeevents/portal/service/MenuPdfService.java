@@ -145,7 +145,7 @@ public class MenuPdfService {
 
     private void dishLine(Document doc, String label, String dish, String price, DeviceRgb labelColor) {
         // 3-Spalten: Label | Gericht | Preis
-        Table row = new Table(UnitValue.createPercentArray(new float[]{18, 62, 20}))
+        Table row = new Table(UnitValue.createPercentArray(new float[]{20, 60, 20}))
                 .useAllAvailableWidth().setMarginTop(0).setMarginBottom(0);
 
         // Label (Fleisch/Fisch oder Vegetarisch)
@@ -153,8 +153,7 @@ public class MenuPdfService {
                 .setPaddingTop(5).setPaddingBottom(5)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE);
         labelCell.add(new Paragraph(label)
-                .setFontSize(7).setFontColor(labelColor).setBold()
-                .setCharacterSpacing(0.3f));
+                .setFontSize(8.5f).setFontColor(labelColor));
         row.addCell(labelCell);
 
         // Gerichtname
