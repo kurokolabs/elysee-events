@@ -207,7 +207,7 @@ public class BookingRepository {
                 "SELECT b.id, b.event_date, b.booking_type, b.status, " +
                 "CONCAT(c.first_name, ' ', c.last_name) AS customer_name " +
                 "FROM bookings b JOIN customers c ON b.customer_id = c.id " +
-                "WHERE DATE_FORMAT(b.event_date, '%Y-%m') = ? ORDER BY b.event_date",
+                "WHERE DATE_FORMAT(b.event_date, '%Y-%m') = ? AND b.status NOT IN ('STORNIERT') ORDER BY b.event_date",
                 monthStr);
     }
 }
