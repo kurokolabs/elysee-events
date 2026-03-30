@@ -65,6 +65,7 @@ public class AdminNewsletterController {
         model.addAttribute("menu", menu);
         model.addAttribute("isNew", true);
         model.addAttribute("holidays", holidayUtil.getHolidaysForWeek(nextMonday, nextFriday));
+        model.addAttribute("weeks", holidayUtil.getUpcomingWeeks(12));
         return "admin/newsletter-menu-form";
     }
 
@@ -129,6 +130,7 @@ public class AdminNewsletterController {
         model.addAttribute("menu", menu);
         model.addAttribute("isNew", false);
         model.addAttribute("holidays", holidays);
+        model.addAttribute("weeks", holidayUtil.getUpcomingWeeks(12));
         return "admin/newsletter-menu-form";
     }
 

@@ -76,6 +76,28 @@ public class BavarianHolidayUtil {
     }
 
     /**
+     * Liefert die nächsten N Arbeitswochen als Liste von Maps mit weekStart, weekEnd, label.
+     */
+    public java.util.List<Map<String, String>> getUpcomingWeeks(int count) {
+        java.util.List<Map<String, String>> weeks = new java.util.ArrayList<>();
+        LocalDate monday = getNextWorkWeekMonday();
+        var formatter = java.time.format.DateTimeFormatter.ofPattern("dd.MM.", java.util.Locale.GERMANY);
+        var yearFormatter = java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy", java.util.Locale.GERMANY);
+        for (int i = 0; i < count; i++) {
+            LocalDate friday = monday.plusDays(4);
+            int kw = monday.get(java.time.temporal.WeekFields.ISO.weekOfWeekBasedYear());
+            String label = "KW " + kw + ": " + monday.format(formatter) + " \u2013 " + friday.format(yearFormatter);
+            Map<String, String> entry = new java.util.LinkedHashMap<>();
+            entry.put("weekStart", monday.toString());
+            entry.put("weekEnd", friday.toString());
+            entry.put("label", label);
+            weeks.add(entry);
+            monday = monday.plusWeeks(1);
+        }
+        return weeks;
+    }
+
+    /**
      * Gauss'sche Osterformel -- berechnet Ostersonntag für ein gegebenes Jahr.
      */
     private LocalDate computeEaster(int year) {
