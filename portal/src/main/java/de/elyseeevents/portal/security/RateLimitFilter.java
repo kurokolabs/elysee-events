@@ -23,6 +23,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private static final Map<String, String> URL_TO_ACTION = Map.of(
         "/portal/login", "LOGIN",
+        "/portal/register", "REGISTER",
         "/portal/2fa", "2FA",
         "/portal/2fa/resend", "2FA_RESEND",
         "/portal/passwort-aendern", "PASSWORD",
@@ -74,7 +75,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
             String forwarded = request.getHeader("X-Forwarded-For");
             if (forwarded != null && !forwarded.isBlank()) {
                 String[] ips = forwarded.split(",");
-                return ips[ips.length - 1].trim();
+                return ips[0].trim();
             }
         }
         return remoteAddr;

@@ -60,7 +60,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf
                 .csrfTokenRepository(org.springframework.security.web.csrf.CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .csrfTokenRequestHandler(new org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler())
-                .ignoringRequestMatchers("/newsletter/**", "/api/**")
+                .ignoringRequestMatchers("/api/**")
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/portal/login", "/portal/register", "/portal/register-success", "/portal/verify-email", "/portal/2fa", "/portal/2fa/resend").permitAll()
@@ -95,6 +95,8 @@ public class SecurityConfig {
                 .xssProtection(xss -> xss.headerValue(org.springframework.security.web.header.writers.XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
                 .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000))
                 .referrerPolicy(ref -> ref.policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                // TODO: 'unsafe-inline' fuer script-src entfernen sobald alle Thymeleaf-Templates
+                //       keine inline <script>-Bloecke mehr enthalten (th:inline="javascript" etc.)
                 .contentSecurityPolicy(csp -> csp.policyDirectives(
                     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; " +
                     "img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'"

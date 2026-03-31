@@ -62,12 +62,20 @@
     <lastmod>2026-03-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.elysee-events.de/img/elysee-og-card.jpg</image:loc>
+      <image:title>Eventlocation Augsburg - Élysée Events Veranstaltungsort</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://www.elysee-events.de/catering</loc>
     <lastmod>2026-03-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.elysee-events.de/img/elysee-og-card.jpg</image:loc>
+      <image:title>Catering Augsburg - Élysée Events Catering-Service</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://www.elysee-events.de/impressum</loc>

@@ -77,13 +77,13 @@ public class AuthController {
             return "redirect:/portal/register";
         }
 
-        if (password.length() < 8
+        if (password.length() < 8 || password.length() > 128
                 || !password.matches(".*[A-Z].*")
                 || !password.matches(".*[a-z].*")
                 || !password.matches(".*[0-9].*")
                 || !password.matches(".*[^A-Za-z0-9].*")) {
             redirectAttributes.addFlashAttribute("error",
-                    "Das Passwort muss mind. 8 Zeichen, Groß-/Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.");
+                    "Das Passwort muss 8-128 Zeichen, Gross-/Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.");
             redirectAttributes.addFlashAttribute("email", email);
             redirectAttributes.addFlashAttribute("firstName", firstName);
             redirectAttributes.addFlashAttribute("lastName", lastName);
@@ -101,7 +101,8 @@ public class AuthController {
         }
 
         if (userRepository.findByEmail(email).isPresent()) {
-            redirectAttributes.addFlashAttribute("error", "Diese E-Mail-Adresse ist bereits registriert.");
+            redirectAttributes.addFlashAttribute("error",
+                    "Registrierung fehlgeschlagen. Bitte prüfen Sie Ihre Eingaben oder melden Sie sich an.");
             redirectAttributes.addFlashAttribute("email", email);
             redirectAttributes.addFlashAttribute("firstName", firstName);
             redirectAttributes.addFlashAttribute("lastName", lastName);
@@ -312,13 +313,13 @@ public class AuthController {
             return "redirect:/portal/passwort-aendern";
         }
 
-        if (newPassword.length() < 8
+        if (newPassword.length() < 8 || newPassword.length() > 128
                 || !newPassword.matches(".*[A-Z].*")
                 || !newPassword.matches(".*[a-z].*")
                 || !newPassword.matches(".*[0-9].*")
                 || !newPassword.matches(".*[^A-Za-z0-9].*")) {
             redirectAttributes.addFlashAttribute("error",
-                    "Das Passwort muss mind. 8 Zeichen, Gross-/Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.");
+                    "Das Passwort muss 8-128 Zeichen, Gross-/Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.");
             return "redirect:/portal/passwort-aendern";
         }
 

@@ -70,7 +70,7 @@ public class DataInitializer implements CommandLineRunner {
         if (userRepository.findByEmail("demo@elysee-events.de").isEmpty()) {
             User demoUser = new User();
             demoUser.setEmail("demo@elysee-events.de");
-            demoUser.setPasswordHash(passwordEncoder.encode(adminPassword));
+            demoUser.setPasswordHash(passwordEncoder.encode("DemoUser2024!"));
             demoUser.setRole("CUSTOMER");
             demoUser.setActive(true);
             demoUser.setForcePwChange(false);

@@ -45,12 +45,13 @@ public class TwoFactorService {
         String hmac = hmacSha256(payload);
         String value = payload + ":" + hmac;
 
-        Cookie cookie = new Cookie(TRUST_COOKIE, value);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/portal");
-        cookie.setMaxAge(TRUST_HOURS * 3600);
-        response.addCookie(cookie);
+        String cookieHeader = TRUST_COOKIE + "=" + value
+                + "; Path=/portal"
+                + "; Max-Age=" + (TRUST_HOURS * 3600)
+                + "; HttpOnly"
+                + "; Secure"
+                + "; SameSite=Strict";
+        response.addHeader("Set-Cookie", cookieHeader);
     }
 
     public boolean isDeviceTrusted(Long userId, HttpServletRequest request) {
