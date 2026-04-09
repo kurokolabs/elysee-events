@@ -542,32 +542,6 @@
     }
     .hero .btn:hover { transform: none; }
 
-    /* Scroll indicator */
-    .hero__scroll {
-      position: absolute;
-      bottom: 36px; left: 50%;
-      transform: translateX(-50%);
-      z-index: 2;
-      display: flex; flex-direction: column; align-items: center; gap: 10px;
-      opacity: 0;
-      transition: opacity .6s ease 1.3s;
-    }
-    .hero--revealed .hero__scroll { opacity: 1; }
-    .hero__scroll span {
-      font-size: 9px; font-weight: 600;
-      letter-spacing: .3em;
-      color: rgba(255,255,255,.5);
-      text-transform: uppercase;
-    }
-    .hero__scroll-line {
-      width: 1px; height: 48px;
-      background: linear-gradient(to bottom, rgba(255,255,255,.4), transparent);
-      animation: scrollPulse 2s ease infinite 2s;
-    }
-    @keyframes scrollPulse {
-      0%, 100% { opacity: .4; transform: scaleY(1); }
-      50%       { opacity: 1;  transform: scaleY(1.15); }
-    }
 
     /* ─── Section Shared ───────────────────────────────────────────────────── */
     .section { padding: 108px 48px; }
@@ -946,9 +920,6 @@
     /* ─── Mobile Media Queries ─────────────────────────────────────────────── */
     @media (max-width: 768px) {
       /* nav handled by 900px breakpoint above */
-
-      /* Hide scroll indicator on mobile */
-      .hero__scroll { display: none; }
 
       /* Hero */
       .hero__actions { flex-direction: column; gap: 12px; }
@@ -1942,10 +1913,6 @@ section:not(.hero):not(:first-of-type) {
       </div>
     </div>
 
-    <div class="hero__scroll">
-      <div class="hero__scroll-line"></div>
-      <span>Entdecken</span>
-    </div>
   </section>
 
   <!-- ── Services ───────────────────────────────────────────────────────── -->

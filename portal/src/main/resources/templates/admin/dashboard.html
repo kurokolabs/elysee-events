@@ -92,25 +92,32 @@
         <a th:href="@{/portal/admin/kunde/neu}" class="btn btn--outline">Neuer Kunde</a>
       </div>
 
-      <h2 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:400; margin-bottom:16px;">Aktuelle Buchungen</h2>
+      <h2 style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:400; margin-bottom:16px;">Anfragen</h2>
 
-      <div th:if="${#lists.isEmpty(recentBookings)}" class="empty-state">
-        <div class="empty-state__title">Keine Buchungen</div>
-        <div class="empty-state__text">Erstellen Sie eine erste Buchung.</div>
+      <div th:if="${#lists.isEmpty(inquiries)}" class="empty-state">
+        <div class="empty-state__title">Keine offenen Anfragen</div>
+        <div class="empty-state__text">Neue Kundenanfragen erscheinen hier.</div>
       </div>
 
-      <div class="table-wrap" th:if="${!#lists.isEmpty(recentBookings)}">
+      <div class="table-wrap" th:if="${!#lists.isEmpty(inquiries)}">
         <table class="data-table">
           <thead>
-            <tr><th>Nr.</th><th>Kunde</th><th>Typ</th><th>Datum</th><th>Status</th></tr>
+            <tr><th>Nr.</th><th>Kunde</th><th>Typ</th><th>Datum</th><th>Gäste</th><th>Aktionen</th></tr>
           </thead>
           <tbody>
-            <tr th:each="b : ${recentBookings}">
+            <tr th:each="b : ${inquiries}">
               <td><a th:href="@{/portal/admin/buchung/{id}(id=${b.id})}" th:text="'#' + ${b.id}">#1</a></td>
               <td th:text="${b.customerName}">Kunde</td>
               <td th:text="${b.bookingTypeEnum.label}">Typ</td>
               <td th:text="${b.eventDate != null ? @dateUtil.format(b.eventDate) : '-'}">-</td>
-              <td><span class="status-badge" th:classappend="'status-badge--' + ${b.status}" th:text="${b.statusEnum.label}">Status</span></td>
+              <td th:text="${b.guestCount != null ? b.guestCount : '-'}">-</td>
+              <td style="white-space:nowrap;">
+                <form th:action="@{/portal/admin/buchung/{id}/status(id=${b.id})}" method="post" style="display:inline;">
+                  <input type="hidden" name="status" value="BESTAETIGT">
+                  <button type="submit" class="btn btn--gold btn--sm" onclick="return confirm('Anfrage annehmen?');">Annehmen</button>
+                </form>
+                <a th:href="@{/portal/admin/rechnung/neu/{customerId}(customerId=${b.customerId})}" class="btn btn--outline btn--sm" style="margin-left:6px;">Rechnung erstellen</a>
+              </td>
             </tr>
           </tbody>
         </table>

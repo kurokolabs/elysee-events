@@ -580,36 +580,6 @@
     .hero-actions .btn:nth-child(2) { transition-delay: 1.2s; }
     .hero-words-visible .hero-actions .btn { opacity: 1; transform: translateY(0); }
 
-    .hero-scroll {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      opacity: 0;
-      transition: opacity 1s ease 1.4s;
-    }
-    .hero-words-visible .hero-scroll { opacity: 1; }
-    .hero-scroll-text {
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.5);
-    }
-    .hero-scroll-line {
-      width: 1px;
-      height: 48px;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
-      animation: scrollPulse 2s ease-in-out infinite;
-    }
-    @keyframes scrollPulse {
-      0%, 100% { opacity: 0.4; transform: scaleY(1); }
-      50% { opacity: 1; transform: scaleY(1.15); }
-    }
 
     /* ===================== SECTION BASE ===================== */
     .section {
@@ -1057,7 +1027,6 @@
 
     /* ===================== RESPONSIVE ===================== */
     @media (max-width: 768px) {
-      .hero-scroll, .hero__scroll { display: none; }
       .section { padding: 72px 24px; }
       .cta-section { padding: 72px 24px; }
       .hero-content { padding: 0 24px; max-width: 100%; }
@@ -2015,10 +1984,6 @@ section:not(.hero):not(:first-of-type) {
         </div>
       </div>
 
-      <div class="hero-scroll" aria-hidden="true">
-        <span class="hero-scroll-text">Entdecken</span>
-        <div class="hero-scroll-line"></div>
-      </div>
     </section>
 
     <!-- ===== 2. KONZEPT ===== -->

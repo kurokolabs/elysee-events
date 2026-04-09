@@ -71,6 +71,15 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
+    @Transactional
+    public void delete(Long id) {
+        Optional<Customer> customer = customerRepository.findById(id);
+        if (customer.isPresent() && customer.get().getUserId() != null && customer.get().getUserId() > 0) {
+            userRepository.deleteById(customer.get().getUserId());
+        }
+        customerRepository.deleteById(id);
+    }
+
     public long count() {
         return customerRepository.count();
     }

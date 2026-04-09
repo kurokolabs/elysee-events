@@ -23,7 +23,7 @@
       <!-- Upload-Formular -->
       <div class="detail-card" style="margin-bottom:32px; max-width:680px;">
         <div class="detail-card__title">Dokument hochladen</div>
-        <form th:action="@{/portal/admin/dokumente/upload}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/portal/admin/dokument/upload}" method="post" enctype="multipart/form-data">
           <div class="form-group">
             <label class="form-label" for="customerId">Kunde</label>
             <select id="customerId" name="customerId" class="form-select" required>
@@ -74,8 +74,8 @@
               <td th:text="${doc.uploadedBy}">admin</td>
               <td th:text="${doc.createdAt}">2026-03-22</td>
               <td style="white-space:nowrap;">
-                <a th:href="@{/portal/admin/dokumente/{id}/download(id=${doc.id})}" class="btn btn--outline btn--sm">Download</a>
-                <form th:action="@{/portal/admin/dokumente/{id}/delete(id=${doc.id})}" method="post" style="display:inline;">
+                <a th:href="@{/portal/admin/dokument/{id}/download(id=${doc.id})}" class="btn btn--outline btn--sm">Download</a>
+                <form th:action="@{/portal/admin/dokument/{id}/delete(id=${doc.id})}" method="post" style="display:inline;">
                   <button type="submit" class="btn btn--danger btn--sm" onclick="return confirm('Dokument wirklich l\u00f6schen?')">L&ouml;schen</button>
                 </form>
               </td>

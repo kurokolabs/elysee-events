@@ -103,6 +103,13 @@
             <div class="detail-field__label">Erstellt am</div>
             <div class="detail-field__value" th:text="${customer.createdAt != null ? @dateUtil.format(customer.createdAt) : '-'}">2024-01-15</div>
           </div>
+
+          <div style="margin-top:24px; padding-top:16px; border-top:1px solid var(--border, #e0e0e0);">
+            <form th:action="@{/portal/admin/kunde/{id}/loeschen(id=${customer.id})}" method="post"
+                  onsubmit="return confirm('Sind Sie sicher, dass Sie diesen Kunden unwiderruflich löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.');">
+              <button type="submit" class="btn btn--danger btn--sm">Kunde löschen</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

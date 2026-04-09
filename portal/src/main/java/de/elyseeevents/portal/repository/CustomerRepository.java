@@ -106,6 +106,10 @@ public class CustomerRepository {
         return c;
     }
 
+    public void deleteById(Long id) {
+        jdbc.update("DELETE FROM customers WHERE id = ?", id);
+    }
+
     public long count() {
         Long count = jdbc.queryForObject("SELECT COUNT(*) FROM customers", Long.class);
         return count != null ? count : 0;

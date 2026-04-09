@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buchungen - Elysee Events</title>
+  <title>Anfragen - Elysee Events</title>
   <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
   <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
 </head>
@@ -16,8 +16,8 @@
       <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
 
       <div class="portal-header">
-        <h1 class="portal-header__title">Buchungen</h1>
-        <p class="portal-header__subtitle" th:text="${#lists.size(bookings)} + ' Buchungen'">0 Buchungen</p>
+        <h1 class="portal-header__title">Anfragen</h1>
+        <p class="portal-header__subtitle" th:text="${#lists.size(bookings)} + ' Anfragen'">0 Anfragen</p>
         <div class="portal-header__actions">
           <a th:href="@{/portal/admin/buchung/neu}" class="btn btn--gold">Neue Buchung</a>
         </div>
@@ -55,7 +55,7 @@
       </form>
 
       <div th:if="${#lists.isEmpty(bookings)}" class="empty-state">
-        <div class="empty-state__title">Keine Buchungen gefunden</div>
+        <div class="empty-state__title">Keine Anfragen gefunden</div>
         <div class="empty-state__text">Erstellen Sie eine neue Buchung oder passen Sie die Filter an.</div>
       </div>
 

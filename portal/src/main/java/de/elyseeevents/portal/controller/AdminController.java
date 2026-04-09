@@ -35,6 +35,7 @@ public class AdminController {
         model.addAttribute("totalBudget", bookingService.totalBudget());
         model.addAttribute("totalCustomers", customerService.count());
         model.addAttribute("recentBookings", bookingService.findRecent(5));
+        model.addAttribute("inquiries", bookingService.findByFilters(null, "ANFRAGE", null, null));
         model.addAttribute("monthlyRevenue", bookingService.monthlyRevenue(12));
         model.addAttribute("monthlyActualRevenue", invoiceRepository.monthlyActualRevenue(12));
         model.addAttribute("monthlyPotentialRevenue", invoiceRepository.monthlyPotentialRevenue(12));

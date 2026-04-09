@@ -166,6 +166,18 @@ public class AdminCustomerController {
         return "redirect:/portal/admin/kunde/" + id;
     }
 
+    @PostMapping("/kunde/{id}/loeschen")
+    public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        Customer customer = customerService.findById(id).orElse(null);
+        if (customer == null) {
+            return "redirect:/portal/admin/kunden";
+        }
+        String name = customer.getFullName();
+        customerService.delete(id);
+        redirectAttributes.addFlashAttribute("message", "Kunde \"" + name + "\" wurde erfolgreich gelöscht.");
+        return "redirect:/portal/admin/kunden";
+    }
+
     // -- Kunden-Dokumente -----------------------------------------------
 
     @GetMapping("/kunde/{id}/dokumente")

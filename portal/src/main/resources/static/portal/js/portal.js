@@ -27,12 +27,13 @@ function updateStatus(sel) {
 document.addEventListener('DOMContentLoaded', function() {
 
   /* ── Mobile Burger Menu ─────────────────────────────────── */
-  var burger = document.getElementById('portalBurger');
-  var mobileMenu = document.getElementById('portalMobileMenu');
+  var burger = document.getElementById('portalBurger') || document.getElementById('customerBurger');
+  var mobileMenu = document.getElementById('portalMobileMenu') || document.getElementById('customerMobileMenu');
   if (burger && mobileMenu) {
     burger.addEventListener('click', function() {
       burger.classList.toggle('is-open');
       mobileMenu.classList.toggle('is-open');
+      burger.setAttribute('aria-label', mobileMenu.classList.contains('is-open') ? 'Menü schließen' : 'Menü öffnen');
     });
   }
 

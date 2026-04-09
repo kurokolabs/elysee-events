@@ -498,26 +498,6 @@
       color: rgba(255,255,255,.5);
     }
 
-    /* ── Scroll indicator ── */
-    .hero__scroll {
-      position: absolute; bottom: 84px; right: 28px; z-index: 2;
-      display: flex; flex-direction: column; align-items: center; gap: 10px;
-      opacity: 0; animation: fadeUp .6s ease 1.6s forwards;
-    }
-    .hero__scroll span {
-      font-size: 8px; font-weight: 600;
-      letter-spacing: .35em; color: rgba(255,255,255,.36);
-      text-transform: uppercase; writing-mode: vertical-rl;
-    }
-    .hero__scroll-line {
-      width: 1px; height: 52px;
-      background: linear-gradient(to bottom, rgba(255,255,255,.32), transparent);
-      animation: scrollPulse 2s ease infinite 1s;
-    }
-    @keyframes scrollPulse {
-      0%, 100% { opacity: .36; transform: scaleY(1); }
-      50%       { opacity: 1;  transform: scaleY(1.15); }
-    }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(22px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -543,7 +523,6 @@
       }
       .hero__left::after { display: none; }
       .hero__subtitle { max-width: 100%; }
-      .hero__scroll, .hero-scroll { display: none; }
     }
 
     /* ─── Buttons ───────────────────────────────────────────────────────────── */
@@ -1851,11 +1830,6 @@ section:not(.hero):not(:first-of-type) {
       <div class="hero__bg" role="img" aria-label="Konferenz- und Event-Atmosphäre"></div>
     </div>
 
-    <!-- Scroll indicator -->
-    <div class="hero__scroll" aria-hidden="true">
-      <span>Entdecken</span>
-      <div class="hero__scroll-line"></div>
-    </div>
   </section>
 
   <!-- ─── Event-Typen ──────────────────────────────────────────────────────── -->

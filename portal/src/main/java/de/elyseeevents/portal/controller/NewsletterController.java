@@ -3,6 +3,7 @@ package de.elyseeevents.portal.controller;
 import de.elyseeevents.portal.model.NewsletterSubscriber;
 import de.elyseeevents.portal.repository.NewsletterRepository;
 import de.elyseeevents.portal.service.EmailService;
+import de.elyseeevents.portal.service.NewsletterService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,10 +23,13 @@ public class NewsletterController {
 
     private final NewsletterRepository newsletterRepository;
     private final EmailService emailService;
+    private final NewsletterService newsletterService;
 
-    public NewsletterController(NewsletterRepository newsletterRepository, EmailService emailService) {
+    public NewsletterController(NewsletterRepository newsletterRepository, EmailService emailService,
+                                NewsletterService newsletterService) {
         this.newsletterRepository = newsletterRepository;
         this.emailService = emailService;
+        this.newsletterService = newsletterService;
     }
 
     @PostMapping("/subscribe")
@@ -61,7 +65,10 @@ public class NewsletterController {
             if (!s.isActive()) {
                 String newToken = UUID.randomUUID().toString();
                 newsletterRepository.reactivate(s.getId(), name != null ? name : s.getName(), newToken);
+                s.setToken(newToken);
+                s.setActive(true);
                 sendWelcome(email, name != null ? name : s.getName());
+                newsletterService.sendCurrentMenuToSubscriber(s);
             }
             return;
         }
@@ -73,6 +80,7 @@ public class NewsletterController {
         subscriber.setToken(UUID.randomUUID().toString());
         newsletterRepository.save(subscriber);
         sendWelcome(email, name);
+        newsletterService.sendCurrentMenuToSubscriber(subscriber);
     }
 
     private void sendWelcome(String email, String name) {

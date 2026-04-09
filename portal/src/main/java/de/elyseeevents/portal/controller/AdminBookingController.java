@@ -34,7 +34,7 @@ public class AdminBookingController {
                       @RequestParam(required = false) String dateFrom,
                       @RequestParam(required = false) String dateTo,
                       Model model) {
-        model.addAttribute("pageTitle", "Buchungen");
+        model.addAttribute("pageTitle", "Anfragen");
         model.addAttribute("activeNav", "buchungen");
         model.addAttribute("bookings", bookingService.findByFilters(type, status, dateFrom, dateTo));
         model.addAttribute("bookingTypes", BookingType.values());

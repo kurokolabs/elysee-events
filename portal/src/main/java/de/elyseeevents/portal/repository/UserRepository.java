@@ -73,6 +73,10 @@ public class UserRepository {
         return user;
     }
 
+    public void deleteById(Long id) {
+        jdbc.update("DELETE FROM users WHERE id = ?", id);
+    }
+
     public void updateLastLogin(Long userId) {
         jdbc.update("UPDATE users SET last_login = NOW() WHERE id = ?", userId);
     }
