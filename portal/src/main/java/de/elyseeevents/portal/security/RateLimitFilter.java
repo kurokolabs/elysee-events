@@ -27,7 +27,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
         "/portal/2fa", "2FA",
         "/portal/2fa/resend", "2FA_RESEND",
         "/portal/passwort-aendern", "PASSWORD",
-        "/newsletter/subscribe", "NEWSLETTER"
+        "/newsletter/subscribe", "NEWSLETTER",
+        "/newsletter/api/subscribe", "NEWSLETTER"
     );
 
     public RateLimitFilter(RateLimiter rateLimiter) {

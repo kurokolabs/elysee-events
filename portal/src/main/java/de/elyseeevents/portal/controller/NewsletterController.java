@@ -9,6 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,6 +21,7 @@ import java.util.regex.Pattern;
 @RequestMapping("/newsletter")
 public class NewsletterController {
 
+    private static final Logger log = LoggerFactory.getLogger(NewsletterController.class);
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
             "^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}$");
 
@@ -67,7 +71,7 @@ public class NewsletterController {
                 newsletterRepository.reactivate(s.getId(), name != null ? name : s.getName(), newToken);
                 s.setToken(newToken);
                 s.setActive(true);
-                sendWelcome(email, name != null ? name : s.getName());
+                sendWelcome(email, name != null ? name : s.getName(), newToken);
                 newsletterService.sendCurrentMenuToSubscriber(s);
             }
             return;
@@ -79,17 +83,19 @@ public class NewsletterController {
         subscriber.setActive(true);
         subscriber.setToken(UUID.randomUUID().toString());
         newsletterRepository.save(subscriber);
-        sendWelcome(email, name);
+        sendWelcome(email, name, subscriber.getToken());
         newsletterService.sendCurrentMenuToSubscriber(subscriber);
     }
 
-    private void sendWelcome(String email, String name) {
+    private void sendWelcome(String email, String name, String token) {
         try {
             emailService.sendHtmlEmail(email, "Willkommen zum Speisekarten-Newsletter",
                     "email/welcome-subscriber", Map.of(
                             "name", name != null ? name : "",
-                            "unsubscribeUrl", "https://www.elysee-events.de/newsletter/abmelden?token="));
-        } catch (Exception ignored) {}
+                            "unsubscribeUrl", "https://www.elysee-events.de/newsletter/abmelden?token=" + token));
+        } catch (Exception e) {
+            log.error("Welcome-Email an {} fehlgeschlagen: {}", email, e.getMessage());
+        }
     }
 
     @GetMapping("/abmelden")
