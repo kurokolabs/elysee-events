@@ -34,6 +34,9 @@ public class DataInitializer implements CommandLineRunner {
     @Value("${app.admin.password}")
     private String adminPassword;
 
+    @Value("${app.demo-data.enabled:false}")
+    private boolean demoDataEnabled;
+
     public DataInitializer(UserRepository userRepository, CustomerRepository customerRepository,
                           BookingRepository bookingRepository, InvoiceRepository invoiceRepository,
                           InvoiceItemRepository invoiceItemRepository, PasswordEncoder passwordEncoder,
@@ -61,10 +64,11 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(admin);
         }
 
-        // Demo data: nur in nicht-prod Umgebungen
+        // Demo data: nur wenn (a) prod-Profil NICHT aktiv ist UND (b) explizit opt-in via app.demo-data.enabled=true.
+        // Belt-and-suspenders: falls SPRING_PROFILES_ACTIVE in Prod vergessen wird, schuetzt uns das Flag.
         String[] activeProfiles = environment.getActiveProfiles();
         boolean isProd = java.util.Arrays.stream(activeProfiles).anyMatch("prod"::equalsIgnoreCase);
-        if (isProd) return;
+        if (isProd || !demoDataEnabled) return;
 
         // Demo customer account
         if (userRepository.findByEmail("demo@elysee-events.de").isEmpty()) {

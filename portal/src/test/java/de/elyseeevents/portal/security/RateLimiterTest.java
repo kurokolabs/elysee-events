@@ -3,6 +3,12 @@ package de.elyseeevents.portal.security;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class RateLimiterTest {
@@ -89,5 +95,71 @@ class RateLimiterTest {
         rateLimiter.reset(action, ip);
 
         assertTrue(rateLimiter.isAllowed(action, ip), "Should be allowed after reset");
+    }
+
+    @Test
+    void tryAcquireAllowsExactlyFiveAttempts() {
+        String action = "login";
+        String ip = "10.0.0.4";
+
+        for (int i = 0; i < 5; i++) {
+            assertTrue(rateLimiter.tryAcquire(action, ip), "Attempt " + (i + 1) + " must be granted");
+        }
+        assertFalse(rateLimiter.tryAcquire(action, ip), "6th tryAcquire must be denied");
+        assertFalse(rateLimiter.tryAcquire(action, ip), "7th tryAcquire must also be denied");
+    }
+
+    @Test
+    void tryAcquireIsAtomicUnderConcurrency() throws InterruptedException {
+        // 20 concurrent threads all calling tryAcquire on the same key:
+        // exactly 5 must succeed, 15 must fail. Previously isAllowed/recordAttempt had a
+        // check-then-act race that could allow more than MAX_ATTEMPTS to slip through.
+        String action = "login";
+        String ip = "10.0.0.5";
+
+        int threads = 20;
+        ExecutorService pool = Executors.newFixedThreadPool(threads);
+        CountDownLatch start = new CountDownLatch(1);
+        CountDownLatch done = new CountDownLatch(threads);
+        AtomicInteger granted = new AtomicInteger(0);
+
+        for (int i = 0; i < threads; i++) {
+            pool.submit(() -> {
+                try {
+                    start.await();
+                    if (rateLimiter.tryAcquire(action, ip)) granted.incrementAndGet();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } finally {
+                    done.countDown();
+                }
+            });
+        }
+
+        start.countDown();
+        assertTrue(done.await(10, TimeUnit.SECONDS), "threads must finish");
+        pool.shutdown();
+
+        assertEquals(5, granted.get(), "tryAcquire must grant exactly MAX_ATTEMPTS=5 slots");
+    }
+
+    @Test
+    void tryAcquireDoesNotIncrementOnDenial() {
+        String action = "login";
+        String ip = "10.0.0.6";
+
+        for (int i = 0; i < 5; i++) {
+            assertTrue(rateLimiter.tryAcquire(action, ip));
+        }
+        // Multiple denials should not grow the internal deque indefinitely.
+        // After reset, exactly 5 more acquires are allowed (window, not cumulative).
+        for (int i = 0; i < 3; i++) {
+            assertFalse(rateLimiter.tryAcquire(action, ip));
+        }
+        rateLimiter.reset(action, ip);
+        for (int i = 0; i < 5; i++) {
+            assertTrue(rateLimiter.tryAcquire(action, ip), "After reset attempt " + (i + 1) + " must succeed");
+        }
+        assertFalse(rateLimiter.tryAcquire(action, ip));
     }
 }

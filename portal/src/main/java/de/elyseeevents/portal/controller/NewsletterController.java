@@ -4,6 +4,7 @@ import de.elyseeevents.portal.model.NewsletterSubscriber;
 import de.elyseeevents.portal.repository.NewsletterRepository;
 import de.elyseeevents.portal.service.EmailService;
 import de.elyseeevents.portal.service.NewsletterService;
+import de.elyseeevents.portal.service.NewsletterTokenHasher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Controller
@@ -28,12 +28,14 @@ public class NewsletterController {
     private final NewsletterRepository newsletterRepository;
     private final EmailService emailService;
     private final NewsletterService newsletterService;
+    private final NewsletterTokenHasher tokenHasher;
 
     public NewsletterController(NewsletterRepository newsletterRepository, EmailService emailService,
-                                NewsletterService newsletterService) {
+                                NewsletterService newsletterService, NewsletterTokenHasher tokenHasher) {
         this.newsletterRepository = newsletterRepository;
         this.emailService = emailService;
         this.newsletterService = newsletterService;
+        this.tokenHasher = tokenHasher;
     }
 
     @PostMapping("/subscribe")
@@ -67,11 +69,10 @@ public class NewsletterController {
         if (existing.isPresent()) {
             NewsletterSubscriber s = existing.get();
             if (!s.isActive()) {
-                String newToken = UUID.randomUUID().toString();
-                newsletterRepository.reactivate(s.getId(), name != null ? name : s.getName(), newToken);
-                s.setToken(newToken);
+                // Kept for backward-compat with existing schema (NOT NULL column); token field is unused after fix D.
+                newsletterRepository.reactivate(s.getId(), name != null ? name : s.getName(), "legacy");
                 s.setActive(true);
-                sendWelcome(email, name != null ? name : s.getName(), newToken);
+                sendWelcome(email, name != null ? name : s.getName(), tokenHasher.tokenFor(s.getId()), s.getId());
                 newsletterService.sendCurrentMenuToSubscriber(s);
             }
             return;
@@ -81,32 +82,39 @@ public class NewsletterController {
         subscriber.setEmail(email);
         subscriber.setName(name);
         subscriber.setActive(true);
-        subscriber.setToken(UUID.randomUUID().toString());
+        subscriber.setToken("legacy");
         newsletterRepository.save(subscriber);
-        sendWelcome(email, name, subscriber.getToken());
+        sendWelcome(email, name, tokenHasher.tokenFor(subscriber.getId()), subscriber.getId());
         newsletterService.sendCurrentMenuToSubscriber(subscriber);
     }
 
-    private void sendWelcome(String email, String name, String token) {
+    private void sendWelcome(String email, String name, String signedToken, long subscriberId) {
         try {
+            String url = "https://www.elysee-events.de/newsletter/abmelden?id=" + subscriberId + "&token=" + signedToken;
             emailService.sendHtmlEmail(email, "Willkommen zum Speisekarten-Newsletter",
                     "email/welcome-subscriber", Map.of(
                             "name", name != null ? name : "",
-                            "unsubscribeUrl", "https://www.elysee-events.de/newsletter/abmelden?token=" + token));
+                            "unsubscribeUrl", url));
         } catch (Exception e) {
             log.error("Welcome-Email an {} fehlgeschlagen: {}", email, e.getMessage());
         }
     }
 
     @GetMapping("/abmelden")
-    public String unsubscribe(@RequestParam String token, Model model) {
-        if (token == null || token.length() < 10 || token.length() > 64) {
+    public String unsubscribe(@RequestParam(required = false) Long id,
+                              @RequestParam(required = false) String token,
+                              Model model) {
+        if (id == null || token == null || token.length() != 64) {
             model.addAttribute("error", "Ungültiger Abmelde-Link.");
             return "newsletter/unsubscribed";
         }
-        Optional<NewsletterSubscriber> subscriber = newsletterRepository.findByToken(token);
+        if (!tokenHasher.verify(id, token)) {
+            model.addAttribute("error", "Ungültiger Abmelde-Link.");
+            return "newsletter/unsubscribed";
+        }
+        Optional<NewsletterSubscriber> subscriber = newsletterRepository.findById(id);
         if (subscriber.isPresent()) {
-            newsletterRepository.unsubscribe(token);
+            newsletterRepository.unsubscribeById(id);
             model.addAttribute("success", true);
         } else {
             model.addAttribute("error", "Ungültiger Abmelde-Link.");

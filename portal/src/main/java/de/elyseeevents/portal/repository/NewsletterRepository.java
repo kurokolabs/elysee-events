@@ -46,9 +46,9 @@ public class NewsletterRepository {
         return list.stream().findFirst();
     }
 
-    public Optional<NewsletterSubscriber> findByToken(String token) {
+    public Optional<NewsletterSubscriber> findById(long id) {
         List<NewsletterSubscriber> list = jdbc.query(
-                "SELECT * FROM newsletter_subscribers WHERE token = ?", rowMapper, token);
+                "SELECT * FROM newsletter_subscribers WHERE id = ?", rowMapper, id);
         return list.stream().findFirst();
     }
 
@@ -73,8 +73,8 @@ public class NewsletterRepository {
                 name, newToken, id);
     }
 
-    public void unsubscribe(String token) {
-        jdbc.update("UPDATE newsletter_subscribers SET active = 0 WHERE token = ?", token);
+    public void unsubscribeById(long id) {
+        jdbc.update("UPDATE newsletter_subscribers SET active = 0 WHERE id = ?", id);
     }
 
     public long count() {

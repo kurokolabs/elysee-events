@@ -229,7 +229,6 @@ public class AuthController {
 
         Long userId = (Long) session.getAttribute("2fa_user_id");
         String role = (String) session.getAttribute("2fa_role");
-        Boolean isRegistration = (Boolean) session.getAttribute("2fa_registration");
 
         if (userId == null) {
             session.invalidate();
@@ -250,29 +249,10 @@ public class AuthController {
         auditService.log("2FA_VERIFIED", "user", userId, null);
         twoFactorService.setTrustedDevice(userId, response);
 
-        // 2FA verified - clear pending flags
         session.removeAttribute("2fa_pending");
         session.removeAttribute("2fa_user_id");
         session.removeAttribute("2fa_email");
         session.removeAttribute("2fa_role");
-        session.removeAttribute("2fa_registration");
-
-        // If this was a registration, programmatically log in the user
-        if (Boolean.TRUE.equals(isRegistration)) {
-            // Rotate session ID to prevent session-fixation on programmatic login
-            request.changeSessionId();
-            org.springframework.security.authentication.UsernamePasswordAuthenticationToken auth =
-                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                    user.getEmail(), null,
-                    java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole()))
-                );
-            org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
-            session.setAttribute("SPRING_SECURITY_CONTEXT",
-                org.springframework.security.core.context.SecurityContextHolder.getContext());
-            userRepository.updateLastLogin(user.getId());
-            auditService.log("REGISTRATION_COMPLETE", "user", userId, user.getEmail());
-            return "redirect:/portal/dashboard";
-        }
 
         String target = "ADMIN".equals(role) ? "/portal/admin" : "/portal/dashboard";
         return "redirect:" + target;

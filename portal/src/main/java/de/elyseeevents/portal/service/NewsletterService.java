@@ -23,13 +23,16 @@ public class NewsletterService {
     private final NewsletterRepository newsletterRepository;
     private final WeeklyMenuRepository weeklyMenuRepository;
     private final EmailService emailService;
+    private final NewsletterTokenHasher tokenHasher;
 
     public NewsletterService(NewsletterRepository newsletterRepository,
                              WeeklyMenuRepository weeklyMenuRepository,
-                             EmailService emailService) {
+                             EmailService emailService,
+                             NewsletterTokenHasher tokenHasher) {
         this.newsletterRepository = newsletterRepository;
         this.weeklyMenuRepository = weeklyMenuRepository;
         this.emailService = emailService;
+        this.tokenHasher = tokenHasher;
     }
 
     private static final ZoneId BERLIN = ZoneId.of("Europe/Berlin");
@@ -65,7 +68,8 @@ public class NewsletterService {
                     "email/weekly-menu-newsletter", Map.of(
                             "menu", menu,
                             "subscriberName", subscriber.getName() != null ? subscriber.getName() : "",
-                            "unsubscribeToken", subscriber.getToken()
+                            "subscriberId", subscriber.getId(),
+                            "unsubscribeToken", tokenHasher.tokenFor(subscriber.getId())
                     ));
             log.info("Aktuelle Speisekarte an neuen Abonnenten {} gesendet.", subscriber.getEmail());
         } catch (Exception e) {
@@ -91,7 +95,8 @@ public class NewsletterService {
                 Map<String, Object> variables = Map.of(
                         "menu", menu,
                         "subscriberName", subscriber.getName() != null ? subscriber.getName() : "",
-                        "unsubscribeToken", subscriber.getToken()
+                        "subscriberId", subscriber.getId(),
+                        "unsubscribeToken", tokenHasher.tokenFor(subscriber.getId())
                 );
                 emailService.sendHtmlEmail(subscriber.getEmail(), subject,
                         "email/weekly-menu-newsletter", variables);

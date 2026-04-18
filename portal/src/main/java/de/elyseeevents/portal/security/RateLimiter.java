@@ -15,18 +15,41 @@ public class RateLimiter {
     private static final long WINDOW_SECONDS = 900;
     private final ConcurrentHashMap<String, Deque<Instant>> attempts = new ConcurrentHashMap<>();
 
+    /**
+     * Atomic check-and-record: returns true iff an attempt slot was acquired (i.e. under the
+     * limit), in which case the attempt is also recorded. Closes the check-then-act race in
+     * the prior isAllowed/recordAttempt split where concurrent requests could all observe
+     * size < MAX and all proceed.
+     */
+    public boolean tryAcquire(String action, String ip) {
+        String key = action + ":" + ip;
+        Deque<Instant> deque = attempts.computeIfAbsent(key, k -> new ConcurrentLinkedDeque<>());
+        synchronized (deque) {
+            pruneExpired(deque);
+            if (deque.size() >= MAX_ATTEMPTS) return false;
+            deque.addLast(Instant.now());
+            return true;
+        }
+    }
+
+    // Kept for tests/back-compat; prefer tryAcquire in filters.
     public boolean isAllowed(String action, String ip) {
         String key = action + ":" + ip;
         Deque<Instant> deque = attempts.get(key);
         if (deque == null) return true;
-        pruneExpired(deque);
-        return deque.size() < MAX_ATTEMPTS;
+        synchronized (deque) {
+            pruneExpired(deque);
+            return deque.size() < MAX_ATTEMPTS;
+        }
     }
 
     public void recordAttempt(String action, String ip) {
         String key = action + ":" + ip;
-        attempts.computeIfAbsent(key, k -> new ConcurrentLinkedDeque<>()).addLast(Instant.now());
-        pruneExpired(attempts.get(key));
+        Deque<Instant> deque = attempts.computeIfAbsent(key, k -> new ConcurrentLinkedDeque<>());
+        synchronized (deque) {
+            deque.addLast(Instant.now());
+            pruneExpired(deque);
+        }
     }
 
     public void reset(String action, String ip) {

@@ -53,7 +53,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
         String ip = resolveIp(request);
 
-        if (!rateLimiter.isAllowed(action, ip)) {
+        if (!rateLimiter.tryAcquire(action, ip)) {
             response.setStatus(429);
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().write(
@@ -66,7 +66,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
             return;
         }
 
-        rateLimiter.recordAttempt(action, ip);
         filterChain.doFilter(request, response);
     }
 

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--
+      Strip CR/LF from log messages to prevent log-injection / forged log lines
+      when user-controlled values (emails, filenames, exception messages) are logged.
+      %replace(%msg){'[\r\n]+', ' | '} replaces any run of newlines with " | ".
+    -->
+    <property name="SAFE_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %replace(%msg){'[\r\n]+', ' | '}%n"/>
+
+    <springProfile name="!prod">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${SAFE_PATTERN}</pattern>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <property name="LOG_FILE" value="${LOG_PATH:-/app/logs/portal.log}"/>
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_FILE}</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+                <maxFileSize>10MB</maxFileSize>
+                <maxHistory>30</maxHistory>
+                <totalSizeCap>1GB</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>${SAFE_PATTERN}</pattern>
+            </encoder>
+        </appender>
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${SAFE_PATTERN}</pattern>
+            </encoder>
+        </appender>
+        <root level="WARN">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        <logger name="de.elyseeevents.portal" level="INFO"/>
+    </springProfile>
+</configuration>

@@ -40,7 +40,11 @@ services:
       - /tmp:size=100M
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      DB_URL: jdbc:mysql://db:3306/elysee_portal?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Berlin&characterEncoding=UTF-8
+      # DB-Verbindung mit TLS (MySQL 8 hat Server-seitige TLS out-of-box, self-signed).
+      # sslMode=REQUIRED erzwingt TLS ohne CA-Verifikation - schuetzt gegen Credential-
+      # Sniffing auf dem Docker-Host, vermeidet allowPublicKeyRetrieval komplett.
+      # Fuer vollstaendigen MITM-Schutz spaeter auf VERIFY_CA + gemountetes CA-Zert upgraden.
+      DB_URL: jdbc:mysql://db:3306/elysee_portal?sslMode=REQUIRED&serverTimezone=Europe/Berlin&characterEncoding=UTF-8
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
