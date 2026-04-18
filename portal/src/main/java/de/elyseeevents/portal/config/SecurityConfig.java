@@ -65,7 +65,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/portal/login", "/portal/register", "/portal/register-success", "/portal/verify-email", "/portal/2fa", "/portal/2fa/resend").permitAll()
                 .requestMatchers("/newsletter/**").permitAll()
-                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/api/weekly-menu/**").permitAll()
+                .requestMatchers("/api/**").authenticated()
                 .requestMatchers("/portal/css/**", "/portal/js/**", "/portal/fonts/**", "/portal/img/**").permitAll()
                 .requestMatchers("/portal/admin/**").hasRole("ADMIN")
                 .requestMatchers("/portal/**").authenticated()
