@@ -330,17 +330,7 @@ public class CustomerController {
         }
 
         // MIME-Type-Validierung: Content-Type muss zur Dateiendung passen
-        String contentType = file.getContentType();
-        Set<String> allowedMimeTypes = Set.of(
-                "application/pdf",
-                "image/jpeg",
-                "image/png",
-                "application/msword",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                "application/vnd.ms-excel",
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        );
-        if (contentType == null || !allowedMimeTypes.contains(contentType)) {
+        if (!FileUtil.isAllowedMimeType(file.getContentType())) {
             redirectAttributes.addFlashAttribute("error",
                     "Dateityp nicht erlaubt. Erlaubt: PDF, JPG, PNG, DOC, DOCX, XLS, XLSX.");
             return "redirect:/portal/dokumente";

@@ -75,8 +75,10 @@ public class RateLimitFilter extends OncePerRequestFilter {
         if (trustedProxy.equals(remoteAddr)) {
             String forwarded = request.getHeader("X-Forwarded-For");
             if (forwarded != null && !forwarded.isBlank()) {
+                // Use the LAST IP in the chain — the one the trusted proxy appended.
+                // The first IP is attacker-controlled and can be spoofed to bypass rate limiting.
                 String[] ips = forwarded.split(",");
-                return ips[0].trim();
+                return ips[ips.length - 1].trim();
             }
         }
         return remoteAddr;

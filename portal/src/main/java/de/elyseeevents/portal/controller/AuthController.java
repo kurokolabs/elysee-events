@@ -231,6 +231,11 @@ public class AuthController {
         String role = (String) session.getAttribute("2fa_role");
         Boolean isRegistration = (Boolean) session.getAttribute("2fa_registration");
 
+        if (userId == null) {
+            session.invalidate();
+            return "redirect:/portal/login";
+        }
+
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
             session.invalidate();
@@ -254,6 +259,8 @@ public class AuthController {
 
         // If this was a registration, programmatically log in the user
         if (Boolean.TRUE.equals(isRegistration)) {
+            // Rotate session ID to prevent session-fixation on programmatic login
+            request.changeSessionId();
             org.springframework.security.authentication.UsernamePasswordAuthenticationToken auth =
                 new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
                     user.getEmail(), null,

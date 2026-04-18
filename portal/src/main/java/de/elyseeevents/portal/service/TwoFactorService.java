@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -65,9 +66,13 @@ public class TwoFactorService {
                     long expiry = Long.parseLong(parts[1]);
                     String hmac = parts[2];
                     String expectedHmac = hmacSha256(parts[0] + ":" + parts[1]);
+                    // Timing-safe comparison to prevent HMAC leakage via response timing
+                    boolean hmacOk = MessageDigest.isEqual(
+                            hmac.getBytes(StandardCharsets.UTF_8),
+                            expectedHmac.getBytes(StandardCharsets.UTF_8));
                     return cookieUserId == userId
                             && expiry > System.currentTimeMillis()
-                            && hmac.equals(expectedHmac);
+                            && hmacOk;
                 } catch (Exception e) {
                     return false;
                 }

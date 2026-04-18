@@ -70,7 +70,16 @@ public class SecurityConfig {
                 .requestMatchers("/portal/css/**", "/portal/js/**", "/portal/fonts/**", "/portal/img/**").permitAll()
                 .requestMatchers("/portal/admin/**").hasRole("ADMIN")
                 .requestMatchers("/portal/**").authenticated()
-                .anyRequest().permitAll()
+                // Public-facing website pages (WebsiteController)
+                .requestMatchers("/", "/kantine", "/hochzeit", "/corporate", "/eventlocation",
+                                 "/catering", "/impressum", "/datenschutz", "/agb").permitAll()
+                .requestMatchers("/elysee-events.html", "/kantine.html", "/hochzeit.html",
+                                 "/corporate.html", "/impressum.html", "/datenschutz.html", "/agb.html").permitAll()
+                .requestMatchers("/favicon.ico", "/favicon.svg", "/robots.txt", "/sitemap.xml",
+                                 "/manifest.json", "/404.html", "/error").permitAll()
+                .requestMatchers("/img/**", "/css/**", "/js/**").permitAll()
+                // Deny-by-default: any new endpoint must be explicitly whitelisted above
+                .anyRequest().denyAll()
             )
             .formLogin(form -> form
                 .loginPage("/portal/login")

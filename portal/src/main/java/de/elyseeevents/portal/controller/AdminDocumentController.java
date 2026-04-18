@@ -78,6 +78,12 @@ public class AdminDocumentController {
             return "redirect:/portal/admin/dokumente";
         }
 
+        if (!FileUtil.isAllowedMimeType(file.getContentType())) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Dateityp nicht erlaubt. Erlaubt: PDF, JPG, PNG, DOC, DOCX, XLS, XLSX.");
+            return "redirect:/portal/admin/dokumente";
+        }
+
         try {
             // Verzeichnis erstellen
             Path customerDir = uploadPath.resolve(String.valueOf(customerId));

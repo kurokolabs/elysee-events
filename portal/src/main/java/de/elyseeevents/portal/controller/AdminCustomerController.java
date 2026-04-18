@@ -218,6 +218,12 @@ public class AdminCustomerController {
             return "redirect:/portal/admin/kunde/" + id + "/dokumente";
         }
 
+        if (!FileUtil.isAllowedMimeType(file.getContentType())) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Dateityp nicht erlaubt. Erlaubt: PDF, JPG, PNG, DOC, DOCX, XLS, XLSX.");
+            return "redirect:/portal/admin/kunde/" + id + "/dokumente";
+        }
+
         try {
             Path customerDir = uploadPath.resolve(String.valueOf(id));
             Files.createDirectories(customerDir);

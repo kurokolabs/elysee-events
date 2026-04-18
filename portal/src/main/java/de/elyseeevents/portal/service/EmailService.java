@@ -37,8 +37,11 @@ public class EmailService {
     }
 
     public void sendHtmlEmail(String toEmail, String subject, String templateName, Map<String, Object> variables) {
-        if (toEmail == null || toEmail.contains("\n") || toEmail.contains("\r") || toEmail.contains("%0a") || toEmail.contains("%0d")) {
+        if (containsHeaderInjection(toEmail)) {
             throw new IllegalArgumentException("Invalid email address");
+        }
+        if (containsHeaderInjection(subject)) {
+            throw new IllegalArgumentException("Invalid email subject");
         }
         try {
             Context ctx = new Context();
@@ -63,6 +66,15 @@ public class EmailService {
     public void sendHtmlEmailWithAttachment(String toEmail, String subject, String templateName,
                                             Map<String, Object> variables, byte[] attachmentBytes,
                                             String attachmentFilename) {
+        if (containsHeaderInjection(toEmail)) {
+            throw new IllegalArgumentException("Invalid email address");
+        }
+        if (containsHeaderInjection(subject)) {
+            throw new IllegalArgumentException("Invalid email subject");
+        }
+        if (containsHeaderInjection(attachmentFilename)) {
+            throw new IllegalArgumentException("Invalid attachment filename");
+        }
         try {
             Context ctx = new Context();
             ctx.setVariables(variables);
@@ -82,5 +94,12 @@ public class EmailService {
         } catch (Exception e) {
             log.error("Failed to send email to {}: {}", toEmail, e.getMessage());
         }
+    }
+
+    private static boolean containsHeaderInjection(String value) {
+        if (value == null) return true;
+        return value.contains("\n") || value.contains("\r")
+                || value.contains("%0a") || value.contains("%0A")
+                || value.contains("%0d") || value.contains("%0D");
     }
 }
