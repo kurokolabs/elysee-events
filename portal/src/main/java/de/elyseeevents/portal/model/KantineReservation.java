@@ -6,6 +6,7 @@ public class KantineReservation {
     private String name;
     private int seatCount;
     private String reservationDate;
+    private String reservationTime;
     private String status = "OFFEN";
     private String createdAt;
 
@@ -23,6 +24,9 @@ public class KantineReservation {
 
     public String getReservationDate() { return reservationDate; }
     public void setReservationDate(String reservationDate) { this.reservationDate = reservationDate; }
+
+    public String getReservationTime() { return reservationTime; }
+    public void setReservationTime(String reservationTime) { this.reservationTime = reservationTime; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }

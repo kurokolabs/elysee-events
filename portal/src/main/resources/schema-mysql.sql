@@ -252,3 +252,5 @@ CREATE TABLE IF NOT EXISTS kantine_reservations (
     INDEX idx_kantine_reservations_date (reservation_date)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+ALTER TABLE kantine_reservations ADD COLUMN reservation_time VARCHAR(5);

@@ -42,7 +42,8 @@
             <th>Kunde</th>
             <th>Name</th>
             <th>Plätze</th>
-            <th>Wunschdatum</th>
+            <th>Datum</th>
+            <th>Uhrzeit</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -59,6 +60,7 @@
             <td th:text="${r.name}">Name</td>
             <td th:text="${r.seatCount}">1</td>
             <td th:text="${r.reservationDate != null ? r.reservationDate : '-'}">-</td>
+            <td th:text="${r.reservationTime != null ? r.reservationTime : '-'}">-</td>
             <td><span class="status-badge" th:classappend="'status-badge--' + ${r.status}" th:text="${r.statusLabel}">Offen</span></td>
             <td>
               <form th:action="@{/portal/admin/kantine-reservierungen/{id}/status(id=${r.id})}" method="post" class="inline-form">

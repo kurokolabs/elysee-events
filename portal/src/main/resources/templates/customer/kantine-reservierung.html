@@ -41,6 +41,9 @@
 
     <div class="detail-card">
       <div class="detail-card__title">Neue Reservierung</div>
+      <p style="font-size:12px; color:#6B6560; margin:0 0 16px 0;">
+        Öffnungszeiten: <strong th:text="${openingHours}">Mo–Fr 11:00–14:00 Uhr</strong>
+      </p>
       <form th:action="@{/portal/kantine/reservierung}" method="post">
         <div class="form-row">
           <div class="form-group">
@@ -54,8 +57,22 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Wunschdatum (optional)</label>
-            <input type="date" name="reservationDate" class="form-input">
+            <label class="form-label">Datum</label>
+            <input type="date" name="reservationDate" class="form-input"
+                   th:min="${minDate}" th:max="${maxDate}" required>
+            <small style="display:block; margin-top:4px; font-size:11px; color:#6B6560;">
+              Nur Mo–Fr (keine Feiertage)
+            </small>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Uhrzeit</label>
+            <select name="reservationTime" class="form-input" required>
+              <option value="" disabled selected>-- Uhrzeit wählen --</option>
+              <option th:each="slot : ${timeSlots}" th:value="${slot}" th:text="${slot} + ' Uhr'"></option>
+            </select>
+            <small style="display:block; margin-top:4px; font-size:11px; color:#6B6560;">
+              Letzte Reservierung 13:30 Uhr
+            </small>
           </div>
         </div>
         <div style="display:flex; justify-content:flex-end; margin-top:16px;">
@@ -75,7 +92,7 @@
           <div class="res-card__meta">
             <span th:text="${r.seatCount + (r.seatCount > 1 ? ' Sitzplätze' : ' Sitzplatz')}">1 Sitzplatz</span>
             <span th:if="${r.reservationDate != null}"> &middot; <span th:text="${r.reservationDate}">2026-04-29</span></span>
-            <span> &middot; <span th:text="${r.createdAt}">erstellt</span></span>
+            <span th:if="${r.reservationTime != null}"> &middot; <span th:text="${r.reservationTime} + ' Uhr'">12:00 Uhr</span></span>
           </div>
         </div>
         <div class="res-card__actions">

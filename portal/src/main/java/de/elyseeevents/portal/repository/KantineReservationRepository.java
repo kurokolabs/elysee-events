@@ -24,6 +24,7 @@ public class KantineReservationRepository {
         r.setName(rs.getString("name"));
         r.setSeatCount(rs.getInt("seat_count"));
         r.setReservationDate(rs.getString("reservation_date"));
+        r.setReservationTime(rs.getString("reservation_time"));
         r.setStatus(rs.getString("status"));
         r.setCreatedAt(rs.getString("created_at"));
         return r;
@@ -57,21 +58,22 @@ public class KantineReservationRepository {
             jdbc.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(
                         "INSERT INTO kantine_reservations " +
-                        "(customer_id, name, seat_count, reservation_date, status) " +
-                        "VALUES (?, ?, ?, ?, ?)",
+                        "(customer_id, name, seat_count, reservation_date, reservation_time, status) " +
+                        "VALUES (?, ?, ?, ?, ?, ?)",
                         Statement.RETURN_GENERATED_KEYS);
                 ps.setLong(1, r.getCustomerId());
                 ps.setString(2, r.getName());
                 ps.setInt(3, r.getSeatCount());
                 ps.setString(4, r.getReservationDate());
-                ps.setString(5, r.getStatus());
+                ps.setString(5, r.getReservationTime());
+                ps.setString(6, r.getStatus());
                 return ps;
             }, keyHolder);
             r.setId(keyHolder.getKey().longValue());
         } else {
             jdbc.update(
-                    "UPDATE kantine_reservations SET name=?, seat_count=?, reservation_date=?, status=? WHERE id=?",
-                    r.getName(), r.getSeatCount(), r.getReservationDate(), r.getStatus(), r.getId());
+                    "UPDATE kantine_reservations SET name=?, seat_count=?, reservation_date=?, reservation_time=?, status=? WHERE id=?",
+                    r.getName(), r.getSeatCount(), r.getReservationDate(), r.getReservationTime(), r.getStatus(), r.getId());
         }
         return r;
     }

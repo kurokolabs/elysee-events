@@ -183,3 +183,5 @@ CREATE TABLE IF NOT EXISTS kantine_reservations (
 
 CREATE INDEX IF NOT EXISTS idx_kantine_reservations_customer ON kantine_reservations(customer_id);
 CREATE INDEX IF NOT EXISTS idx_kantine_reservations_date ON kantine_reservations(reservation_date);
+
+ALTER TABLE kantine_reservations ADD COLUMN reservation_time TEXT;
