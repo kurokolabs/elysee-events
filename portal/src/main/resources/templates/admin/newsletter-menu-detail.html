@@ -148,8 +148,13 @@
         </form>
         <a th:if="${menu.status == 'BESTAETIGT'}" th:href="@{/portal/admin/newsletter/speisekarte/{id}/bearbeiten(id=${menu.id})}" class="btn btn--outline">Bearbeiten</a>
 
-        <!-- Versendet: Zurück -->
+        <!-- Versendet: Nachträglich ändern + Zurück -->
+        <a th:if="${menu.status == 'VERSENDET'}" th:href="@{/portal/admin/newsletter/speisekarte/{id}/bearbeiten(id=${menu.id})}" class="btn btn--gold">Nachträglich ändern</a>
         <a th:if="${menu.status == 'VERSENDET'}" th:href="@{/portal/admin/newsletter}" class="btn btn--outline">Zurück zur Übersicht</a>
+      </div>
+
+      <div th:if="${menu.status == 'VERSENDET'}" style="margin-top:14px; font-size:12px; color:var(--muted); line-height:1.5;">
+        Hinweis: Änderungen wirken sich nur auf die Online-Anzeige und das PDF aus. Bereits versendete Newsletter werden nicht erneut zugestellt.
       </div>
 
       <!-- Bestätigungs-Dialog für manuellen Versand -->

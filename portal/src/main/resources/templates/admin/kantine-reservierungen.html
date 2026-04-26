@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kantine-Reservierungen - Elysee Events</title>
+  <link rel="stylesheet" th:href="@{/portal/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/portal/css/portal.css}">
+  <style>
+    .res-table { width:100%; border-collapse:collapse; background:#fff; border:1px solid rgba(26,26,26,.08); border-radius:6px; overflow:hidden; }
+    .res-table th, .res-table td { padding:12px 14px; text-align:left; font-size:13px; border-bottom:1px solid rgba(26,26,26,.06); }
+    .res-table th { background:rgba(201,168,76,.08); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#8B7330; font-weight:600; }
+    .res-table tr:last-child td { border-bottom:none; }
+    .status-badge--OFFEN { background:rgba(201,168,76,.15); color:#8B7330; }
+    .status-badge--BESTAETIGT { background:rgba(46,125,50,.12); color:#2E7D32; }
+    .status-badge--STORNIERT { background:rgba(107,101,96,.15); color:#6B6560; }
+    .inline-form { display:inline-flex; gap:6px; align-items:center; }
+    .inline-form select { font-size:12px; padding:4px 8px; border:1px solid rgba(26,26,26,.15); border-radius:4px; }
+  </style>
+</head>
+<body>
+  <div th:replace="~{fragments/admin-nav :: topnav}"></div>
+  <div class="admin-layout">
+    <div th:replace="~{fragments/admin-nav :: sidebar}"></div>
+    <div class="admin-content">
+      <div th:if="${message}" class="alert alert--success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert--error" th:text="${error}"></div>
+
+      <div class="portal-header">
+        <h1 class="portal-header__title">Kantine-Reservierungen</h1>
+        <p class="portal-header__subtitle">Tischreservierungen Ihrer Kunden</p>
+      </div>
+
+      <div th:if="${#lists.isEmpty(reservations)}" style="padding:32px; text-align:center; color:#6B6560; background:#fff; border:1px dashed rgba(26,26,26,.12); border-radius:8px;">
+        Noch keine Reservierungen vorhanden.
+      </div>
+
+      <table th:if="${!#lists.isEmpty(reservations)}" class="res-table">
+        <thead>
+          <tr>
+            <th>Erstellt</th>
+            <th>Kunde</th>
+            <th>Name</th>
+            <th>Plätze</th>
+            <th>Wunschdatum</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="r : ${reservations}">
+            <td th:text="${r.createdAt}">-</td>
+            <td>
+              <th:block th:with="c=${customers.get(r.customerId)}">
+                <span th:if="${c != null}" th:text="${c.firstName} + ' ' + ${c.lastName}">Kunde</span>
+                <span th:if="${c == null}" style="color:#6B6560;">unbekannt</span>
+              </th:block>
+            </td>
+            <td th:text="${r.name}">Name</td>
+            <td th:text="${r.seatCount}">1</td>
+            <td th:text="${r.reservationDate != null ? r.reservationDate : '-'}">-</td>
+            <td><span class="status-badge" th:classappend="'status-badge--' + ${r.status}" th:text="${r.statusLabel}">Offen</span></td>
+            <td>
+              <form th:action="@{/portal/admin/kantine-reservierungen/{id}/status(id=${r.id})}" method="post" class="inline-form">
+                <select name="status">
+                  <option value="OFFEN" th:selected="${r.status == 'OFFEN'}">Offen</option>
+                  <option value="BESTAETIGT" th:selected="${r.status == 'BESTAETIGT'}">Bestätigt</option>
+                  <option value="STORNIERT" th:selected="${r.status == 'STORNIERT'}">Storniert</option>
+                </select>
+                <button type="submit" class="btn btn--outline" style="font-size:11px; padding:4px 10px;">Speichern</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script th:src="@{/portal/js/portal.js}"></script>
+</body>
+</html>

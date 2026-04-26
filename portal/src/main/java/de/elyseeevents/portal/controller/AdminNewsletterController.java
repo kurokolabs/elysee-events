@@ -157,16 +157,23 @@ public class AdminNewsletterController {
         }
 
         WeeklyMenu menu = menuOpt.get();
+        boolean wasSent = "VERSENDET".equals(menu.getStatus());
+        String effectiveStatus = wasSent ? "VERSENDET" : status;
         populateMenu(menu, weekStart, weekEnd, mondayMeat, mondayMeatPrice, mondayVeg, mondayVegPrice,
                 tuesdayMeat, tuesdayMeatPrice, tuesdayVeg, tuesdayVegPrice,
                 wednesdayMeat, wednesdayMeatPrice, wednesdayVeg, wednesdayVegPrice,
                 thursdayMeat, thursdayMeatPrice, thursdayVeg, thursdayVegPrice,
-                fridayMeat, fridayMeatPrice, fridayVeg, fridayVegPrice, notes, status);
+                fridayMeat, fridayMeatPrice, fridayVeg, fridayVegPrice, notes, effectiveStatus);
         weeklyMenuRepository.save(menu);
 
-        String msg = "BESTAETIGT".equals(status)
-                ? "Speisekarte bestätigt. Newsletter wird am Montag um 09:00 Uhr automatisch versendet."
-                : "Entwurf gespeichert.";
+        String msg;
+        if (wasSent) {
+            msg = "Speisekarte nachträglich aktualisiert. Bereits versendete Newsletter bleiben unverändert.";
+        } else if ("BESTAETIGT".equals(status)) {
+            msg = "Speisekarte bestätigt. Newsletter wird am Montag um 09:00 Uhr automatisch versendet.";
+        } else {
+            msg = "Entwurf gespeichert.";
+        }
         redirectAttributes.addFlashAttribute("message", msg);
         return "redirect:/portal/admin/newsletter/speisekarte/" + id;
     }

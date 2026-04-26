@@ -237,3 +237,18 @@ ALTER TABLE weekly_menus ADD COLUMN friday_veg_price VARCHAR(20);
 
 -- Speisekarten-Status: ENTWURF -> BESTAETIGT -> VERSENDET
 ALTER TABLE weekly_menus ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'ENTWURF';
+
+
+CREATE TABLE IF NOT EXISTS kantine_reservations (
+    id               BIGINT AUTO_INCREMENT PRIMARY KEY,
+    customer_id      BIGINT NOT NULL,
+    name             VARCHAR(150) NOT NULL,
+    seat_count       INT NOT NULL,
+    reservation_date DATE,
+    status           VARCHAR(20) NOT NULL DEFAULT 'OFFEN',
+    created_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE,
+    INDEX idx_kantine_reservations_customer (customer_id),
+    INDEX idx_kantine_reservations_date (reservation_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+

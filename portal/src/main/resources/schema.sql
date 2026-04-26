@@ -169,3 +169,17 @@ ALTER TABLE bookings ADD COLUMN catering_package TEXT;
 ALTER TABLE bookings ADD COLUMN food_option TEXT;
 ALTER TABLE bookings ADD COLUMN food_sub_option TEXT;
 ALTER TABLE bookings ADD COLUMN cuisine_style TEXT;
+
+CREATE TABLE IF NOT EXISTS kantine_reservations (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id     INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+    name            TEXT NOT NULL,
+    seat_count      INTEGER NOT NULL CHECK(seat_count > 0),
+    reservation_date TEXT,
+    status          TEXT NOT NULL DEFAULT 'OFFEN'
+                    CHECK(status IN ('OFFEN','BESTAETIGT','STORNIERT')),
+    created_at      TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_kantine_reservations_customer ON kantine_reservations(customer_id);
+CREATE INDEX IF NOT EXISTS idx_kantine_reservations_date ON kantine_reservations(reservation_date);
