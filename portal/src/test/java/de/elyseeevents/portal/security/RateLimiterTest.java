@@ -144,6 +144,46 @@ class RateLimiterTest {
     }
 
     @Test
+    void tryAcquireWithCustomMaxAllowsExactlyThatMany() {
+        // The per-action overload must apply the supplied threshold, NOT the default 5.
+        // Used by RateLimitFilter to give per-username login a different (stricter) limit
+        // than per-IP login.
+        String action = "LOGIN_USER";
+        String key = "alice@example.com";
+
+        for (int i = 0; i < 10; i++) {
+            assertTrue(rateLimiter.tryAcquire(action, key, 10), "Attempt " + (i + 1) + " of 10 must be granted");
+        }
+        assertFalse(rateLimiter.tryAcquire(action, key, 10), "11th must be denied");
+    }
+
+    @Test
+    void perUserAndPerIpKeysAreIndependent() {
+        // Distributed brute-force scenario: 5 different IPs each hit the same account once.
+        // Per-IP buckets stay under their 5/15min limit, BUT the per-user counter accumulates
+        // across IPs.
+        String username = "victim@example.com";
+
+        // Five distinct IPs, each can login (under per-IP limit).
+        for (int i = 1; i <= 5; i++) {
+            assertTrue(rateLimiter.tryAcquire("LOGIN", "203.0.113." + i),
+                    "IP " + i + " under its own per-IP limit");
+        }
+        // But the same victim username, hit 5 times across those IPs, eats 5 per-user slots.
+        for (int i = 0; i < 5; i++) {
+            assertTrue(rateLimiter.tryAcquire("LOGIN_USER", username, 10),
+                    "Per-user attempt " + (i + 1) + " of 10 still allowed");
+        }
+        // Five more IPs add five more per-user attempts → 10 total → 11th must be blocked.
+        for (int i = 0; i < 5; i++) {
+            assertTrue(rateLimiter.tryAcquire("LOGIN_USER", username, 10),
+                    "Per-user attempt " + (i + 6) + " of 10 still allowed");
+        }
+        assertFalse(rateLimiter.tryAcquire("LOGIN_USER", username, 10),
+                "11th per-user attempt must be blocked even with fresh IPs");
+    }
+
+    @Test
     void tryAcquireDoesNotIncrementOnDenial() {
         String action = "login";
         String ip = "10.0.0.6";

@@ -188,7 +188,7 @@
     </div>
   </div>
   <script th:src="@{/portal/js/portal.js}"></script>
-  <script>
+  <script th:attr="nonce=${cspNonce}">
     // USt-Anzeige-Map
     var ustLabels = { SAALMIETE: '19%', GETRAENKE: '19%', ESSEN: '7%', BUEFFET: '75% zu 19%, 25% zu 7%' };
     // Artikel fuer Einleitungstext

@@ -2,11 +2,13 @@ package de.elyseeevents.portal.config;
 
 import de.elyseeevents.portal.model.User;
 import de.elyseeevents.portal.repository.UserRepository;
+import de.elyseeevents.portal.security.CspNonceHeaderWriter;
 import de.elyseeevents.portal.security.RateLimiter;
 import de.elyseeevents.portal.service.EmailService;
 import de.elyseeevents.portal.service.TwoFactorService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -23,7 +25,6 @@ import de.elyseeevents.portal.security.RateLimitFilter;
 import de.elyseeevents.portal.security.TwoFaFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @Configuration
@@ -38,6 +39,18 @@ public class SecurityConfig {
     private final TwoFaFilter twoFaFilter;
     private final EmailService emailService;
     private final de.elyseeevents.portal.repository.AuditLogRepository auditLogRepository;
+
+    @Value("${app.trusted-proxy:127.0.0.1}")
+    private String trustedProxy;
+
+    /**
+     * Force HTTPS via {@code requiresChannel().requiresSecure()} when behind a reverse proxy
+     * that sets X-Forwarded-Proto. Default false so local dev on plain HTTP still works.
+     * Production should set {@code app.security.require-https=true} and
+     * {@code server.forward-headers-strategy=native} (already in application-prod.properties).
+     */
+    @Value("${app.security.require-https:false}")
+    private boolean requireHttps;
 
     public SecurityConfig(UserRepository userRepository, TwoFactorService twoFactorService,
                           RateLimiter rateLimiter, RateLimitFilter rateLimitFilter,
@@ -78,6 +91,10 @@ public class SecurityConfig {
                 .requestMatchers("/favicon.ico", "/favicon.svg", "/robots.txt", "/sitemap.xml",
                                  "/manifest.json", "/404.html", "/error").permitAll()
                 .requestMatchers("/img/**", "/css/**", "/js/**").permitAll()
+                // Actuator hardening: /actuator/health stays public (Docker healthcheck);
+                // every other actuator endpoint is denied to prevent reconnaissance.
+                .requestMatchers("/actuator/health").permitAll()
+                .requestMatchers("/actuator/**").denyAll()
                 // Deny-by-default: any new endpoint must be explicitly whitelisted above
                 .anyRequest().denyAll()
             )
@@ -105,14 +122,16 @@ public class SecurityConfig {
                 .xssProtection(xss -> xss.headerValue(org.springframework.security.web.header.writers.XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
                 .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000))
                 .referrerPolicy(ref -> ref.policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
-                // TODO: 'unsafe-inline' fuer script-src entfernen sobald alle Thymeleaf-Templates
-                //       keine inline <script>-Bloecke mehr enthalten (th:inline="javascript" etc.)
-                .contentSecurityPolicy(csp -> csp.policyDirectives(
-                    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; " +
-                    "img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'"
-                ))
+                // CSP via custom HeaderWriter so we can emit a per-request nonce. Replaces
+                // the previous static `script-src 'self' 'unsafe-inline'` (CVE-class XSS
+                // amplifier flagged by 2026-04-27 pentest).
+                .addHeaderWriter(new CspNonceHeaderWriter())
                 .permissionsPolicy(pp -> pp.policy("camera=(), microphone=(), geolocation=(), payment=()"))
             );
+
+        if (requireHttps) {
+            http.requiresChannel(rc -> rc.anyRequest().requiresSecure());
+        }
 
         return http.build();
     }
@@ -124,8 +143,13 @@ public class SecurityConfig {
             String email = authentication.getName();
             Optional<User> userOpt = userRepository.findByEmail(email);
 
-            // Reset rate limiter on successful login
-            rateLimiter.reset("LOGIN", request.getRemoteAddr());
+            // Reset BOTH rate-limit counters on successful login: per-IP (LOGIN) and
+            // per-username (LOGIN_USER). The IP key uses the trusted-proxy-aware resolution
+            // to match what RateLimitFilter records.
+            rateLimiter.reset("LOGIN", resolveIp(request));
+            if (email != null) {
+                rateLimiter.reset("LOGIN_USER", email.trim().toLowerCase());
+            }
 
             if (userOpt.isPresent()) {
                 User user = userOpt.get();
@@ -160,5 +184,17 @@ public class SecurityConfig {
                 response.sendRedirect("/portal/dashboard");
             }
         };
+    }
+
+    private String resolveIp(HttpServletRequest request) {
+        String remoteAddr = request.getRemoteAddr();
+        if (trustedProxy.equals(remoteAddr)) {
+            String forwarded = request.getHeader("X-Forwarded-For");
+            if (forwarded != null && !forwarded.isBlank()) {
+                String[] ips = forwarded.split(",");
+                return ips[ips.length - 1].trim();
+            }
+        }
+        return remoteAddr;
     }
 }

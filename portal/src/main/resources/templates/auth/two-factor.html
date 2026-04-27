@@ -111,7 +111,7 @@
     </div>
   </div>
 
-  <script>
+  <script th:attr="nonce=${cspNonce}">
     var digits = document.querySelectorAll('.code-digit');
     var hiddenCode = document.getElementById('hiddenCode');
     var verifyBtn = document.getElementById('verifyBtn');

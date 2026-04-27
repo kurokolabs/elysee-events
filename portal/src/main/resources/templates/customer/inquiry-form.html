@@ -229,8 +229,8 @@
   </main>
 
   <script th:src="@{/portal/js/portal.js}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" crossorigin="anonymous"></script>
-  <script th:inline="javascript">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" crossorigin="anonymous" th:attr="nonce=${cspNonce}"></script>
+  <script th:inline="javascript" th:attr="nonce=${cspNonce}">
   (function() {
     /* ── Config ── */
     var EMAILJS_PK   = /*[[${emailjsPublicKey}]]*/ '';

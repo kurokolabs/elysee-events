@@ -10,14 +10,31 @@ import de.elyseeevents.portal.repository.CustomerRepository;
 import de.elyseeevents.portal.repository.InvoiceItemRepository;
 import de.elyseeevents.portal.repository.InvoiceRepository;
 import de.elyseeevents.portal.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.security.SecureRandom;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.EnumSet;
+import java.util.Set;
+
 @Component
 public class DataInitializer implements CommandLineRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 
     private final Environment environment;
 
@@ -31,11 +48,14 @@ public class DataInitializer implements CommandLineRunner {
     @Value("${app.admin.email}")
     private String adminEmail;
 
-    @Value("${app.admin.password}")
+    @Value("${app.admin.password:}")
     private String adminPassword;
 
     @Value("${app.demo-data.enabled:false}")
     private boolean demoDataEnabled;
+
+    @Value("${app.admin.bootstrap-secret-path:./logs/admin-bootstrap.txt}")
+    private String adminBootstrapSecretPath;
 
     public DataInitializer(UserRepository userRepository, CustomerRepository customerRepository,
                           BookingRepository bookingRepository, InvoiceRepository invoiceRepository,
@@ -52,17 +72,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Admin account - nur erstellen wenn Passwort gesetzt ist
-        if (adminPassword != null && !adminPassword.isBlank() && userRepository.findByEmail(adminEmail).isEmpty()) {
-            User admin = new User();
-            admin.setEmail(adminEmail);
-            admin.setPasswordHash(passwordEncoder.encode(adminPassword));
-            admin.setRole("ADMIN");
-            admin.setActive(true);
-            admin.setForcePwChange(true);
-            admin.setTwoFaEnabled(true);
-            userRepository.save(admin);
-        }
+        bootstrapAdmin();
 
         // Demo data: nur wenn (a) prod-Profil NICHT aktiv ist UND (b) explizit opt-in via app.demo-data.enabled=true.
         // Belt-and-suspenders: falls SPRING_PROFILES_ACTIVE in Prod vergessen wird, schuetzt uns das Flag.
@@ -70,6 +80,99 @@ public class DataInitializer implements CommandLineRunner {
         boolean isProd = java.util.Arrays.stream(activeProfiles).anyMatch("prod"::equalsIgnoreCase);
         if (isProd || !demoDataEnabled) return;
 
+        seedDemoData();
+    }
+
+    /**
+     * Create the admin account on first boot. If {@code app.admin.password} is set,
+     * uses it (legacy / explicit override). Otherwise generates a cryptographically
+     * random password and writes it once to {@code admin-bootstrap.txt} (chmod 600 on
+     * POSIX) so an operator can pick it up for the first login. The flag
+     * {@code force_pw_change=true} is always set so the random/initial password is
+     * replaced on first login.
+     *
+     * Why: keeping the admin password in plaintext .env (as flagged by 2026-04-27
+     * pentest) means a host filesystem read leaks production credentials. Letting the
+     * app generate the secret at bootstrap means there is no canonical source of the
+     * password except the one-shot bootstrap file (which the operator should delete).
+     */
+    void bootstrapAdmin() {
+        if (adminEmail == null || adminEmail.isBlank()) {
+            log.warn("ADMIN_EMAIL not set — skipping admin bootstrap");
+            return;
+        }
+        if (userRepository.findByEmail(adminEmail).isPresent()) {
+            return; // already provisioned
+        }
+
+        boolean wasGenerated = false;
+        String password = adminPassword;
+        if (password == null || password.isBlank()) {
+            password = generateRandomPassword();
+            wasGenerated = true;
+        }
+
+        User admin = new User();
+        admin.setEmail(adminEmail);
+        admin.setPasswordHash(passwordEncoder.encode(password));
+        admin.setRole("ADMIN");
+        admin.setActive(true);
+        admin.setForcePwChange(true);
+        admin.setTwoFaEnabled(true);
+        userRepository.save(admin);
+
+        if (wasGenerated) {
+            writeBootstrapSecret(password);
+            log.warn("Admin account '{}' created with generated password. See {} (delete after first login).",
+                    adminEmail, adminBootstrapSecretPath);
+        } else {
+            log.info("Admin account '{}' created from app.admin.password — force_pw_change=true.", adminEmail);
+        }
+    }
+
+    /** 24 random bytes -> URL-safe Base64 (~32 chars). High entropy, no ambiguous chars. */
+    static String generateRandomPassword() {
+        SecureRandom rng = new SecureRandom();
+        byte[] bytes = new byte[24];
+        rng.nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
+    /**
+     * Write the bootstrap password to a file readable only by the owner. Best-effort:
+     * if the FS is not POSIX (e.g. Windows dev), fall back to a plain write — the
+     * intended deployment is Linux so POSIX perms are the primary path.
+     */
+    private void writeBootstrapSecret(String password) {
+        Path file = Paths.get(adminBootstrapSecretPath);
+        String stamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        String content = "# Elysee admin bootstrap — DELETE THIS FILE AFTER FIRST LOGIN\n"
+                + "# Generated: " + stamp + "\n"
+                + "email=" + adminEmail + "\n"
+                + "password=" + password + "\n"
+                + "# force_pw_change=true is set; you will be redirected to /portal/passwort-aendern.\n";
+        try {
+            Path parent = file.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+            Files.writeString(file, content);
+            try {
+                Set<PosixFilePermission> perms = EnumSet.of(
+                        PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE);
+                Files.setPosixFilePermissions(file, perms);
+            } catch (UnsupportedOperationException ignored) {
+                // non-POSIX FS (Windows dev) — file is still written, just without 0600.
+            }
+        } catch (IOException e) {
+            // Bootstrap file write failure should not crash the app — the password is
+            // still in the audit log via the WARN above. Operator must check stdout.
+            log.error("Failed to write admin bootstrap secret to {}: {}", file, e.getMessage());
+            log.warn("Generated admin password (RECORD AND DELETE THIS LINE): {}", password);
+        }
+    }
+
+    private void seedDemoData() {
         // Demo customer account
         if (userRepository.findByEmail("demo@elysee-events.de").isEmpty()) {
             User demoUser = new User();

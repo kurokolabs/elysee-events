@@ -180,7 +180,7 @@
     </div>
   </div>
   <script th:src="@{/portal/js/portal.js}"></script>
-  <script>
+  <script th:attr="nonce=${cspNonce}">
     document.getElementById('addItem').addEventListener('click', function() {
       var container = document.getElementById('itemRows');
       var row = document.createElement('div');

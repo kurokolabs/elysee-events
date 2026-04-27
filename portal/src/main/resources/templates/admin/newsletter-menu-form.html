@@ -185,7 +185,7 @@
   </div>
 
   <script th:src="@{/portal/js/portal.js}"></script>
-  <script th:inline="javascript">
+  <script th:inline="javascript" th:attr="nonce=${cspNonce}">
   (function() {
     var DAYS = ['monday','tuesday','wednesday','thursday','friday'];
 
